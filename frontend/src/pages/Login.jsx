@@ -1,0 +1,98 @@
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-toastify';
+import { FaUser, FaEnvelope, FaLock } from 'react-icons/fa';
+
+const Login = () => {
+    const [formData, setFormData] = useState({
+        email: '',
+        password: ''
+    });
+    const [loading, setLoading] = useState(false);
+    const { login } = useAuth();
+    const navigate = useNavigate();
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+
+        try {
+            await login(formData);
+            toast.success('Login successful!');
+            navigate('/dashboard');
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Login failed');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="section min-h-[80vh] flex items-center justify-center">
+            <div className="card w-full max-w-md animate-[fadeIn_0.5s_ease-out]">
+                <h2 className="text-3xl font-bold text-center mb-8">Welcome Back</h2>
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-gray-300">Email Address</label>
+                        <div className="relative">
+                            <span className="absolute left-3 top-3 text-gray-400">
+                                <FaEnvelope />
+                            </span>
+                            <input
+                                type="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                className="w-full bg-slate-800 border border-slate-700 rounded-lg py-2.5 pl-10 pr-4 text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                                placeholder="you@example.com"
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-gray-300">Password</label>
+                        <div className="relative">
+                            <span className="absolute left-3 top-3 text-gray-400">
+                                <FaLock />
+                            </span>
+                            <input
+                                type="password"
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                className="w-full bg-slate-800 border border-slate-700 rounded-lg py-2.5 pl-10 pr-4 text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                                placeholder="••••••••"
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <button
+                        type="submit"
+                        className="btn btn-primary w-full flex justify-center items-center"
+                        disabled={loading}
+                    >
+                        {loading ? <div className="loading mr-2 w-5 h-5" /> : null}
+                        Login
+                    </button>
+                </form>
+
+                <p className="mt-6 text-center text-gray-400">
+                    Don't have an account?{' '}
+                    <Link to="/register" className="text-primary hover:text-primary-light font-medium">
+                        Register here
+                    </Link>
+                </p>
+            </div>
+        </div>
+    );
+};
+
+export default Login;
