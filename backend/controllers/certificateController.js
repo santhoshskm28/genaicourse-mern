@@ -91,10 +91,10 @@ export const getUserCertificates = async (req, res, next) => {
             userId: req.user._id,
             isRevoked: false
         })
-        .populate('courseId', 'title thumbnail category level')
-        .sort({ completionDate: -1 })
-        .limit(limit * 1)
-        .skip((page - 1) * limit);
+            .populate('courseId', 'title thumbnail category level')
+            .sort({ completionDate: -1 })
+            .limit(limit * 1)
+            .skip((page - 1) * limit);
 
         const total = await Certificate.countDocuments({
             userId: req.user._id,

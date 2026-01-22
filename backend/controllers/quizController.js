@@ -310,10 +310,10 @@ export const getQuizAttempts = async (req, res, next) => {
             userId: req.user._id,
             quizId: req.params.id
         })
-        .populate('quizId', 'title')
-        .sort({ createdAt: -1 })
-        .limit(limit * 1)
-        .skip((page - 1) * limit);
+            .populate('quizId', 'title')
+            .sort({ createdAt: -1 })
+            .limit(limit * 1)
+            .skip((page - 1) * limit);
 
         const total = await UserQuizAttempt.countDocuments({
             userId: req.user._id,

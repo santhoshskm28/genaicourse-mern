@@ -15,7 +15,7 @@ const Navbar = () => {
         <nav className="fixed w-full z-50 glass-header top-0">
             <div className="container mx-auto px-6 h-20 flex justify-between items-center">
                 <Link to="/" className="text-2xl font-black tracking-tighter">
-                    genai<span className="text-primary">.io</span>
+                    genaicourse<span className="text-primary">.io</span>
                 </Link>
 
                 {/* Desktop Menu */}

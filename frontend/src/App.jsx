@@ -30,30 +30,23 @@ const App = () => {
         <AuthProvider>
             <Router>
                 <div className="min-h-screen bg-slate-900 text-white font-sans selection:bg-primary selection:text-white">
-                    <Routes>
-                        <Route path="/courses/:id/learn" element={<CourseViewer />} />
+                    <Navbar />
+                    <main>
+                        <Routes>
+                            <Route path="/" element={<Home />} />
+                            <Route path="/courses" element={<CourseCatalogue />} />
+                            <Route path="/courses/:id" element={<CourseDetail />} />
+                            <Route path="/courses/:id/learn" element={<CourseViewer />} />
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/register" element={<Register />} />
+                            <Route path="/how-it-works" element={<HowItWorks />} />
 
-                        <Route path="*" element={
-                            <>
-                                <Navbar />
-                                <main>
-                                    <Routes>
-                                        <Route path="/" element={<Home />} />
-                                        <Route path="/courses" element={<CourseCatalogue />} />
-                                        <Route path="/courses/:id" element={<CourseDetail />} />
-                                        <Route path="/login" element={<Login />} />
-                                        <Route path="/register" element={<Register />} />
-                                        <Route path="/how-it-works" element={<HowItWorks />} />
-
-                                        <Route element={<PrivateRoute />}>
-                                            <Route path="/dashboard" element={<Dashboard />} />
-                                        </Route>
-                                    </Routes>
-                                </main>
-                                <Footer />
-                            </>
-                        } />
-                    </Routes>
+                            <Route element={<PrivateRoute />}>
+                                <Route path="/dashboard" element={<Dashboard />} />
+                            </Route>
+                        </Routes>
+                    </main>
+                    <Footer />
 
                     <ToastContainer
                         position="bottom-right"

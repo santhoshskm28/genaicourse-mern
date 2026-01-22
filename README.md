@@ -1,106 +1,195 @@
-# GenAI Course Platform (MERN Stack)
+# GenAI Course Platform
 
-## Project Overview
-A comprehensive e-learning platform for GenAI courses built with the MERN stack. Features include slide-based course viewing, user progress tracking, admin dashboard, and JWT authentication with structured JSON course content.
+A comprehensive MERN stack learning management system for AI and technology courses with CI/CD pipeline.
 
-## 🎯 Core Features Implemented
+## 🚀 Features
 
-### Frontend Views (SPA Routes)
-- ✅ **Home View**: Platform overview with clear value proposition and CTA buttons
-- ✅ **How It Works View**: Step-by-step explanation with icons and illustrations
-- ✅ **Course Catalogue View**: Fetch and display courses with search/filter functionality
-- ✅ **Authentication Views**: Login/Register with client-side validation and error handling
-- ✅ **Course Player**: Slide-based learning with Next/Previous navigation and progress tracking
+- **User Authentication**: JWT-based authentication with role-based access
+- **Course Management**: Create, enroll, and track progress through courses
+- **Admin Dashboard**: Full administrative controls for course management
+- **Responsive Design**: Modern UI with Tailwind CSS and Framer Motion
+- **API-First**: RESTful API with comprehensive documentation
+- **Docker Support**: Containerized deployment with Docker Compose
+- **CI/CD Ready**: GitHub Actions for automated testing and deployment
 
-### Backend APIs
-- ✅ **User Management**: Register/Login with JWT authentication and role-based access
-- ✅ **Course CRUD Operations**: Fetch, upload (JSON), edit, delete courses
-- ✅ **Admin Features**: Upload/edit/delete courses, view users, restricted admin APIs
-- ✅ **Progress Tracking**: Track course access and user progress
+## 🛠️ Tech Stack
 
-### Database Design
-- ✅ **Users Collection**: name, email, hashed password, role
-- ✅ **Courses Collection**: title, description, structured JSON content, created date
-- ✅ **User Progress Collection**: userId, courseId, progress tracking
+### Frontend
+- **React 18** with Vite
+- **React Router** for routing
+- **Tailwind CSS** for styling
+- **Framer Motion** for animations
+- **Axios** for API calls
+- **React Toastify** for notifications
 
-## 🛠 Technologies Used
-- **Frontend**: React.js, React Router, Tailwind CSS, Framer Motion, Axios
-- **Backend**: Node.js, Express.js, JWT, bcryptjs, CORS, helmet, morgan
-- **Database**: MongoDB with Mongoose
-- **Development**: Vite, nodemon, express-validator
+### Backend
+- **Node.js** with Express.js
+- **MongoDB** with Mongoose
+- **JWT** for authentication
+- **bcryptjs** for password hashing
+- **Express Validator** for input validation
+- **Helmet** and **CORS** for security
+
+### DevOps
+- **Docker** & **Docker Compose**
+- **GitHub Actions** for CI/CD
+- **ESLint** for code linting
+- **Jest** for testing
 
 ## 📋 Prerequisites
-- Node.js (v16+)
-- MongoDB (running locally or Atlas URI)
 
-## 🚀 Getting Started
+- Node.js 18+ and npm 8+
+- MongoDB (local or Atlas)
+- Docker & Docker Compose (optional)
 
-### 1. Backend Setup
+## 🚀 Quick Start
+
+### Local Development
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd genaicourse-mern
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm run install:all
+   ```
+
+3. **Environment Setup**
+   ```bash
+   # Backend
+   cp backend/.env.example backend/.env
+
+   # Frontend
+   cp frontend/.env.example frontend/.env
+   ```
+
+4. **Start Development Servers**
+   ```bash
+   npm run dev
+   ```
+
+### Docker Development
+
 ```bash
-cd backend
-npm install
-# Configure .env file (already configured with MongoDB Atlas)
-npm run dev
+# Start all services
+docker-compose up -d
+
+# Stop services
+docker-compose down
 ```
 
-The backend server runs on `http://localhost:5000`.
+## 🧪 Testing
 
-### 2. Database Setup (Optional Seeding)
 ```bash
-cd backend
-# The database is already configured with MongoDB Atlas
-# Local setup: Update MONGODB_URI in .env to use local MongoDB
+# Run all tests
+npm test
+
+# Run backend tests only
+npm run test:backend
+
+# Run with coverage
+cd backend && npm run test:coverage
 ```
 
-**Default Admin Credentials (if seeded):**
-- Email: `admin@genaicourse.io`
-- Password: `Admin@123`
+## 🔧 CI/CD Pipeline
 
-### 3. Frontend Setup
+### GitHub Actions
+
+The project includes a comprehensive CI/CD pipeline that:
+
+1. **Testing**: Runs tests on multiple Node.js versions
+2. **Linting**: Checks code quality with ESLint
+3. **Building**: Ensures frontend builds successfully
+4. **Deployment**: Automated deployment on main branch pushes
+
+### Pipeline Stages
+
+- **Test**: Unit tests, linting, and build verification
+- **Deploy**: Production deployment
+
+### Environment Variables for CI/CD
+
+Create GitHub Secrets:
+- `JWT_SECRET`: JWT signing secret
+- `MONGODB_URI`: MongoDB connection string
+- `CLIENT_URL`: Frontend URL for CORS
+
+## 🐳 Docker Deployment
+
+### Production Deployment
+
 ```bash
-cd frontend
-npm install
-npm run dev
-```
+# Build and start production containers
+docker-compose -f docker-compose.prod.yml up -d --build
 
-The frontend application runs on `http://localhost:5173`.
+# Stop production services
+docker-compose -f docker-compose.prod.yml down
+```
 
 ## 📁 Project Structure
 
 ```
 genaicourse-mern/
-├── backend/
-│   ├── config/          # Database configuration
-│   ├── controllers/     # Route controllers
-│   ├── middleware/      # Authentication & error handling
-│   ├── models/          # MongoDB schemas (User, Course, UserProgress)
-│   ├── routes/          # API routes (auth, courses, admin)
-│   └── utils/           # Utility functions
-├── frontend/
+├── backend/                 # Node.js/Express API
+│   ├── controllers/         # Route controllers
+│   ├── models/             # MongoDB models
+│   ├── routes/             # API routes
+│   ├── middleware/         # Custom middleware
+│   ├── config/             # Database configuration
+│   ├── __tests__/          # Backend tests
+│   ├── Dockerfile          # Backend container config
+│   └── package.json
+├── frontend/                # React/Vite frontend
 │   ├── src/
-│   │   ├── components/  # Reusable components
-│   │   ├── context/     # React context (Auth)
-│   │   ├── pages/       # Page components (Home, Login, etc.)
-│   │   └── services/    # API service functions
-│   └── public/          # Static assets
-└── README.md
+│   │   ├── components/     # Reusable components
+│   │   ├── pages/          # Page components
+│   │   ├── context/        # React context
+│   │   ├── services/       # API services
+│   │   └── utils/          # Utility functions
+│   ├── public/             # Static assets
+│   ├── Dockerfile          # Frontend container config
+│   └── package.json
+├── .github/workflows/       # GitHub Actions CI/CD
+├── docker-compose.yml       # Development containers
+├── docker-compose.prod.yml  # Production containers
+└── package.json            # Root package.json
 ```
 
-## 🎨 Frontend Features
+## 🔐 API Endpoints
 
-### Course Content System (CRITICAL)
-- ✅ Text-based content with structured JSON conversion
-- ✅ JSON schema supports: Modules → Lessons → Key points
-- ✅ Slide-based/step-based learning UI
-- ✅ Navigation: Next/Previous with progress indicator
+### Authentication
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `GET /api/auth/me` - Get current user
+
+### Courses
+- `GET /api/courses` - Get all courses
+- `GET /api/courses/:id` - Get course details
+- `POST /api/courses/:id/enroll` - Enroll in course
+
+### Admin (Protected)
+- `POST /api/admin/courses` - Create course
+- `PUT /api/admin/courses/:id` - Update course
+- `DELETE /api/admin/courses/:id` - Delete course
+
+## 🎯 Core Features
+
+### Course Content System
+- Text-based content with structured JSON conversion
+- JSON schema supports: Modules → Lessons → Key points
+- Slide-based/step-based learning UI
+- Navigation: Next/Previous with progress indicator
 
 ### User Interface
-- ✅ Modern dark theme with gradient accents
-- ✅ Responsive design for all screen sizes
-- ✅ Smooth animations and transitions
-- ✅ Toast notifications for user feedback
+- Modern dark theme with gradient accents
+- Responsive design for all screen sizes
+- Smooth animations and transitions
+- Toast notifications for user feedback
 
-## 🔒 Security Features
+### Security Features
 - JWT-based authentication
 - Password hashing with bcryptjs
 - CORS configuration
@@ -108,35 +197,7 @@ genaicourse-mern/
 - Helmet security headers
 - Input validation and sanitization
 
-## 📊 Admin Dashboard
-- User management (view all users)
-- Course management (CRUD operations)
-- Progress tracking analytics
-- Role-based access control
-
-## 🚀 Deployment Ready
-- Frontend: Ready for Vercel/Netlify deployment
-- Backend: Ready for Railway/Heroku/Render deployment
-- Environment variables properly configured
-- Production-ready security middleware
-
-## 🔧 Development Commands
-
-### Backend
-```bash
-npm run dev      # Start development server with nodemon
-npm start        # Start production server
-```
-
-### Frontend
-```bash
-npm run dev      # Start development server
-npm run build    # Build for production
-npm run preview  # Preview production build
-```
-
 ## 📝 Course JSON Schema
-The system accepts structured JSON course content:
 
 ```json
 {

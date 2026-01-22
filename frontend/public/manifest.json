@@ -1,0 +1,9 @@
+{
+  "short_name": "GenAI Course",
+  "name": "GenAI Course Platform",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#0f172a",
+  "background_color": "#0f172a",
+  "description": "Learn cutting-edge AI and technology skills"
+}

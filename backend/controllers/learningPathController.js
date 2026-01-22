@@ -425,11 +425,11 @@ const generateRecommendationReason = (course, userProgress) => {
     if (userCategories.includes(course.category)) {
         return `Continue learning in ${course.category}`;
     } else if (course.averageRating >= 4.5) {
-        return `Highly rated course`;
+        return 'Highly rated course';
     } else if (course.enrollmentCount > 500) {
-        return `Popular course`;
+        return 'Popular course';
     } else {
-        return `Recommended for you`;
+        return 'Recommended for you';
     }
 };
 

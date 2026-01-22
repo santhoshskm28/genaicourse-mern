@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import courseService from '../../services/courseService';
-import Loader from '../common/Loader';
+import courseService from '../services/courseService';
+import Loader from '../components/common/Loader';
 import { FaChevronLeft, FaChevronRight, FaCheck, FaBars, FaTimes } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 

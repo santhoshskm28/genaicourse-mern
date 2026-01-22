@@ -43,8 +43,7 @@ export const getCourses = async (req, res, next) => {
             .populate('createdBy', 'name')
             .sort({ [sortBy]: sortOptions[sortBy] })
             .limit(limit * 1)
-            .skip((page - 1) * limit)
-            .lean();
+            .skip((page - 1) * limit);
 
         const total = await Course.countDocuments(query);
 

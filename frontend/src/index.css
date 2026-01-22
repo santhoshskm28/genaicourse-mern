@@ -39,6 +39,45 @@ body {
 
 @layer components {
 
+  /* Container Utility */
+  .container {
+    @apply max-w-7xl mx-auto px-6;
+  }
+
+  /* Grid Utilities */
+  .grid-3 {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+
+  /* Section Utilities */
+  .section {
+    @apply py-20;
+  }
+
+  .section-title {
+    @apply text-4xl md:text-5xl font-black text-center mb-16 text-gradient;
+  }
+
+  /* Card Utilities */
+  .card {
+    @apply bg-slate-800 border border-slate-700 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300;
+  }
+
+  /* Line Clamp Utilities */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
   /* Glassmorphism Utilities */
   .glass-panel {
     @apply bg-slate-800/70 backdrop-blur-md border border-white/10 shadow-xl;
