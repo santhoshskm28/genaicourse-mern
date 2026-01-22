@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import adminService from '../../services/adminService';
 import Loader from '../../components/common/Loader';
 import { FaUser, FaBook, FaPlus, FaTrash, FaEdit } from 'react-icons/fa';
+import { FiUploadCloud } from 'react-icons/fi';
+
 import { toast } from 'react-toastify';
 
 const AdminDashboard = () => {
@@ -78,8 +80,8 @@ const AdminDashboard = () => {
                             key={tab}
                             onClick={() => setActiveTab(tab)}
                             className={`pb-4 px-4 font-medium capitalize ${activeTab === tab
-                                    ? 'text-primary border-b-2 border-primary'
-                                    : 'text-gray-400 hover:text-white'
+                                ? 'text-primary border-b-2 border-primary'
+                                : 'text-gray-400 hover:text-white'
                                 }`}
                         >
                             {tab}
@@ -122,12 +124,20 @@ const AdminDashboard = () => {
                     <div>
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-2xl font-bold">Manage Courses</h2>
-                            <button
-                                onClick={() => navigate('/admin/courses/new')}
-                                className="btn btn-primary flex items-center gap-2"
-                            >
-                                <FaPlus /> New Course
-                            </button>
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => navigate('/admin/courses/upload')}
+                                    className="btn bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-2 "
+                                >
+                                    <FiUploadCloud /> AI Course Upload
+                                </button>
+                                <button
+                                    onClick={() => navigate('/admin/courses/new')}
+                                    className="btn btn-primary flex items-center gap-2"
+                                >
+                                    <FaPlus /> New Course
+                                </button>
+                            </div>
                         </div>
 
                         <div className="overflow-x-auto rounded-lg border border-slate-700">
@@ -197,33 +207,33 @@ const AdminDashboard = () => {
                                         <th className="px-6 py-3">Actions</th>
                                     </tr>
                                 </thead>
-                                 <tbody className="divide-y divide-slate-700 bg-slate-900">
-                                     {users && users.length > 0 ? (
-                                         users.map(u => (
-                                             <tr key={u._id || u.id} className="hover:bg-slate-800 transition-colors">
-                                                 <td className="px-6 py-4 font-medium text-white">{u.name || 'Unknown'}</td>
-                                                 <td className="px-6 py-4">{u.email || 'No email'}</td>
-                                                 <td className="px-6 py-4 capitalize">{u.role || 'user'}</td>
-                                                 <td className="px-6 py-4">
-                                                     {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'Unknown'}
-                                                 </td>
-                                                 <td className="px-6 py-4">
-                                                     {u.role !== 'admin' && (
-                                                         <button onClick={() => handleDeleteUser(u._id || u.id)} className="text-red-400 hover:text-red-300">
-                                                             <FaTrash />
-                                                         </button>
-                                                     )}
-                                                 </td>
-                                             </tr>
-                                         ))
-                                     ) : (
-                                         <tr>
-                                             <td colSpan="5" className="px-6 py-8 text-center text-gray-400">
-                                                 No users found
-                                             </td>
-                                         </tr>
-                                     )}
-                                 </tbody>
+                                <tbody className="divide-y divide-slate-700 bg-slate-900">
+                                    {users && users.length > 0 ? (
+                                        users.map(u => (
+                                            <tr key={u._id || u.id} className="hover:bg-slate-800 transition-colors">
+                                                <td className="px-6 py-4 font-medium text-white">{u.name || 'Unknown'}</td>
+                                                <td className="px-6 py-4">{u.email || 'No email'}</td>
+                                                <td className="px-6 py-4 capitalize">{u.role || 'user'}</td>
+                                                <td className="px-6 py-4">
+                                                    {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'Unknown'}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    {u.role !== 'admin' && (
+                                                        <button onClick={() => handleDeleteUser(u._id || u.id)} className="text-red-400 hover:text-red-300">
+                                                            <FaTrash />
+                                                        </button>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="5" className="px-6 py-8 text-center text-gray-400">
+                                                No users found
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
                             </table>
                         </div>
                     </div>

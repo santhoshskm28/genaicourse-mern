@@ -256,3 +256,8 @@ When logged in, the admin gets a JWT token that grants access to all admin endpo
 - Update JWT_SECRET in environment variables
 - Configure proper CORS for production domains
 Admin ID: 69719ad9d9caabe01a8f659c
+
+
+powershell code for backend:
+
+Stop-Process -Id (Get-NetTCPConnection -LocalPort 5000).OwningProcess -Force

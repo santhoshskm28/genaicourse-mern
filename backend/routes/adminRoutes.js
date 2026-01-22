@@ -11,7 +11,9 @@ import {
     deleteCourse,
     getDashboardStats
 } from '../controllers/adminController.js';
+import { uploadAndConvertCourse, saveApprovedCourse, upload } from '../controllers/adminCourseController.js';
 import { protect, authorize } from '../middleware/auth.js';
+
 
 const router = express.Router();
 
@@ -39,5 +41,9 @@ router.get('/courses/:id', getCourse);
 router.post('/courses', createCourse);
 router.put('/courses/:id', updateCourse);
 router.delete('/courses/:id', deleteCourse);
+
+// AI Conversion Routes
+router.post('/courses/upload', upload, uploadAndConvertCourse);
+router.post('/courses/save', saveApprovedCourse);
 
 export default router;

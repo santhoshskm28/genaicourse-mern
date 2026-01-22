@@ -14,7 +14,10 @@ const connectDB = async () => {
             family: 4 // Use IPv4, skip trying IPv6
         };
 
-        const conn = await mongoose.connect(process.env.MONGODB_URI, options);
+
+        const uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/genaicourse';
+        console.log(`🔌 Attempting to connect to MongoDB at: ${uri}`);
+        const conn = await mongoose.connect(uri, options);
 
         console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
         console.log(`📊 Database: ${conn.connection.name}`);

@@ -17,7 +17,17 @@ import certificateRoutes from './routes/certificateRoutes.js';
 import learningPathRoutes from './routes/learningPathRoutes.js';
 
 // Load environment variables
-dotenv.config();
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.join(__dirname, '.env') });
+
+console.log('Current working directory:', process.cwd());
+console.log('MONGODB_URI:', process.env.MONGODB_URI); // Debug log
+
 
 // Initialize express app
 const app = express();

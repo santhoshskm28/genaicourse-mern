@@ -96,12 +96,11 @@ const certificateSchema = new mongoose.Schema({
 });
 
 // Index for verification
-certificateSchema.index({ certificateId: 1 });
 certificateSchema.index({ userId: 1, courseId: 1 }, { unique: true });
 certificateSchema.index({ completionDate: -1 });
 
 // Pre-save to generate certificate ID
-certificateSchema.pre('save', function(next) {
+certificateSchema.pre('save', function (next) {
     if (this.isNew && !this.certificateId) {
         this.certificateId = this.generateCertificateId();
     }
@@ -109,14 +108,14 @@ certificateSchema.pre('save', function(next) {
 });
 
 // Method to generate unique certificate ID
-certificateSchema.methods.generateCertificateId = function() {
+certificateSchema.methods.generateCertificateId = function () {
     const timestamp = Date.now().toString(36);
     const random = Math.random().toString(36).substring(2, 7);
     return `GENAI-${timestamp}-${random}`.toUpperCase();
 };
 
 // Virtual for completion percentage
-certificateSchema.virtual('completionPercentage').get(function() {
+certificateSchema.virtual('completionPercentage').get(function () {
     return this.totalModules > 0 ? (this.modulesCompleted / this.totalModules) * 100 : 0;
 });
 

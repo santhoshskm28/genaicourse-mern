@@ -24,6 +24,8 @@ import Pricing from './pages/Pricing';
 // Admin Imports
 import AdminDashboard from './pages/admin/AdminDashboard';
 import CourseForm from './pages/admin/CourseForm';
+import AdminUpload from './pages/admin/AdminUpload';
+
 
 const PrivateRoute = () => {
     const { isAuthenticated, loading } = useAuth();
@@ -34,7 +36,7 @@ const PrivateRoute = () => {
 const App = () => {
     return (
         <AuthProvider>
-            <Router>
+            <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
                 <div className="min-h-screen bg-slate-900 text-white font-sans selection:bg-primary selection:text-white">
                     <Navbar />
                     <main>
@@ -56,6 +58,7 @@ const App = () => {
                             <Route element={<AdminRoute />}>
                                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
                                 <Route path="/admin/courses/new" element={<CourseForm />} />
+                                <Route path="/admin/courses/upload" element={<AdminUpload />} />
                                 <Route path="/admin/courses/:id/edit" element={<CourseForm isEditing={true} />} />
                             </Route>
                         </Routes>
