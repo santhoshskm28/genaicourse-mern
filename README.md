@@ -219,3 +219,40 @@ genaicourse-mern/
   ]
 }
 ```
+🔐 Admin Credentials & Information
+👤 Admin User Details:
+- Admin ID: 69719ad9d9caabe01a8f659c
+- Name: System Admin
+- Email: admin@genaicourse.io
+- Password: Admin@123
+- Role: admin
+🚀 How to Access Admin Features:
+1. Login via Web Interface:
+- Navigate to: http://localhost:3001/login
+- Enter email: admin@genaicourse.io
+- Enter password: Admin@123
+2. Direct API Login:
+curl -X POST http://localhost:5000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@genaicourse.io","password":"Admin@123"}'
+3. Admin Dashboard Access:
+After login, the admin user will have access to:
+- Dashboard: User management and analytics
+- Course Management: Create, edit, delete courses
+- User Management: View and manage all users
+- System Administration: Full platform control
+📊 Admin User Profile:
+- Avatar: Auto-generated from name
+- Bio: "System Administrator"
+- Stats: All initialized to zero (new admin account)
+- Created: Database seeding timestamp
+🔑 Admin API Token:
+When logged in, the admin gets a JWT token that grants access to all admin endpoints:
+- /api/admin/* - Administrative functions
+- /api/courses - Course management (full CRUD)
+- /api/auth/users - User management
+⚠️ Security Notes:
+- Change the default password in production
+- Update JWT_SECRET in environment variables
+- Configure proper CORS for production domains
+Admin ID: 69719ad9d9caabe01a8f659c

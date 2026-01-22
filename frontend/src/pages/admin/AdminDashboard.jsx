@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import adminService from '../../services/adminService';
 import Loader from '../../components/common/Loader';
-import { FaUser, FaBook, FaPlus, FaTrash } from 'react-icons/fa';
+import { FaUser, FaBook, FaPlus, FaTrash, FaEdit } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
 const AdminDashboard = () => {
+    const navigate = useNavigate();
     const [stats, setStats] = useState(null);
     const [courses, setCourses] = useState([]);
     const [users, setUsers] = useState([]);
@@ -111,7 +113,10 @@ const AdminDashboard = () => {
                     <div>
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-2xl font-bold">Manage Courses</h2>
-                            <button className="btn btn-primary flex items-center gap-2">
+                            <button
+                                onClick={() => navigate('/admin/courses/new')}
+                                className="btn btn-primary flex items-center gap-2"
+                            >
                                 <FaPlus /> New Course
                             </button>
                         </div>
@@ -138,10 +143,20 @@ const AdminDashboard = () => {
                                                     {course.isPublished ? 'Published' : 'Draft'}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4 flex space-x-3">
-                                                <button className="text-blue-400 hover:text-blue-300">Edit</button>
-                                                <button onClick={() => handleDeleteCourse(course._id)} className="text-red-400 hover:text-red-300"><FaTrash /></button>
-                                            </td>
+                                             <td className="px-6 py-4 flex space-x-3">
+                                                 <button
+                                                     onClick={() => navigate(`/admin/courses/${course._id}/edit`)}
+                                                     className="text-blue-400 hover:text-blue-300 flex items-center gap-1"
+                                                 >
+                                                     <FaEdit /> Edit
+                                                 </button>
+                                                 <button
+                                                     onClick={() => handleDeleteCourse(course._id)}
+                                                     className="text-red-400 hover:text-red-300 flex items-center gap-1"
+                                                 >
+                                                     <FaTrash /> Delete
+                                                 </button>
+                                             </td>
                                         </tr>
                                     ))}
                                 </tbody>

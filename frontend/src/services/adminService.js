@@ -40,6 +40,30 @@ const adminService = {
     getAllCourses: async () => {
         const response = await api.get('/admin/courses');
         return response.data;
+    },
+
+    // Get single course
+    getCourse: async (id) => {
+        const response = await api.get(`/admin/courses/${id}`);
+        return response.data;
+    },
+
+    // Create new course
+    createCourse: async (courseData) => {
+        const response = await api.post('/admin/courses', courseData);
+        return response.data;
+    },
+
+    // Update course
+    updateCourse: async (id, courseData) => {
+        const response = await api.put(`/admin/courses/${id}`, courseData);
+        return response.data;
+    },
+
+    // Delete course
+    deleteCourse: async (id) => {
+        const response = await api.delete(`/admin/courses/${id}`);
+        return response.data;
     }
 };
 

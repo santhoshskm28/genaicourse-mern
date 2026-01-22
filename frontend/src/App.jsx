@@ -8,6 +8,7 @@ import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
 import Loader from './components/common/Loader';
 import APIStatus from './components/common/APIStatus';
+import AdminRoute from './components/routing/AdminRoute';
 
 // Page Imports
 import Home from './pages/Home';
@@ -18,6 +19,10 @@ import CourseCatalogue from './pages/CourseCatalogue';
 import CourseDetail from './pages/CourseDetail';
 import CourseViewer from './pages/CourseViewer';
 import HowItWorks from './pages/HowItWorks';
+
+// Admin Imports
+import AdminDashboard from './pages/admin/AdminDashboard';
+import CourseForm from './pages/admin/CourseForm';
 
 const PrivateRoute = () => {
     const { isAuthenticated, loading } = useAuth();
@@ -43,6 +48,13 @@ const App = () => {
 
                             <Route element={<PrivateRoute />}>
                                 <Route path="/dashboard" element={<Dashboard />} />
+                            </Route>
+
+                            {/* Admin Routes */}
+                            <Route element={<AdminRoute />}>
+                                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                                <Route path="/admin/courses/new" element={<CourseForm />} />
+                                <Route path="/admin/courses/:id/edit" element={<CourseForm isEditing={true} />} />
                             </Route>
                         </Routes>
                     </main>

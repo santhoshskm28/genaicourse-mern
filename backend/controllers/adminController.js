@@ -162,6 +162,122 @@ export const getAllCourses = async (req, res, next) => {
 };
 
 /**
+ * @desc    Create new course (Admin only)
+ * @route   POST /api/admin/courses
+ * @access  Private/Admin
+ */
+export const createCourse = async (req, res, next) => {
+    try {
+        const courseData = {
+            ...req.body,
+            createdBy: req.user._id
+        };
+
+        const course = await Course.create(courseData);
+
+        res.status(201).json({
+            success: true,
+            message: 'Course created successfully',
+            data: course
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * @desc    Update course (Admin only)
+ * @route   PUT /api/admin/courses/:id
+ * @access  Private/Admin
+ */
+export const updateCourse = async (req, res, next) => {
+    try {
+        let course = await Course.findById(req.params.id);
+
+        if (!course) {
+            return res.status(404).json({
+                success: false,
+                message: 'Course not found'
+            });
+        }
+
+        course = await Course.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            {
+                new: true,
+                runValidators: true
+            }
+        );
+
+        res.status(200).json({
+            success: true,
+            message: 'Course updated successfully',
+            data: course
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * @desc    Delete course (Admin only)
+ * @route   DELETE /api/admin/courses/:id
+ * @access  Private/Admin
+ */
+export const deleteCourse = async (req, res, next) => {
+    try {
+        const course = await Course.findById(req.params.id);
+
+        if (!course) {
+            return res.status(404).json({
+                success: false,
+                message: 'Course not found'
+            });
+        }
+
+        await course.deleteOne();
+
+        // Also delete all user progress for this course
+        await UserProgress.deleteMany({ courseId: req.params.id });
+
+        res.status(200).json({
+            success: true,
+            message: 'Course deleted successfully'
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * @desc    Get single course (Admin only)
+ * @route   GET /api/admin/courses/:id
+ * @access  Private/Admin
+ */
+export const getCourse = async (req, res, next) => {
+    try {
+        const course = await Course.findById(req.params.id)
+            .populate('createdBy', 'name email')
+            .populate('instructors.userId', 'name email profile');
+
+        if (!course) {
+            return res.status(404).json({
+                success: false,
+                message: 'Course not found'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: course
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
  * @desc    Get dashboard statistics (Admin only)
  * @route   GET /api/admin/stats
  * @access  Private/Admin
@@ -216,5 +332,9 @@ export default {
     updateUserRole,
     deleteUser,
     getAllCourses,
+    getCourse,
+    createCourse,
+    updateCourse,
+    deleteCourse,
     getDashboardStats
 };

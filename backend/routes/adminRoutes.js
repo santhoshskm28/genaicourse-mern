@@ -5,6 +5,10 @@ import {
     updateUserRole,
     deleteUser,
     getAllCourses,
+    getCourse,
+    createCourse,
+    updateCourse,
+    deleteCourse,
     getDashboardStats
 } from '../controllers/adminController.js';
 import { protect, authorize } from '../middleware/auth.js';
@@ -31,5 +35,9 @@ router.delete('/users/:id', deleteUser);
 
 // Course management
 router.get('/courses', getAllCourses);
+router.get('/courses/:id', getCourse);
+router.post('/courses', createCourse);
+router.put('/courses/:id', updateCourse);
+router.delete('/courses/:id', deleteCourse);
 
 export default router;
