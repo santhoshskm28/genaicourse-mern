@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import adminService from '../../services/adminService';
 import Loader from '../../components/common/Loader';
 import { FaUser, FaBook, FaPlus, FaTrash, FaEdit } from 'react-icons/fa';
@@ -25,9 +25,9 @@ const AdminDashboard = () => {
                 adminService.getAllUsers()
             ]);
 
-            setStats(statsData.data);
-            setCourses(coursesData.data);
-            setUsers(usersData.data);
+            setStats(statsData.data || null);
+            setCourses(coursesData.data || []);
+            setUsers(usersData.data || []);
         } catch (error) {
             toast.error('Failed to load admin data');
         } finally {
@@ -64,7 +64,12 @@ const AdminDashboard = () => {
     return (
         <div className="section min-h-screen bg-slate-900">
             <div className="container">
-                <h1 className="text-3xl font-bold mb-8 text-white">Admin Dashboard</h1>
+                <div className="flex items-center justify-between mb-8">
+                    <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
+                    <Link to="/dashboard" className="btn btn-secondary">
+                        ← Back to My Dashboard
+                    </Link>
+                </div>
 
                 {/* Tabs */}
                 <div className="flex space-x-4 mb-8 border-b border-slate-700">
@@ -83,25 +88,29 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Overview Tab */}
-                {activeTab === 'overview' && stats && (
+                {activeTab === 'overview' && stats && stats.overview && (
                     <div>
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-                            <StatCard title="Total Users" value={stats.overview.totalUsers} icon={<FaUser />} color="indigo" />
-                            <StatCard title="Total Courses" value={stats.overview.totalCourses} icon={<FaBook />} color="emerald" />
-                            <StatCard title="Total Enrollments" value={stats.overview.totalEnrollments} icon={<FaBook />} color="pink" />
-                            <StatCard title="Published" value={stats.overview.publishedCourses} icon={<FaBook />} color="blue" />
+                            <StatCard title="Total Users" value={stats.overview.totalUsers || 0} icon={<FaUser />} color="indigo" />
+                            <StatCard title="Total Courses" value={stats.overview.totalCourses || 0} icon={<FaBook />} color="emerald" />
+                            <StatCard title="Total Enrollments" value={stats.overview.totalEnrollments || 0} icon={<FaBook />} color="pink" />
+                            <StatCard title="Published" value={stats.overview.publishedCourses || 0} icon={<FaBook />} color="blue" />
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div className="card p-6 bg-slate-800 border-none">
                                 <h3 className="text-xl font-bold mb-4">Popular Courses</h3>
                                 <ul className="space-y-4">
-                                    {stats.popularCourses.map((course, idx) => (
-                                        <li key={idx} className="flex justify-between items-center border-b border-slate-700 pb-2">
-                                            <span>{course.title}</span>
-                                            <span className="bg-slate-700 px-2 py-1 rounded text-sm">{course.enrollmentCount} students</span>
-                                        </li>
-                                    ))}
+                                    {stats.popularCourses && stats.popularCourses.length > 0 ? (
+                                        stats.popularCourses.map((course, idx) => (
+                                            <li key={course._id || idx} className="flex justify-between items-center border-b border-slate-700 pb-2">
+                                                <span>{course.title || 'Untitled Course'}</span>
+                                                <span className="bg-slate-700 px-2 py-1 rounded text-sm">{course.enrollmentCount || 0} students</span>
+                                            </li>
+                                        ))
+                                    ) : (
+                                        <li className="text-gray-400">No courses available</li>
+                                    )}
                                 </ul>
                             </div>
                         </div>
@@ -133,32 +142,40 @@ const AdminDashboard = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-700 bg-slate-900">
-                                    {courses.map(course => (
-                                        <tr key={course._id} className="hover:bg-slate-800 transition-colors">
-                                            <td className="px-6 py-4 font-medium text-white">{course.title}</td>
-                                            <td className="px-6 py-4">{course.category}</td>
-                                            <td className="px-6 py-4">{course.enrollmentCount}</td>
-                                            <td className="px-6 py-4">
-                                                <span className={`px-2 py-1 rounded-full text-xs ${course.isPublished ? 'bg-emerald-500/20 text-emerald-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
-                                                    {course.isPublished ? 'Published' : 'Draft'}
-                                                </span>
+                                    {courses && courses.length > 0 ? (
+                                        courses.map(course => (
+                                            <tr key={course._id || course.id} className="hover:bg-slate-800 transition-colors">
+                                                <td className="px-6 py-4 font-medium text-white">{course.title || 'Untitled'}</td>
+                                                <td className="px-6 py-4">{course.category || 'Uncategorized'}</td>
+                                                <td className="px-6 py-4">{course.enrollmentCount || 0}</td>
+                                                <td className="px-6 py-4">
+                                                    <span className={`px-2 py-1 rounded-full text-xs ${course.isPublished ? 'bg-emerald-500/20 text-emerald-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
+                                                        {course.isPublished ? 'Published' : 'Draft'}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 flex space-x-3">
+                                                    <button
+                                                        onClick={() => navigate(`/admin/courses/${course._id || course.id}/edit`)}
+                                                        className="text-blue-400 hover:text-blue-300 flex items-center gap-1"
+                                                    >
+                                                        <FaEdit /> Edit
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDeleteCourse(course._id || course.id)}
+                                                        className="text-red-400 hover:text-red-300 flex items-center gap-1"
+                                                    >
+                                                        <FaTrash /> Delete
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="5" className="px-6 py-8 text-center text-gray-400">
+                                                No courses found
                                             </td>
-                                             <td className="px-6 py-4 flex space-x-3">
-                                                 <button
-                                                     onClick={() => navigate(`/admin/courses/${course._id}/edit`)}
-                                                     className="text-blue-400 hover:text-blue-300 flex items-center gap-1"
-                                                 >
-                                                     <FaEdit /> Edit
-                                                 </button>
-                                                 <button
-                                                     onClick={() => handleDeleteCourse(course._id)}
-                                                     className="text-red-400 hover:text-red-300 flex items-center gap-1"
-                                                 >
-                                                     <FaTrash /> Delete
-                                                 </button>
-                                             </td>
                                         </tr>
-                                    ))}
+                                    )}
                                 </tbody>
                             </table>
                         </div>
@@ -180,23 +197,33 @@ const AdminDashboard = () => {
                                         <th className="px-6 py-3">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-slate-700 bg-slate-900">
-                                    {users.map(u => (
-                                        <tr key={u._id} className="hover:bg-slate-800 transition-colors">
-                                            <td className="px-6 py-4 font-medium text-white">{u.name}</td>
-                                            <td className="px-6 py-4">{u.email}</td>
-                                            <td className="px-6 py-4 capitalize">{u.role}</td>
-                                            <td className="px-6 py-4">{new Date(u.createdAt).toLocaleDateString()}</td>
-                                            <td className="px-6 py-4">
-                                                {u.role !== 'admin' && (
-                                                    <button onClick={() => handleDeleteUser(u._id)} className="text-red-400 hover:text-red-300">
-                                                        <FaTrash />
-                                                    </button>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
+                                 <tbody className="divide-y divide-slate-700 bg-slate-900">
+                                     {users && users.length > 0 ? (
+                                         users.map(u => (
+                                             <tr key={u._id || u.id} className="hover:bg-slate-800 transition-colors">
+                                                 <td className="px-6 py-4 font-medium text-white">{u.name || 'Unknown'}</td>
+                                                 <td className="px-6 py-4">{u.email || 'No email'}</td>
+                                                 <td className="px-6 py-4 capitalize">{u.role || 'user'}</td>
+                                                 <td className="px-6 py-4">
+                                                     {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'Unknown'}
+                                                 </td>
+                                                 <td className="px-6 py-4">
+                                                     {u.role !== 'admin' && (
+                                                         <button onClick={() => handleDeleteUser(u._id || u.id)} className="text-red-400 hover:text-red-300">
+                                                             <FaTrash />
+                                                         </button>
+                                                     )}
+                                                 </td>
+                                             </tr>
+                                         ))
+                                     ) : (
+                                         <tr>
+                                             <td colSpan="5" className="px-6 py-8 text-center text-gray-400">
+                                                 No users found
+                                             </td>
+                                         </tr>
+                                     )}
+                                 </tbody>
                             </table>
                         </div>
                     </div>
@@ -207,16 +234,33 @@ const AdminDashboard = () => {
     );
 };
 
-const StatCard = ({ title, value, icon, color }) => (
-    <div className="card p-6 bg-slate-800 border-none flex items-center">
-        <div className={`w-12 h-12 rounded-lg bg-${color}-500/10 flex items-center justify-center text-${color}-500 mr-4 text-2xl`}>
-            {icon}
+const StatCard = ({ title, value, icon, color }) => {
+    const getColorClasses = (color) => {
+        switch (color) {
+            case 'indigo':
+                return 'bg-indigo-500/10 text-indigo-500';
+            case 'emerald':
+                return 'bg-emerald-500/10 text-emerald-500';
+            case 'pink':
+                return 'bg-pink-500/10 text-pink-500';
+            case 'blue':
+                return 'bg-blue-500/10 text-blue-500';
+            default:
+                return 'bg-slate-500/10 text-slate-500';
+        }
+    };
+
+    return (
+        <div className="card p-6 bg-slate-800 border-none flex items-center">
+            <div className={`w-12 h-12 rounded-lg flex items-center justify-center mr-4 text-2xl ${getColorClasses(color)}`}>
+                {icon}
+            </div>
+            <div>
+                <div className="text-gray-400 text-sm">{title}</div>
+                <div className="text-2xl font-bold text-white">{value}</div>
+            </div>
         </div>
-        <div>
-            <div className="text-gray-400 text-sm">{title}</div>
-            <div className="text-2xl font-bold text-white">{value}</div>
-        </div>
-    </div>
-);
+    );
+};
 
 export default AdminDashboard;

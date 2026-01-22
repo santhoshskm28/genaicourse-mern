@@ -265,13 +265,23 @@ courseSchema.index({ category: 1, isPublished: 1 });
 
 // Virtual for total lessons count
 courseSchema.virtual('totalLessons').get(function () {
-    return this.modules.reduce((total, module) => total + module.lessons.length, 0);
+    if (!this.modules || !Array.isArray(this.modules)) return 0;
+    return this.modules.reduce((total, module) => {
+        if (module.lessons && Array.isArray(module.lessons)) {
+            return total + module.lessons.length;
+        }
+        return total;
+    }, 0);
 });
 
 // Virtual for total duration
 courseSchema.virtual('totalDuration').get(function () {
+    if (!this.modules || !Array.isArray(this.modules)) return 0;
     return this.modules.reduce((total, module) => {
-        return total + module.lessons.reduce((sum, lesson) => sum + lesson.duration, 0);
+        if (module.lessons && Array.isArray(module.lessons)) {
+            return total + module.lessons.reduce((sum, lesson) => sum + (lesson.duration || 0), 0);
+        }
+        return total;
     }, 0);
 });
 

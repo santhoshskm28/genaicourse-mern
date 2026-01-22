@@ -19,6 +19,7 @@ import CourseCatalogue from './pages/CourseCatalogue';
 import CourseDetail from './pages/CourseDetail';
 import CourseViewer from './pages/CourseViewer';
 import HowItWorks from './pages/HowItWorks';
+import Pricing from './pages/Pricing';
 
 // Admin Imports
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -42,6 +43,7 @@ const App = () => {
                             <Route path="/courses" element={<CourseCatalogue />} />
                             <Route path="/courses/:id" element={<CourseDetail />} />
                             <Route path="/courses/:id/learn" element={<CourseViewer />} />
+                            <Route path="/pricing" element={<Pricing />} />
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
                             <Route path="/how-it-works" element={<HowItWorks />} />

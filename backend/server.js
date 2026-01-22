@@ -36,25 +36,16 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// CORS configuration
+// CORS configuration - Allow localhost with any port for development
 const corsOptions = {
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
-
-        // Allow localhost with any port for development
-        if (origin.match(/^http:\/\/localhost:\d+$/)) {
-            return callback(null, true);
-        }
-
-        // Allow the configured CLIENT_URL
-        const allowedOrigin = process.env.CLIENT_URL;
-        if (allowedOrigin && origin === allowedOrigin) {
-            return callback(null, true);
-        }
-
-        return callback(new Error('Not allowed by CORS'));
-    },
+    origin: [
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'http://localhost:3002',
+        'http://localhost:3003',
+        'http://localhost:3004',
+        'http://localhost:3005'
+    ],
     credentials: true,
     optionsSuccessStatus: 200
 };
@@ -120,6 +111,8 @@ app.use(errorHandler);
 
 // Start server
 const PORT = process.env.PORT || 5000;
+
+
 
 const server = app.listen(PORT, () => {
     console.log(`
