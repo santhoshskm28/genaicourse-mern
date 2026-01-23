@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import courseService from '../services/courseService';
-import Loader from '../components/common/Loader';
+import { useAuth } from '@/context/AuthContext.jsx';
+import courseService from '../services/courseService.js';
+import Loader from '../components/common/Loader.jsx';
 import { toast } from 'react-toastify';
 import { FaPlay, FaCheckCircle, FaLock, FaList } from 'react-icons/fa';
 
@@ -23,7 +23,7 @@ const CourseDetail = () => {
 
                 // Check enrollment by checking user's enrolledCourses array of objects
                 if (isAuthenticated && user?.enrolledCourses) {
-                    const enrolled = user.enrolledCourses.some(enrollment => 
+                    const enrolled = user.enrolledCourses.some(enrollment =>
                         enrollment.courseId?.toString() === id || enrollment._id?.toString() === id
                     );
                     setIsEnrolled(enrolled);
@@ -108,7 +108,7 @@ const CourseDetail = () => {
                                 onClick={startLearning}
                                 className="btn btn-primary text-lg px-8 py-3 flex items-center"
                             >
-                                <FaPlay className="mr-2" /> 
+                                <FaPlay className="mr-2" />
                                 {isEnrolled ? 'Continue Learning' : 'Enroll Now - Free'}
                             </button>
                         </div>
@@ -149,9 +149,8 @@ const CourseDetail = () => {
                                         <Link
                                             key={lessonId}
                                             to={`/courses/${id}/lessons/${lessonId}`}
-                                            className={`p-4 flex items-center hover:bg-slate-700/30 transition-colors ${
-                                                !isEnrolled ? 'cursor-not-allowed opacity-60' : ''
-                                            }`}
+                                            className={`p-4 flex items-center hover:bg-slate-700/30 transition-colors ${!isEnrolled ? 'cursor-not-allowed opacity-60' : ''
+                                                }`}
                                             onClick={(e) => {
                                                 if (!isEnrolled) {
                                                     e.preventDefault();

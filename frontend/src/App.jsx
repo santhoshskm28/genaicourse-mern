@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { AuthProvider, useAuth } from '@/context/AuthContext.jsx';
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
 import Loader from './components/common/Loader';
@@ -50,9 +50,9 @@ const App = () => {
                             <Route path="/courses" element={<CourseCatalogue />} />
                             <Route path="/courses/:id" element={<CourseDetail />} />
                             <Route path="/courses/:id/learn" element={<CourseViewer />} />
-                            <Route path="/courses/:courseId/enroll" element={<CourseEnrollment />} />
-                            <Route path="/courses/:courseId/access" element={<CourseAccess />} />
-                            <Route path="/courses/:courseId/lessons/:lessonId" element={<CourseReadingProgress />} />
+                            <Route path="/courses/:id/enroll" element={<CourseEnrollment />} />
+                            <Route path="/courses/:id/access" element={<CourseAccess />} />
+                            {/* <Route path="/courses/:courseId/lessons/:lessonId" element={<CourseReadingProgress />} /> */}
                             <Route path="/courses/:courseId/lessons/:lessonId" element={<LessonPlayer />} />
                             <Route path="/pricing" element={<Pricing />} />
                             <Route path="/login" element={<Login />} />
@@ -63,13 +63,13 @@ const App = () => {
                                 <Route path="/dashboard" element={<Dashboard />} />
                             </Route>
 
-                             {/* Admin Routes */}
-                             <Route element={<AdminRoute />}>
-                                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                                 <Route path="/admin/courses/new" element={<CourseForm />} />
-                                 <Route path="/admin/courses/json" element={<AdminJSONUpload />} />
-                                 <Route path="/admin/courses/:id/edit" element={<CourseForm isEditing={true} />} />
-                             </Route>
+                            {/* Admin Routes */}
+                            <Route element={<AdminRoute />}>
+                                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                                <Route path="/admin/courses/new" element={<CourseForm />} />
+                                <Route path="/admin/courses/json" element={<AdminJSONUpload />} />
+                                <Route path="/admin/courses/:id/edit" element={<CourseForm isEditing={true} />} />
+                            </Route>
                         </Routes>
                     </main>
                     <Footer />

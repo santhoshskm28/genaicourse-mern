@@ -120,11 +120,11 @@ const courseSchema = new mongoose.Schema({
     category: {
         type: String,
         required: true,
-        enum: ['AI/ML', 'Web Development', 'Data Science', 'Cloud Computing', 'Human Resources', 'Other']
+        enum: ['AI/ML', 'Web Development', 'Data Science', 'Cloud Computing', 'Human Resources', 'Social Impact & Non-profits', 'Other']
     },
     level: {
         type: String,
-        enum: ['Beginner', 'Intermediate', 'Advanced'],
+        enum: ['Beginner', 'Intermediate', 'Advanced', 'Beginner to Intermediate'],
         default: 'Beginner'
     },
     tags: [{

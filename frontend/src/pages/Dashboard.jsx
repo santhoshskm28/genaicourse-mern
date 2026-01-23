@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
-import courseService from '../services/courseService';
-import Loader from '../components/common/Loader';
+import { useAuth } from '@/context/AuthContext.jsx';
+import courseService from '@/services/courseService.js';
+import Loader from '../components/common/Loader.jsx';
 import { Link } from 'react-router-dom';
 import { FaGraduationCap, FaClock, FaTrophy, FaPlay } from 'react-icons/fa';
 

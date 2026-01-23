@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import courseService from '../../services/courseService';
+import courseService from '../../services/courseService.js';
 import { FaArrowLeft, FaArrowRight, FaBars, FaTimes } from 'react-icons/fa';
 
 const LessonPlayer = () => {

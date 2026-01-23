@@ -100,9 +100,8 @@ const Pricing = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, delay: index * 0.1 }}
-                            className={`relative card p-8 bg-slate-800 border-none ${
-                                plan.popular ? 'ring-2 ring-primary shadow-2xl scale-105' : ''
-                            }`}
+                            className={`relative card p-8 bg-slate-800 border-none ${plan.popular ? 'ring-2 ring-primary shadow-2xl scale-105' : ''
+                                }`}
                         >
                             {plan.popular && (
                                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
@@ -141,9 +140,8 @@ const Pricing = () => {
 
                             <Link
                                 to={plan.name === 'Enterprise' ? '/contact' : '/register'}
-                                className={`btn ${
-                                    plan.buttonVariant === 'primary' ? 'btn-primary' : 'btn-secondary'
-                                } w-full text-center`}
+                                className={`btn ${plan.buttonVariant === 'primary' ? 'btn-primary' : 'btn-secondary'
+                                    } w-full text-center`}
                             >
                                 {plan.buttonText}
                             </Link>

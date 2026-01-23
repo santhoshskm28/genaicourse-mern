@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import courseService from '../services/courseService';
-import CourseCard from '../components/courses/CourseCard';
-import Loader from '../components/common/Loader';
+import courseService from '../services/courseService.js';
+import CourseCard from '../components/courses/CourseCard.jsx';
+import Loader from '../components/common/Loader.jsx';
 import { FaSearch } from 'react-icons/fa';
 
 const CourseCatalogue = () => {
@@ -110,11 +110,11 @@ const CourseCatalogue = () => {
                 {loading ? (
                     <Loader />
                 ) : courses.length > 0 ? (
-                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                         {courses.map(course => (
-                             <CourseCard key={course._id || course.id} course={course} />
-                         ))}
-                     </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {courses.map(course => (
+                            <CourseCard key={course._id || course.id} course={course} />
+                        ))}
+                    </div>
                 ) : (
                     <div className="text-center py-20 bg-slate-800/50 rounded-lg border border-dashed border-slate-700">
                         <h3 className="text-xl font-bold text-gray-300">No courses found</h3>

@@ -1,8 +1,8 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import courseService from '../../services/courseService';
-import { useAuth } from '../../context/AuthContext';
-import Loader from '../common/Loader';
+import courseService from '@/services/courseService.js';
+import { useAuth } from '@/context/AuthContext.jsx';
+import Loader from '../components/common/Loader.jsx';
 import { toast } from 'react-toastify';
 import { FaPlay, FaLock, FaBookOpen, FaClock, FaSignal, FaUsers } from 'react-icons/fa';
 
@@ -70,11 +70,11 @@ const CourseEnrollment = () => {
                                     {course?.category || 'Course'}
                                 </span>
                             </div>
-                            
+
                             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
                                 {course?.title}
                             </h1>
-                            
+
                             <div className="text-xl text-gray-300 mb-6 leading-relaxed max-w-3xl">
                                 {course?.description}
                             </div>
@@ -127,7 +127,7 @@ const CourseEnrollment = () => {
             <div className="py-16 bg-slate-800/50">
                 <div className="container">
                     <h2 className="text-3xl font-bold text-white mb-8 text-center">Why Choose This Course?</h2>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div className="card text-center p-6">
                             <div className="text-primary mb-4">
@@ -136,7 +136,7 @@ const CourseEnrollment = () => {
                             <h3 className="text-xl font-bold text-white mb-3">Expert Instruction</h3>
                             <p className="text-gray-400">Learn from industry experts with real-world experience and practical insights.</p>
                         </div>
-                        
+
                         <div className="card text-center p-6">
                             <div className="text-primary mb-4">
                                 <FaClock size={32} />
@@ -144,7 +144,7 @@ const CourseEnrollment = () => {
                             <h3 className="text-xl font-bold text-white mb-3">Self-Paced Learning</h3>
                             <p className="text-gray-400">Study at your own pace with lifetime access to course materials and updates.</p>
                         </div>
-                        
+
                         <div className="card text-center p-6">
                             <div className="text-primary mb-4">
                                 <FaSignal size={32} />
@@ -160,7 +160,7 @@ const CourseEnrollment = () => {
             <div className="py-16 bg-slate-900">
                 <div className="container">
                     <h2 className="text-3xl font-bold text-white mb-8 text-center">Course Curriculum</h2>
-                    
+
                     <div className="max-w-4xl mx-auto space-y-4">
                         {course?.modules?.map((module, mIndex) => (
                             <div key={module._id || mIndex} className="border border-slate-700 rounded-lg overflow-hidden bg-slate-800/50">
@@ -173,7 +173,7 @@ const CourseEnrollment = () => {
                                         {module.lessons?.length || 0} Lessons
                                     </span>
                                 </div>
-                                
+
                                 <div className="divide-y divide-slate-700/50">
                                     {module.lessons?.slice(0, 2).map((lesson, lIndex) => (
                                         <div key={lesson._id || lesson.id} className="p-4 flex items-center justify-between border-slate-700/50">
@@ -191,7 +191,7 @@ const CourseEnrollment = () => {
                                         </div>
                                     ))}
                                 </div>
-                                
+
                                 {module.lessons?.length > 2 && (
                                     <div className="p-4 text-center border-t border-slate-700/50">
                                         <p className="text-gray-400 text-sm">
@@ -212,7 +212,7 @@ const CourseEnrollment = () => {
                     <p className="text-xl text-gray-200 mb-8 max-w-2xl mx-auto">
                         Join thousands of students already advancing their careers with this comprehensive course.
                     </p>
-                    
+
                     <div className="max-w-md mx-auto">
                         <button
                             onClick={handleEnroll}
@@ -222,7 +222,7 @@ const CourseEnrollment = () => {
                             {enrolling ? 'Enrolling...' : 'Enroll Now - Start Your Journey'}
                         </button>
                     </div>
-                    
+
                     <div className="mt-6 text-gray-200">
                         <p className="text-sm">
                             ✅ Lifetime Access • 🎓 Certificate on Completion • 🔄 30-Day Money Back Guarantee

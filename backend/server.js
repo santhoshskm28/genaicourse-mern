@@ -28,104 +28,105 @@ dotenv.config({ path: path.join(__dirname, '.env') });
 console.log('Current working directory:', process.cwd());
 console.log('MONGODB_URI:', process.env.MONGODB_URI); // Debug log
 
-
 // Initialize express app
 const app = express();
 
-// Connect to database
-connectDB();
+const startServer = async () => {
 
-// Security middleware
-app.use(helmet());
+    // Connect to database
+    await connectDB();
 
-// Rate limiting
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // Limit each IP to 100 requests per windowMs
-    message: 'Too many requests from this IP, please try again later.'
-});
-app.use('/api/', limiter);
+    // CORS configuration - Allow localhost with any port for development
+    const corsOptions = {
+        origin: [
+            'http://localhost:3000',
+            'http://localhost:3001',
+            'http://localhost:3002',
+            'http://localhost:3003',
+            'http://localhost:3004',
+            'http://localhost:3005',
+            'http://localhost:5173'
+        ],
+        credentials: true,
+        optionsSuccessStatus: 200
+    };
+    app.use(cors(corsOptions));
 
-// CORS configuration - Allow localhost with any port for development
-const corsOptions = {
-    origin: [
-        'http://localhost:3000',
-        'http://localhost:3001',
-        'http://localhost:3002',
-        'http://localhost:3003',
-        'http://localhost:3004',
-        'http://localhost:3005'
-    ],
-    credentials: true,
-    optionsSuccessStatus: 200
-};
-app.use(cors(corsOptions));
+    // Security middleware
+    app.use(helmet());
 
-// Body parser middleware
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-
-// Logging middleware
-if (process.env.NODE_ENV === 'development') {
-    app.use(morgan('dev'));
-}
-
-// Root route - Welcome message
-app.get('/', (req, res) => {
-    res.status(200).json({
-        success: true,
-        message: 'Welcome to GenAI Course Platform API',
-        version: '1.0.0',
-        endpoints: {
-            health: '/health',
-            auth: '/api/auth',
-            courses: '/api/courses',
-            admin: '/api/admin',
-            quizzes: '/api/quizzes',
-            certificates: '/api/certificates',
-            learningPaths: '/api/learning-paths'
-        },
-        documentation: 'Visit /health for server status'
+    // Rate limiting
+    const limiter = rateLimit({
+        windowMs: 15 * 60 * 1000, // 15 minutes
+        max: 100, // Limit each IP to 100 requests per windowMs
+        message: 'Too many requests from this IP, please try again later.'
     });
-});
+    app.use('/api/', limiter);
 
-// Health check route
-app.get('/health', (req, res) => {
-    res.status(200).json({
-        success: true,
-        message: 'Server is running',
-        timestamp: new Date().toISOString(),
-        database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
-        environment: process.env.NODE_ENV || 'development'
+    // Body parser middleware
+    app.use(express.json({ limit: '10mb' }));
+    app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+    // Logging middleware
+    if (process.env.NODE_ENV === 'development') {
+        app.use(morgan('dev'));
+    }
+
+    // Root route - Welcome message
+    app.get('/', (req, res) => {
+        res.status(200).json({
+            success: true,
+            message: 'Welcome to GenAI Course Platform API',
+            version: '1.0.0',
+            endpoints: {
+                health: '/health',
+                auth: '/api/auth',
+                courses: '/api/courses',
+                admin: '/api/admin',
+                quizzes: '/api/quizzes',
+                certificates: '/api/certificates',
+                learningPaths: '/api/learning-paths'
+            },
+            documentation: 'Visit /health for server status'
+        });
     });
-});
 
-// API routes
-app.use('/api/auth', authRoutes);
-app.use('/api/courses', courseRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/quizzes', quizRoutes);
-app.use('/api/certificates', certificateRoutes);
-app.use('/api/learning-paths', learningPathRoutes);
-
-// 404 handler
-app.use('*', (req, res) => {
-    res.status(404).json({
-        success: false,
-        message: `Route ${req.originalUrl} not found`
+    // Health check route
+    app.get('/health', (req, res) => {
+        res.status(200).json({
+            success: true,
+            message: 'Server is running',
+            timestamp: new Date().toISOString(),
+            database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
+            environment: process.env.NODE_ENV || 'development'
+        });
     });
-});
 
-// Error handler middleware (must be last)
-app.use(errorHandler);
+    // API routes
+    app.use('/api/auth', authRoutes);
+    app.use('/api/courses', courseRoutes);
+    app.use('/api/admin', adminRoutes);
+    app.use('/api/quizzes', quizRoutes);
+    app.use('/api/certificates', certificateRoutes);
+    app.use('/api/learning-paths', learningPathRoutes);
 
-// Start server
-const PORT = process.env.PORT || 5000;
+    // 404 handler
+    app.use('*', (req, res) => {
+        res.status(404).json({
+            success: false,
+            message: `Route ${req.originalUrl} not found`
+        });
+    });
 
+    // Error handler middleware (must be last)
+    app.use(errorHandler);
 
+    // Start server
+    const PORT = process.env.PORT || 5000;
 
-const server = app.listen(PORT, () => {
-    console.log(`
+    try {
+        const server = app.listen(PORT, () => {
+            console.log(`
 ╔═══════════════════════════════════════════════════════════╗
 ║                                                           ║
 ║   🚀 GenAI Course Platform - Backend Server              ║
@@ -135,18 +136,33 @@ const server = app.listen(PORT, () => {
 ║   URL: http://localhost:${PORT}                             ║
 ║                                                           ║
 ╚═══════════════════════════════════════════════════════════╝
-  `);
-});
+      `);
+            console.log('Server is listening on port', PORT);
+        });
 
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (err) => {
-    console.error(`❌ Unhandled Rejection: ${err.message}`);
-    server.close(() => process.exit(1));
-});
+        server.on('error', (err) => {
+            console.error('Server error:', err);
+        });
+    } catch (err) {
+        console.error('Failed to start server:', err);
+    }
 
-// Handle uncaught exceptions
-process.on('uncaughtException', (err) => {
-    console.error(`❌ Uncaught Exception: ${err.message}`);
+    // Handle unhandled promise rejections
+    process.on('unhandledRejection', (err) => {
+        console.error(`❌ Unhandled Rejection: ${err.message}`);
+        server.close(() => process.exit(1));
+    });
+
+    // Handle uncaught exceptions
+    process.on('uncaughtException', (err) => {
+        console.error(`❌ Uncaught Exception: ${err.message}`);
+        process.exit(1);
+    });
+
+};
+
+startServer().catch((err) => {
+    console.error('Failed to start server:', err);
     process.exit(1);
 });
 

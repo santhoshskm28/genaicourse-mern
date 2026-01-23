@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import courseService from '../services/courseService';
-import Loader from '../components/common/Loader';
+import courseService from '../services/courseService.js';
+import Loader from '../components/common/Loader.jsx';
 import { FaChevronLeft, FaChevronRight, FaCheck, FaBars, FaTimes } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
@@ -83,8 +83,8 @@ const CourseViewer = () => {
                                         setCurrentLessonIndex(lIdx);
                                     }}
                                     className={`w-full text-left px-4 py-3 text-sm transition-all duration-200 border-l-4 ${mIdx === currentModuleIndex && lIdx === currentLessonIndex
-                                            ? 'bg-primary/10 border-primary text-white'
-                                            : 'border-transparent text-gray-400 hover:bg-slate-800'
+                                        ? 'bg-primary/10 border-primary text-white'
+                                        : 'border-transparent text-gray-400 hover:bg-slate-800'
                                         }`}
                                 >
                                     {less.title}

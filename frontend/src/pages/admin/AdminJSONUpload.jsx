@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import api from '../../services/api';
+import api from '../../services/api.js';
 
 const AdminJSONUpload = () => {
     const navigate = useNavigate();
@@ -86,11 +86,10 @@ const AdminJSONUpload = () => {
                     <button
                         onClick={handleSave}
                         disabled={!jsonInput.trim() || isSaving}
-                        className={`px-6 py-3 rounded-lg font-bold flex items-center gap-2 transition-all ${
-                            !jsonInput.trim() || isSaving
+                        className={`px-6 py-3 rounded-lg font-bold flex items-center gap-2 transition-all ${!jsonInput.trim() || isSaving
                                 ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
                                 : 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-900/20'
-                        }`}
+                            }`}
                     >
                         {isSaving ? 'Publishing...' : 'Publish Course'}
                     </button>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import courseService from '../../services/courseService';
-import Loader from '../common/Loader';
+import courseService from '../../services/courseService.js';
+import Loader from '../common/Loader.jsx';
 import { toast } from 'react-toastify';
 import { FaArrowLeft, FaArrowRight, FaBookOpen, FaClock, FaCheckCircle, FaHome } from 'react-icons/fa';
 
