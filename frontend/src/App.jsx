@@ -18,13 +18,18 @@ import Dashboard from './pages/Dashboard';
 import CourseCatalogue from './pages/CourseCatalogue';
 import CourseDetail from './pages/CourseDetail';
 import CourseViewer from './pages/CourseViewer';
+import CourseEnrollment from './pages/CourseEnrollment';
+import CourseAccess from './pages/CourseAccess';
+import CourseReadingProgress from './components/courses/CourseReadingProgress';
+import LessonPlayer from './components/lessons/LessonPlayer';
 import HowItWorks from './pages/HowItWorks';
 import Pricing from './pages/Pricing';
 
 // Admin Imports
 import AdminDashboard from './pages/admin/AdminDashboard';
 import CourseForm from './pages/admin/CourseForm';
-import AdminUpload from './pages/admin/AdminUpload';
+import AdminJSONUpload from './pages/admin/AdminJSONUpload';
+
 
 
 const PrivateRoute = () => {
@@ -45,6 +50,10 @@ const App = () => {
                             <Route path="/courses" element={<CourseCatalogue />} />
                             <Route path="/courses/:id" element={<CourseDetail />} />
                             <Route path="/courses/:id/learn" element={<CourseViewer />} />
+                            <Route path="/courses/:courseId/enroll" element={<CourseEnrollment />} />
+                            <Route path="/courses/:courseId/access" element={<CourseAccess />} />
+                            <Route path="/courses/:courseId/lessons/:lessonId" element={<CourseReadingProgress />} />
+                            <Route path="/courses/:courseId/lessons/:lessonId" element={<LessonPlayer />} />
                             <Route path="/pricing" element={<Pricing />} />
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
@@ -54,13 +63,13 @@ const App = () => {
                                 <Route path="/dashboard" element={<Dashboard />} />
                             </Route>
 
-                            {/* Admin Routes */}
-                            <Route element={<AdminRoute />}>
-                                <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                                <Route path="/admin/courses/new" element={<CourseForm />} />
-                                <Route path="/admin/courses/upload" element={<AdminUpload />} />
-                                <Route path="/admin/courses/:id/edit" element={<CourseForm isEditing={true} />} />
-                            </Route>
+                             {/* Admin Routes */}
+                             <Route element={<AdminRoute />}>
+                                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                                 <Route path="/admin/courses/new" element={<CourseForm />} />
+                                 <Route path="/admin/courses/json" element={<AdminJSONUpload />} />
+                                 <Route path="/admin/courses/:id/edit" element={<CourseForm isEditing={true} />} />
+                             </Route>
                         </Routes>
                     </main>
                     <Footer />

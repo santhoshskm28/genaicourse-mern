@@ -326,6 +326,77 @@ export const getDashboardStats = async (req, res, next) => {
     }
 };
 
+/**
+ * @desc    Upload course from JSON (Admin only)
+ * @route   POST /api/admin/courses/json
+ * @access  Private/Admin
+ */
+export const uploadCourseFromJSON = async (req, res, next) => {
+    try {
+        const courseData = req.body;
+
+        // Basic validation
+        if (!courseData.title || !courseData.description || !courseData.modules || !Array.isArray(courseData.modules)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid JSON: Course must have title, description, and modules array'
+            });
+        }
+
+        // Normalize field names to match schema
+        courseData.modules = courseData.modules.map(module => ({
+            title: module.moduleTitle || module.title,
+            description: module.description || '',
+            lessons: module.lessons.map(lesson => ({
+                title: lesson.lessonTitle || lesson.title,
+                content: lesson.content,
+                type: lesson.type || 'text',
+                keyPoints: lesson.keyPoints || []
+            }))
+        }));
+
+
+
+        // Add metadata
+        if (req.user && req.user._id) {
+            courseData.createdBy = req.user._id;
+        } else {
+            // For testing, use a default admin ID or skip
+            const defaultAdmin = await User.findOne({ role: 'admin' });
+            if (defaultAdmin) {
+                courseData.createdBy = defaultAdmin._id;
+            } else {
+                return res.status(400).json({
+                    success: false,
+                    message: 'No admin user found'
+                });
+            }
+        }
+        courseData.isPublished = true; // Assume published when uploaded
+
+        const course = new Course(courseData);
+        await course.save();
+
+        console.log('Course saved successfully:', course.title);
+        res.status(201).json({
+            success: true,
+            message: 'Course uploaded successfully from JSON',
+            data: course
+        });
+    } catch (error) {
+        console.error('JSON Upload Error:', error.message);
+        console.error('Full error:', error);
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({
+                success: false,
+                message: 'Validation failed',
+                errors: Object.values(error.errors).map(e => e.message)
+            });
+        }
+        next(error);
+    }
+};
+
 export default {
     getAllUsers,
     getUserById,
@@ -336,5 +407,6 @@ export default {
     createCourse,
     updateCourse,
     deleteCourse,
+    uploadCourseFromJSON,
     getDashboardStats
 };

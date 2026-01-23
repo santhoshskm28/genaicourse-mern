@@ -120,7 +120,7 @@ const courseSchema = new mongoose.Schema({
     category: {
         type: String,
         required: true,
-        enum: ['AI/ML', 'Web Development', 'Data Science', 'Cloud Computing', 'Other']
+        enum: ['AI/ML', 'Web Development', 'Data Science', 'Cloud Computing', 'Human Resources', 'Other']
     },
     level: {
         type: String,
@@ -228,8 +228,7 @@ const courseSchema = new mongoose.Schema({
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
+        ref: 'User'
     },
     instructors: [{
         userId: {
@@ -291,28 +290,28 @@ courseSchema.virtual('completionRate').get(function () {
 });
 
 // Method to add review
-courseSchema.methods.addReview = function(userId, rating, comment) {
+courseSchema.methods.addReview = function (userId, rating, comment) {
     // Remove existing review by the same user
-    this.reviews = this.reviews.filter(review => 
+    this.reviews = this.reviews.filter(review =>
         review.userId.toString() !== userId.toString()
     );
-    
+
     // Add new review
     this.reviews.push({
         userId: userId,
         rating: rating,
         comment: comment
     });
-    
+
     // Update average rating
     this.ratingCount = this.reviews.length;
     this.averageRating = this.reviews.reduce((sum, review) => sum + review.rating, 0) / this.ratingCount;
-    
+
     return this.save();
 };
 
 // Method to get lesson by index
-courseSchema.methods.getLessonByIndex = function(moduleIndex, lessonIndex) {
+courseSchema.methods.getLessonByIndex = function (moduleIndex, lessonIndex) {
     if (this.modules[moduleIndex] && this.modules[moduleIndex].lessons[lessonIndex]) {
         return this.modules[moduleIndex].lessons[lessonIndex];
     }

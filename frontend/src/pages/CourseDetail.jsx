@@ -21,9 +21,12 @@ const CourseDetail = () => {
                 const data = await courseService.getCourse(id);
                 setCourse(data.data);
 
-                // Check if enrolled using user data from context or local check
-                if (isAuthenticated && user?.enrolledCourses?.includes(id)) {
-                    setIsEnrolled(true);
+                // Check enrollment by checking user's enrolledCourses array of objects
+                if (isAuthenticated && user?.enrolledCourses) {
+                    const enrolled = user.enrolledCourses.some(enrollment => 
+                        enrollment.courseId?.toString() === id || enrollment._id?.toString() === id
+                    );
+                    setIsEnrolled(enrolled);
                 }
             } catch (error) {
                 toast.error('Failed to load course details');
@@ -58,7 +61,14 @@ const CourseDetail = () => {
     };
 
     const startLearning = () => {
-        navigate(`/courses/${id}/learn`);
+        // Navigate to the appropriate page based on enrollment status
+        if (isEnrolled) {
+            // User is enrolled - go to course access/reading progress
+            navigate(`/courses/${id}/access`);
+        } else {
+            // User is not enrolled - go to enrollment page
+            navigate(`/courses/${id}/enroll`);
+        }
     };
 
     if (loading) return <Loader />;
@@ -94,22 +104,13 @@ const CourseDetail = () => {
                                 </div>
                             </div>
 
-                            {isEnrolled ? (
-                                <button
-                                    onClick={startLearning}
-                                    className="btn btn-primary text-lg px-8 py-3 flex items-center"
-                                >
-                                    <FaPlay className="mr-2" /> Continue Learning
-                                </button>
-                            ) : (
-                                <button
-                                    onClick={handleEnroll}
-                                    disabled={enrolling}
-                                    className="btn btn-primary text-lg px-8 py-3 w-full md:w-auto"
-                                >
-                                    {enrolling ? 'Enrolling...' : 'Enroll Now - Free'}
-                                </button>
-                            )}
+                            <button
+                                onClick={startLearning}
+                                className="btn btn-primary text-lg px-8 py-3 flex items-center"
+                            >
+                                <FaPlay className="mr-2" /> 
+                                {isEnrolled ? 'Continue Learning' : 'Enroll Now - Free'}
+                            </button>
                         </div>
 
                         <div className="w-full md:w-1/3 max-w-sm">
@@ -142,24 +143,39 @@ const CourseDetail = () => {
                             </div>
 
                             <div className="divide-y divide-slate-700/50">
-                                {module.lessons?.map((lesson, lIndex) => (
-                                    <div key={lesson._id} className="p-4 flex items-center hover:bg-slate-700/30 transition-colors">
-                                        <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center mr-4 text-xs font-bold text-gray-400">
-                                            {lIndex + 1}
-                                        </div>
-                                        <div className="flex-1">
-                                            <h4 className="text-gray-200 font-medium">{lesson.title}</h4>
-                                            <p className="text-sm text-gray-500 mt-0.5">{lesson.duration || 5} mins</p>
-                                        </div>
-                                        <div className="text-primary">
-                                            {isEnrolled ? (
-                                                <FaPlay size={14} className="opacity-70" />
-                                            ) : (
-                                                <FaLock size={14} className="text-gray-600" />
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
+                                {module.lessons?.map((lesson, lIndex) => {
+                                    const lessonId = lesson._id || lesson.id;
+                                    return (
+                                        <Link
+                                            key={lessonId}
+                                            to={`/courses/${id}/lessons/${lessonId}`}
+                                            className={`p-4 flex items-center hover:bg-slate-700/30 transition-colors ${
+                                                !isEnrolled ? 'cursor-not-allowed opacity-60' : ''
+                                            }`}
+                                            onClick={(e) => {
+                                                if (!isEnrolled) {
+                                                    e.preventDefault();
+                                                    toast.info('Please enroll to access this lesson');
+                                                }
+                                            }}
+                                        >
+                                            <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center mr-4 text-xs font-bold text-gray-400">
+                                                {lIndex + 1}
+                                            </div>
+                                            <div className="flex-1">
+                                                <h4 className="text-gray-200 font-medium">{lesson.title}</h4>
+                                                <p className="text-sm text-gray-500 mt-0.5">{lesson.duration || 5} mins</p>
+                                            </div>
+                                            <div className={`${isEnrolled ? 'text-primary' : 'text-gray-600'}`}>
+                                                {isEnrolled ? (
+                                                    <FaPlay size={14} className="opacity-70" />
+                                                ) : (
+                                                    <FaLock size={14} />
+                                                )}
+                                            </div>
+                                        </Link>
+                                    );
+                                })}
                             </div>
                         </div>
                     ))}

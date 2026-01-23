@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import adminService from '../../services/adminService';
 import Loader from '../../components/common/Loader';
 import { FaUser, FaBook, FaPlus, FaTrash, FaEdit } from 'react-icons/fa';
-import { FiUploadCloud } from 'react-icons/fi';
+
 
 import { toast } from 'react-toastify';
 
@@ -126,10 +126,10 @@ const AdminDashboard = () => {
                             <h2 className="text-2xl font-bold">Manage Courses</h2>
                             <div className="flex gap-3">
                                 <button
-                                    onClick={() => navigate('/admin/courses/upload')}
-                                    className="btn bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-2 "
+                                    onClick={() => navigate('/admin/courses/json')}
+                                    className="btn bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-2"
                                 >
-                                    <FiUploadCloud /> AI Course Upload
+                                    <FaPlus /> JSON Upload
                                 </button>
                                 <button
                                     onClick={() => navigate('/admin/courses/new')}

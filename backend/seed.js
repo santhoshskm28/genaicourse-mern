@@ -39,25 +39,22 @@ const seedDatabase = async () => {
             console.log('ℹ️ Admin user already exists');
         }
 
-        // Create Sample Course if none exist
-        const courseCount = await Course.countDocuments();
+        // Create Sample Course
+        console.log('Creating sample course...');
 
-        if (courseCount === 0) {
-            console.log('Creating sample course...');
-
-            await Course.create({
-                title: 'Introduction to Generative AI',
-                description: 'Master the fundamentals of Generative AI, including LLMs, diffusion models, and prompt engineering. This comprehensive course takes you from basics to advanced concepts.',
-                thumbnail: 'https://placehold.co/600x400/7c3aed/white?text=GenAI+Course',
-                category: 'AI/ML',
-                level: 'Beginner',
-                language: 'english',
-                tags: ['ai', 'generative-ai', 'llm', 'prompt-engineering'],
-                price: 0,
-                isPublished: true,
-                createdBy: adminUser._id,
-                instructors: [{ userId: adminUser._id, role: 'lead' }],
-                modules: [
+        await Course.create({
+            title: 'Introduction to Generative AI',
+            description: 'Master the fundamentals of Generative AI, including LLMs, diffusion models, and prompt engineering. This comprehensive course takes you from basics to advanced concepts.',
+            thumbnail: 'https://placehold.co/600x400/7c3aed/white?text=GenAI+Course',
+            category: 'AI/ML',
+            level: 'Beginner',
+            language: 'english',
+            tags: ['ai', 'generative-ai', 'llm', 'prompt-engineering'],
+            price: 0,
+            isPublished: true,
+            createdBy: adminUser._id,
+            instructors: [{ userId: adminUser._id, role: 'lead' }],
+            modules: [
                     {
                         title: 'Module 1: Foundations of GenAI',
                         description: 'Understanding the basic concepts and history of Generative AI.',
@@ -110,9 +107,6 @@ const seedDatabase = async () => {
             });
 
             console.log('✅ Sample course created');
-        } else {
-            console.log('ℹ️ Courses already exist. Skipping seed.');
-        }
 
         console.log('🎉 Seeding completed successfully!');
         process.exit(0);
