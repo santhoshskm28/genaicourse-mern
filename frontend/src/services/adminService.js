@@ -64,6 +64,12 @@ const adminService = {
     deleteCourse: async (id) => {
         const response = await api.delete(`/admin/courses/${id}`);
         return response.data;
+    },
+
+    // Get quiz by ID
+    getQuiz: async (id) => {
+        const response = await api.get(`/quizzes/${id}`);
+        return response.data;
     }
 };
 

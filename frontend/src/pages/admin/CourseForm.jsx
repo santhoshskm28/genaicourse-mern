@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import adminService from '../../services/adminService.js';
 import { toast } from 'react-toastify';
 import { FaSave, FaArrowLeft } from 'react-icons/fa';
+import CourseAssessmentUpload from '../../components/admin/CourseAssessmentUpload.jsx';
 
 const CourseForm = ({ isEditing = false }) => {
     const navigate = useNavigate();
@@ -23,6 +24,7 @@ const CourseForm = ({ isEditing = false }) => {
 
     const [loading, setLoading] = useState(false);
     const [fetchLoading, setFetchLoading] = useState(isEditing);
+    const [courseQuiz, setCourseQuiz] = useState(null);
 
     useEffect(() => {
         if (isEditing && id) {
@@ -46,12 +48,44 @@ const CourseForm = ({ isEditing = false }) => {
                 requirements: course.requirements?.length > 0 ? course.requirements : [''],
                 tags: course.tags?.length > 0 ? course.tags : ['']
             });
+            
+            // Fetch course quiz if exists
+            if (course.quizId) {
+                try {
+                    const quizResponse = await adminService.getQuiz(course.quizId);
+                    const quizData = quizResponse.data;
+                    setCourseQuiz({
+                        id: quizData._id,
+                        title: quizData.title,
+                        description: quizData.description,
+                        questionCount: quizData.questions?.length || 0,
+                        timeLimit: quizData.timeLimit,
+                        maxAttempts: quizData.maxAttempts,
+                        passingScore: quizData.passingScore
+                    });
+                } catch (error) {
+                    console.log('No quiz found for this course');
+                }
+            }
         } catch (error) {
             toast.error('Failed to load course data');
             navigate('/admin/dashboard');
         } finally {
             setFetchLoading(false);
         }
+    };
+
+    const handleAssessmentUploaded = (quiz) => {
+        setCourseQuiz({
+            id: quiz._id,
+            title: quiz.title,
+            description: quiz.description,
+            questionCount: quiz.questions?.length || 0,
+            timeLimit: quiz.timeLimit,
+            maxAttempts: quiz.maxAttempts,
+            passingScore: quiz.passingScore
+        });
+        toast.success('Assessment successfully linked to course!');
     };
 
     const handleChange = (e) => {
@@ -358,6 +392,15 @@ const CourseForm = ({ isEditing = false }) => {
                                 </span>
                             </label>
                         </div>
+                    </div>
+
+                    {/* Course Assessment Section */}
+                    <div className="mt-8 pt-8 border-t border-slate-700">
+                        <CourseAssessmentUpload 
+                            courseId={id}
+                            onAssessmentUploaded={handleAssessmentUploaded}
+                            existingQuiz={courseQuiz}
+                        />
                     </div>
 
                     {/* Submit Button */}

@@ -16,26 +16,50 @@ const AdminDashboard = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        let isMounted = true;
+        
+        const fetchData = async () => {
+            try {
+                // Sequential requests to avoid rate limiting
+                const statsData = await adminService.getDashboardStats();
+                
+                if (!isMounted) return;
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                const coursesData = await adminService.getAllCourses();
+                
+                if (!isMounted) return;
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                const usersData = await adminService.getAllUsers();
+
+                if (!isMounted) return;
+                
+                setStats(statsData || null);
+                setCourses(coursesData.data || []);
+                setUsers(usersData.data || []);
+            } catch (error) {
+                console.error('Error fetching dashboard data:', error);
+                if (error.response?.status === 429) {
+                    toast.error('Too many requests. Please wait a moment...');
+                } else {
+                    toast.error('Failed to load dashboard data');
+                }
+            } finally {
+                if (isMounted) {
+                    setLoading(false);
+                }
+            }
+        };
+
         fetchData();
+        
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
-    const fetchData = async () => {
-        try {
-            const [statsData, coursesData, usersData] = await Promise.all([
-                adminService.getDashboardStats(),
-                adminService.getAllCourses(),
-                adminService.getAllUsers()
-            ]);
 
-            setStats(statsData.data || null);
-            setCourses(coursesData.data || []);
-            setUsers(usersData.data || []);
-        } catch (error) {
-            toast.error('Failed to load admin data');
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleDeleteCourse = async (id) => {
         if (window.confirm('Are you sure you want to delete this course?')) {

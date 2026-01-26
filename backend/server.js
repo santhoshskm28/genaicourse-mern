@@ -15,6 +15,9 @@ import adminRoutes from './routes/adminRoutes.js';
 import quizRoutes from './routes/quizRoutes.js';
 import certificateRoutes from './routes/certificateRoutes.js';
 import learningPathRoutes from './routes/learningPathRoutes.js';
+import assessmentRoutes from './routes/assessment.js';
+import assessmentUploadRoutes from './routes/assessmentUpload.js';
+import courseAssessmentRoutes from './routes/courseAssessment.js';
 
 // Load environment variables
 import path from 'path';
@@ -58,7 +61,7 @@ const startServer = async () => {
     // Rate limiting
     const limiter = rateLimit({
         windowMs: 15 * 60 * 1000, // 15 minutes
-        max: 100, // Limit each IP to 100 requests per windowMs
+        max: 1000, // Increased limit for development
         message: 'Too many requests from this IP, please try again later.'
     });
     app.use('/api/', limiter);
@@ -85,7 +88,9 @@ const startServer = async () => {
                 admin: '/api/admin',
                 quizzes: '/api/quizzes',
                 certificates: '/api/certificates',
-                learningPaths: '/api/learning-paths'
+                learningPaths: '/api/learning-paths',
+                assessments: '/api/assessments',
+                courseAssessments: '/api/courses/:courseId/assessment'
             },
             documentation: 'Visit /health for server status'
         });
@@ -103,12 +108,15 @@ const startServer = async () => {
     });
 
     // API routes
-    app.use('/api/auth', authRoutes);
-    app.use('/api/courses', courseRoutes);
-    app.use('/api/admin', adminRoutes);
-    app.use('/api/quizzes', quizRoutes);
-    app.use('/api/certificates', certificateRoutes);
-    app.use('/api/learning-paths', learningPathRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/courses', courseRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/quizzes', quizRoutes);
+app.use('/api/certificates', certificateRoutes);
+app.use('/api/learning-paths', learningPathRoutes);
+app.use('/api/assessments', assessmentRoutes);
+app.use('/api/assessments', assessmentUploadRoutes);
+app.use('/api/courses', courseAssessmentRoutes);
 
     // 404 handler
     app.use('*', (req, res) => {

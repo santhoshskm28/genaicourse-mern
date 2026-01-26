@@ -1,0 +1,249 @@
+{
+  "title": "MERN Stack Fundamentals Assessment",
+  "description": "Test your knowledge of MongoDB, Express, React, and Node.js",
+  "timeLimit": 60,
+  "maxAttempts": 3,
+  "passingScore": 80,
+  "questions": [
+    {
+      "question": "What does MongoDB use to store data?",
+      "options": [
+        "Tables",
+        "Documents",
+        "Spreadsheets",
+        "Arrays"
+      ],
+      "correctAnswer": "Documents",
+      "points": 5,
+      "explanation": "MongoDB is a NoSQL database that stores data in flexible, JSON-like documents."
+    },
+    {
+      "question": "Which of the following is a Node.js web framework?",
+      "options": [
+        "Django",
+        "Express",
+        "Laravel",
+        "Rails"
+      ],
+      "correctAnswer": "Express",
+      "points": 5,
+      "explanation": "Express.js is a minimal and flexible Node.js web application framework."
+    },
+    {
+      "question": "What is the purpose of React's virtual DOM?",
+      "options": [
+        "To store user data",
+        "To improve performance by minimizing direct DOM manipulation",
+        "To handle server-side rendering",
+        "To manage routing"
+      ],
+      "correctAnswer": "To improve performance by minimizing direct DOM manipulation",
+      "points": 5,
+      "explanation": "The virtual DOM is a JavaScript representation of the real DOM that allows React to optimize updates."
+    },
+    {
+      "question": "Which method is used to connect to MongoDB using Mongoose?",
+      "options": [
+        "mongoose.connect()",
+        "mongoose.createConnection()",
+        "mongoose.open()",
+        "mongoose.init()"
+      ],
+      "correctAnswer": "mongoose.connect()",
+      "points": 5,
+      "explanation": "mongoose.connect() is the standard method to establish a connection to a MongoDB database."
+    },
+    {
+      "question": "What is middleware in Express.js?",
+      "options": [
+        "A database connection",
+        "Functions that run between the request and response cycle",
+        "Frontend components",
+        "Authentication tokens"
+      ],
+      "correctAnswer": "Functions that run between the request and response cycle",
+      "points": 5,
+      "explanation": "Middleware functions are functions that have access to the request object (req), the response object (res), and the next function in the application's request-response cycle."
+    },
+    {
+      "question": "Which React hook is used for managing state in functional components?",
+      "options": [
+        "useEffect",
+        "useState",
+        "useContext",
+        "useReducer"
+      ],
+      "correctAnswer": "useState",
+      "points": 5,
+      "explanation": "useState is the primary hook for adding state to functional React components."
+    },
+    {
+      "question": "What does REST stand for in API design?",
+      "options": [
+        "Representational State Transfer",
+        "Remote State Execution",
+        "Resource State Exchange",
+        "Reusable Service Technology"
+      ],
+      "correctAnswer": "Representational State Transfer",
+      "points": 5,
+      "explanation": "REST is an architectural style for designing networked applications and APIs."
+    },
+    {
+      "question": "Which command is used to initialize a new Node.js project?",
+      "options": [
+        "npm start",
+        "npm init",
+        "node init",
+        "npm create"
+      ],
+      "correctAnswer": "npm init",
+      "points": 5,
+      "explanation": "npm init creates a new package.json file for a Node.js project."
+    },
+    {
+      "question": "What is JSX in React?",
+      "options": [
+        "JavaScript XML",
+        "Java Syntax Extension",
+        "JSON Express",
+        "JavaScript Execution"
+      ],
+      "correctAnswer": "JavaScript XML",
+      "points": 5,
+      "explanation": "JSX is a syntax extension for JavaScript that allows you to write HTML-like code in your JavaScript files."
+    },
+    {
+      "question": "Which HTTP status code represents a successful request?",
+      "options": [
+        "404",
+        "500",
+        "200",
+        "301"
+      ],
+      "correctAnswer": "200",
+      "points": 5,
+      "explanation": "HTTP 200 OK is the standard response for successful HTTP requests."
+    },
+    {
+      "question": "What is the purpose of environment variables in Node.js?",
+      "options": [
+        "To store frontend styles",
+        "To manage configuration and sensitive data",
+        "To handle routing",
+        "To create database schemas"
+      ],
+      "correctAnswer": "To manage configuration and sensitive data",
+      "points": 5,
+      "explanation": "Environment variables are used to store configuration settings, API keys, and other sensitive data outside of the code."
+    },
+    {
+      "question": "Which React hook is used for side effects?",
+      "options": [
+        "useState",
+        "useEffect",
+        "useContext",
+        "useMemo"
+      ],
+      "correctAnswer": "useEffect",
+      "points": 5,
+      "explanation": "useEffect is used to perform side effects in functional components, such as data fetching or subscriptions."
+    },
+    {
+      "question": "What is the purpose of CORS in Express.js?",
+      "options": [
+        "To authenticate users",
+        "To enable cross-origin requests",
+        "To compress responses",
+        "To log errors"
+      ],
+      "correctAnswer": "To enable cross-origin requests",
+      "points": 5,
+      "explanation": "CORS (Cross-Origin Resource Sharing) is a mechanism that allows restricted resources on a web page to be requested from another domain."
+    },
+    {
+      "question": "Which method is used to send JSON data in Express responses?",
+      "options": [
+        "res.send()",
+        "res.json()",
+        "res.data()",
+        "res.render()"
+      ],
+      "correctAnswer": "res.json()",
+      "points": 5,
+      "explanation": "res.json() sends a JSON response and sets the Content-Type header to application/json."
+    },
+    {
+      "question": "What is the purpose of package.json in Node.js?",
+      "options": [
+        "To store source code",
+        "To manage project dependencies and metadata",
+        "To handle database connections",
+        "To configure web servers"
+      ],
+      "correctAnswer": "To manage project dependencies and metadata",
+      "points": 5,
+      "explanation": "package.json contains metadata about the project and lists the packages that the project depends on."
+    },
+    {
+      "question": "Which React concept allows sharing data between components without props?",
+      "options": [
+        "State",
+        "Props",
+        "Context",
+        "Effects"
+      ],
+      "correctAnswer": "Context",
+      "points": 5,
+      "explanation": "React Context provides a way to pass data through the component tree without having to pass props down manually at every level."
+    },
+    {
+      "question": "What is the default port for MongoDB?",
+      "options": [
+        "27017",
+        "3000",
+        "5000",
+        "8080"
+      ],
+      "correctAnswer": "27017",
+      "points": 5,
+      "explanation": "MongoDB by default runs on port 27017."
+    },
+    {
+      "question": "Which command is used to install dependencies in a Node.js project?",
+      "options": [
+        "npm start",
+        "npm install",
+        "npm run",
+        "npm build"
+      ],
+      "correctAnswer": "npm install",
+      "points": 5,
+      "explanation": "npm install installs all dependencies listed in package.json."
+    },
+    {
+      "question": "What is the purpose of async/await in JavaScript?",
+      "options": [
+        "To create loops",
+        "To handle asynchronous operations more cleanly",
+        "To define classes",
+        "To manage styles"
+      ],
+      "correctAnswer": "To handle asynchronous operations more cleanly",
+      "points": 5,
+      "explanation": "async/await is syntactic sugar built on promises that makes asynchronous code easier to read and write."
+    },
+    {
+      "question": "Which React hook is used to optimize performance by memoizing values?",
+      "options": [
+        "useState",
+        "useEffect",
+        "useMemo",
+        "useContext"
+      ],
+      "correctAnswer": "useMemo",
+      "points": 5,
+      "explanation": "useMemo returns a memoized value that only recalculates when dependencies change, helping to optimize performance."
+    }
+  ]
+}
