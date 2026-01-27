@@ -108,15 +108,15 @@ const startServer = async () => {
     });
 
     // API routes
-app.use('/api/auth', authRoutes);
-app.use('/api/courses', courseRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/quizzes', quizRoutes);
-app.use('/api/certificates', certificateRoutes);
-app.use('/api/learning-paths', learningPathRoutes);
-app.use('/api/assessments', assessmentRoutes);
-app.use('/api/assessments', assessmentUploadRoutes);
-app.use('/api/courses', courseAssessmentRoutes);
+    app.use('/api/auth', authRoutes);
+    app.use('/api/courses', courseRoutes);
+    app.use('/api/admin', adminRoutes);
+    app.use('/api/quizzes', quizRoutes);
+    app.use('/api/certificates', certificateRoutes);
+    app.use('/api/learning-paths', learningPathRoutes);
+    app.use('/api/assessments', assessmentRoutes); // Student assessment routes (take quiz, etc.)
+    app.use('/api/assessments', assessmentUploadRoutes); // Upload/management routes after
+    app.use('/api/courses', courseAssessmentRoutes);
 
     // 404 handler
     app.use('*', (req, res) => {

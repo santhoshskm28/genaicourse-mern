@@ -29,38 +29,37 @@ const upload = multer({
   }
 });
 
+// Add a simple auth test route
+router.get('/auth-test', protect, (req, res) => {
+  res.json({
+    message: 'Authentication test',
+    user: req.user,
+    isAuthenticated: true
+  });
+});
+
 // All routes require instructor/admin role
 router.use(protect);
 router.use(authorize('instructor', 'admin'));
 
+// @route   GET /api/assessments/template
+router.get('/template', getAssessmentTemplate);
+
 // @route   POST /api/assessments/upload
-// @desc    Upload assessment from JSON data
-// @access  Private (Instructor/Admin only)
 router.post('/upload', uploadAssessment);
 
 // @route   POST /api/assessments/import-file
-// @desc    Import assessment from file (JSON/CSV)
-// @access  Private (Instructor/Admin only)
 router.post('/import-file', upload.single('assessmentFile'), importAssessmentFromFile);
 
-// @route   GET /api/assessments/template
-// @desc    Get assessment template/sample
-// @access  Private (Instructor/Admin only)
-router.get('/template', getAssessmentTemplate);
-
 // @route   GET /api/assessments/instructor
-// @desc    Get instructor's assessments
-// @access  Private (Instructor/Admin only)
 router.get('/instructor', getInstructorAssessments);
 
 // @route   PUT /api/assessments/:id
-// @desc    Update assessment
-// @access  Private (Instructor/Admin only)
 router.put('/:id', updateAssessment);
 
 // @route   DELETE /api/assessments/:id
-// @desc    Delete assessment
-// @access  Private (Instructor/Admin only)
 router.delete('/:id', deleteAssessment);
+
+
 
 export default router;

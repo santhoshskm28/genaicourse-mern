@@ -37,7 +37,7 @@ const certificateSchema = new mongoose.Schema({
     },
     grade: {
         type: String,
-        enum: ['A', 'B', 'C', 'Pass'],
+        enum: ['A+', 'A', 'B+', 'B', 'C+', 'C', 'Pass', 'Fail'],
         default: 'Pass'
     },
     score: {

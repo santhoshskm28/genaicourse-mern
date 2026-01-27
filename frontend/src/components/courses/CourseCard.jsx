@@ -7,7 +7,7 @@ const CourseCard = ({ course }) => {
         <div className="card h-full flex flex-col overflow-hidden p-0 bg-slate-800 border-none">
             <div className="relative h-48 overflow-hidden">
                 <img
-                    src={course.thumbnail || 'https://via.placeholder.com/400x250?text=Course'}
+                    src={course.thumbnail || 'https://placehold.co/400x250?text=Course'}
                     alt={course.title}
                     className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
                 />

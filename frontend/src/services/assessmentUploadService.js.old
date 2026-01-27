@@ -1,11 +1,13 @@
-import api from './api.js';
+import axios from 'axios';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const assessmentUploadService = {
   // Upload assessment from JSON data
   uploadAssessment: async (assessmentData, courseId = null) => {
     try {
-      const response = await api.post(
-        `/assessments/upload`,
+      const response = await axios.post(
+        `${API_URL}/assessments/upload`,
         { assessmentData, courseId }
       );
       return response.data;
@@ -23,8 +25,8 @@ const assessmentUploadService = {
         formData.append('courseId', courseId);
       }
 
-      const response = await api.post(
-        `/assessments/import-file`,
+      const response = await axios.post(
+        `${API_URL}/assessments/import-file`,
         formData,
         {
           headers: {
@@ -41,7 +43,7 @@ const assessmentUploadService = {
   // Get assessment template
   getTemplate: async () => {
     try {
-      const response = await api.get(`/assessments/template`);
+      const response = await axios.get(`${API_URL}/assessments/template`);
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to get template');
@@ -51,7 +53,7 @@ const assessmentUploadService = {
   // Get instructor's assessments
   getInstructorAssessments: async () => {
     try {
-      const response = await api.get(`/assessments/instructor`);
+      const response = await axios.get(`${API_URL}/assessments/instructor`);
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to get assessments');
@@ -61,8 +63,8 @@ const assessmentUploadService = {
   // Update assessment
   updateAssessment: async (assessmentId, updates) => {
     try {
-      const response = await api.put(
-        `/assessments/${assessmentId}`,
+      const response = await axios.put(
+        `${API_URL}/assessments/${assessmentId}`,
         updates
       );
       return response.data;
@@ -74,7 +76,7 @@ const assessmentUploadService = {
   // Delete assessment
   deleteAssessment: async (assessmentId) => {
     try {
-      const response = await api.delete(`/assessments/${assessmentId}`);
+      const response = await axios.delete(`${API_URL}/assessments/${assessmentId}`);
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to delete assessment');

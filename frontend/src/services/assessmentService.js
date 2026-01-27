@@ -1,12 +1,10 @@
-import axios from 'axios';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+import api from './api';
 
 const assessmentService = {
   // Get assessment details for a course
   getAssessment: async (courseId) => {
     try {
-      const response = await axios.get(`${API_URL}/assessments/${courseId}/quiz`);
+      const response = await api.get(`/assessments/${courseId}/quiz`);
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to load assessment');
@@ -16,8 +14,8 @@ const assessmentService = {
   // Submit assessment
   submitAssessment: async (courseId, assessmentData) => {
     try {
-      const response = await axios.post(
-        `${API_URL}/assessments/${courseId}/take`,
+      const response = await api.post(
+        `/assessments/${courseId}/take`,
         assessmentData
       );
       return response.data;
@@ -29,8 +27,8 @@ const assessmentService = {
   // Get assessment results
   getResults: async (courseId, attemptId) => {
     try {
-      const response = await axios.get(
-        `${API_URL}/assessments/${courseId}/results/${attemptId}`
+      const response = await api.get(
+        `/assessments/${courseId}/results/${attemptId}`
       );
       return response.data;
     } catch (error) {
@@ -41,7 +39,7 @@ const assessmentService = {
   // Get assessment history
   getHistory: async (courseId) => {
     try {
-      const response = await axios.get(`${API_URL}/assessments/${courseId}/history`);
+      const response = await api.get(`/assessments/${courseId}/history`);
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to load assessment history');
@@ -51,7 +49,7 @@ const assessmentService = {
   // Check if assessment is available for course
   checkAssessmentAvailability: async (courseId) => {
     try {
-      const response = await axios.get(`${API_URL}/assessments/${courseId}/check`);
+      const response = await api.get(`/assessments/${courseId}/check`);
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to check assessment availability');

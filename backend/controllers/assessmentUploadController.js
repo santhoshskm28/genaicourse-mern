@@ -26,26 +26,43 @@ export const uploadAssessment = asyncHandler(async (req, res) => {
 
     // Verify instructor permissions
     const isInstructor = req.user.role === 'instructor' || req.user.role === 'admin';
-    const isCourseInstructor = course.instructor.toString() === req.user.id;
-    
-    if (!isInstructor || (req.user.role === 'instructor' && !isCourseInstructor)) {
+    const isCourseOwner = course.createdBy.toString() === req.user.id;
+    const isCourseInstructor = course.instructors && course.instructors.some(inst => inst.userId.toString() === req.user.id);
+
+    if (!isInstructor || (req.user.role === 'instructor' && !isCourseOwner && !isCourseInstructor)) {
       return res.status(403).json({ message: 'Not authorized to upload assessments for this course' });
     }
   }
 
   try {
+    // Transform questions to match Schema
+    const formattedQuestions = assessmentData.questions.map(q => {
+      return {
+        question: q.question,
+        type: 'multiple-choice', // Default type
+        options: q.options.map(opt => ({
+          text: opt,
+          isCorrect: opt === q.correctAnswer
+        })),
+        correctAnswer: q.correctAnswer,
+        points: q.points || 5,
+        explanation: q.explanation
+      };
+    });
+
     // Create quiz from assessment data
     const quiz = await Quiz.create({
       title: assessmentData.title,
       description: assessmentData.description,
-      courseId: courseId,
-      questions: assessmentData.questions,
+      courseId: courseId || undefined, // Handle empty string/null
+      questions: formattedQuestions,
       timeLimit: assessmentData.timeLimit || 60,
       maxAttempts: assessmentData.maxAttempts || 3,
       passingScore: assessmentData.passingScore || 80,
       shuffleQuestions: assessmentData.shuffleQuestions || false,
       showResults: assessmentData.showResults !== false,
       allowReview: assessmentData.allowReview !== false,
+      isPublished: true, // Auto-publish uploaded assessments
       createdBy: req.user.id
     });
 
@@ -77,6 +94,7 @@ export const uploadAssessment = asyncHandler(async (req, res) => {
 // @route   GET /api/assessments/template
 // @access  Private (Instructor/Admin only)
 export const getAssessmentTemplate = asyncHandler(async (req, res) => {
+  console.log('Template endpoint called');
   const template = {
     title: "Sample Assessment Title",
     description: "Brief description of the assessment",
@@ -91,7 +109,7 @@ export const getAssessmentTemplate = asyncHandler(async (req, res) => {
         question: "Sample question text?",
         options: [
           "Option A",
-          "Option B", 
+          "Option B",
           "Option C",
           "Option D"
         ],
@@ -130,7 +148,7 @@ export const importAssessmentFromFile = asyncHandler(async (req, res) => {
   try {
     // Read file content
     let assessmentData;
-    
+
     if (file.mimetype === 'application/json') {
       // JSON file
       const fileContent = Buffer.from(file.buffer).toString('utf-8');
@@ -139,8 +157,8 @@ export const importAssessmentFromFile = asyncHandler(async (req, res) => {
       // CSV file - convert to assessment format
       assessmentData = await parseCSVToAssessment(file.buffer);
     } else {
-      return res.status(400).json({ 
-        message: 'Unsupported file format. Please upload JSON or CSV files.' 
+      return res.status(400).json({
+        message: 'Unsupported file format. Please upload JSON or CSV files.'
       });
     }
 
@@ -161,25 +179,42 @@ export const importAssessmentFromFile = asyncHandler(async (req, res) => {
       }
 
       const isInstructor = req.user.role === 'instructor' || req.user.role === 'admin';
-      const isCourseInstructor = course.instructor.toString() === req.user.id;
-      
-      if (!isInstructor || (req.user.role === 'instructor' && !isCourseInstructor)) {
+      const isCourseOwner = course.createdBy.toString() === req.user.id;
+      const isCourseInstructor = course.instructors && course.instructors.some(inst => inst.userId.toString() === req.user.id);
+
+      if (!isInstructor || (req.user.role === 'instructor' && !isCourseOwner && !isCourseInstructor)) {
         return res.status(403).json({ message: 'Not authorized to upload assessments for this course' });
       }
     }
+
+    // Transform questions to match Schema
+    const formattedQuestions = assessmentData.questions.map(q => {
+      return {
+        question: q.question,
+        type: 'multiple-choice', // Default type
+        options: q.options.map(opt => ({
+          text: opt,
+          isCorrect: opt === q.correctAnswer
+        })),
+        correctAnswer: q.correctAnswer,
+        points: q.points || 5,
+        explanation: q.explanation
+      };
+    });
 
     // Create quiz
     const quiz = await Quiz.create({
       title: assessmentData.title,
       description: assessmentData.description,
-      courseId: courseId,
-      questions: assessmentData.questions,
+      courseId: courseId || undefined,
+      questions: formattedQuestions,
       timeLimit: assessmentData.timeLimit || 60,
       maxAttempts: assessmentData.maxAttempts || 3,
       passingScore: assessmentData.passingScore || 80,
       shuffleQuestions: assessmentData.shuffleQuestions || false,
       showResults: assessmentData.showResults !== false,
       allowReview: assessmentData.allowReview !== false,
+      isPublished: true, // Auto-publish uploaded assessments
       createdBy: req.user.id
     });
 
@@ -365,19 +400,19 @@ function validateAssessmentData(data) {
 async function parseCSVToAssessment(csvBuffer) {
   const csvString = csvBuffer.toString('utf-8');
   const lines = csvString.split('\n').filter(line => line.trim());
-  
+
   if (lines.length < 2) {
     throw new Error('CSV must have at least a header and one question row');
   }
 
   const questions = [];
-  
+
   for (let i = 1; i < lines.length; i++) {
     const columns = lines[i].split(',').map(col => col.trim().replace(/"/g, ''));
-    
+
     if (columns.length >= 5) {
       const [question, option1, option2, option3, option4, correctAnswer, points, explanation] = columns;
-      
+
       questions.push({
         question: question || `Question ${i}`,
         options: [option1, option2, option3, option4].filter(opt => opt),

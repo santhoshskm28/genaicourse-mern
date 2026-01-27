@@ -1,6 +1,7 @@
 import express from 'express';
 import { protect } from '../middleware/auth.js';
 import {
+  getAssessmentForCourse,
   takeAssessment,
   getAssessmentResults,
   getAssessmentHistory
@@ -10,6 +11,11 @@ const router = express.Router();
 
 // All routes are protected
 router.use(protect);
+
+// @route   GET /api/assessments/:courseId/quiz
+// @desc    Get assessment for taking
+// @access  Private (Student)
+router.get('/:courseId/quiz', getAssessmentForCourse);
 
 // @route   POST /api/assessments/:courseId/take
 // @desc    Take course assessment

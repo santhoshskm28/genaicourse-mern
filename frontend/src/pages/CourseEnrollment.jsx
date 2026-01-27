@@ -113,7 +113,7 @@ const CourseEnrollment = () => {
                         <div className="w-full lg:w-1/3 max-w-sm">
                             <div className="card p-2 bg-slate-800 border border-slate-700">
                                 <img
-                                    src={course?.thumbnail || 'https://via.placeholder.com/400x250?text=Course'}
+                                    src={course?.thumbnail || 'https://placehold.co/400x250?text=Course'}
                                     alt={course?.title}
                                     className="w-full rounded-lg shadow-lg"
                                 />

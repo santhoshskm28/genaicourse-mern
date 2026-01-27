@@ -80,7 +80,7 @@ const Dashboard = () => {
                             <div key={progress._id} className="card p-6 flex flex-col md:flex-row gap-6 items-center">
                                 <div className="w-full md:w-48 h-32 rounded-lg bg-slate-700 overflow-hidden flex-shrink-0">
                                     <img
-                                        src={progress.courseId.thumbnail || 'https://via.placeholder.com/400x250'}
+                                        src={progress.courseId.thumbnail || 'https://placehold.co/400x250?text=Course'}
                                         alt={progress.courseId.title}
                                         className="w-full h-full object-cover"
                                     />

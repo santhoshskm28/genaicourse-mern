@@ -48,7 +48,7 @@ const userQuizAttemptSchema = new mongoose.Schema({
     },
     totalPoints: {
         type: Number,
-        required: 0,
+        required: true,
         min: 0
     },
     passed: {

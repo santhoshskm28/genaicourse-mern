@@ -116,7 +116,7 @@ const CourseDetail = () => {
                         <div className="w-full md:w-1/3 max-w-sm">
                             <div className="card p-2 bg-slate-800 border border-slate-700">
                                 <img
-                                    src={course.thumbnail || 'https://via.placeholder.com/400x250'}
+                                    src={course.thumbnail || 'https://placehold.co/400x250?text=Course'}
                                     alt={course.title}
                                     className="w-full rounded-lg shadow-lg"
                                 />
@@ -178,6 +178,40 @@ const CourseDetail = () => {
                             </div>
                         </div>
                     ))}
+
+                    {course.quizId && (
+                        <div className="border border-indigo-900/50 rounded-lg overflow-hidden bg-indigo-900/10">
+                            <div className="bg-indigo-900/20 p-4 border-b border-indigo-900/30 flex justify-between items-center">
+                                <h3 className="font-bold text-lg text-indigo-400">
+                                    Final Assessment
+                                </h3>
+                                <span className="text-sm text-indigo-300">1 Assessment</span>
+                            </div>
+                            <div className="p-4">
+                                <Link
+                                    to={`/courses/${id}/assessment`}
+                                    className={`flex items-center hover:bg-indigo-900/20 transition-colors rounded p-2 ${!isEnrolled ? 'cursor-not-allowed opacity-60' : ''}`}
+                                    onClick={(e) => {
+                                        if (!isEnrolled) {
+                                            e.preventDefault();
+                                            toast.info('Please enroll to access success assessment');
+                                        }
+                                    }}
+                                >
+                                    <div className="w-8 h-8 rounded-full bg-indigo-900/50 flex items-center justify-center mr-4 text-indigo-400">
+                                        <FaCheckCircle size={14} />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h4 className="text-indigo-200 font-medium">Course Final Exam</h4>
+                                        <p className="text-sm text-indigo-400/60 mt-0.5">Test your knowledge to earn certificate</p>
+                                    </div>
+                                    <div className={`${isEnrolled ? 'text-indigo-400' : 'text-gray-600'}`}>
+                                        {isEnrolled ? <FaPlay size={14} className="opacity-70" /> : <FaLock size={14} />}
+                                    </div>
+                                </Link>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

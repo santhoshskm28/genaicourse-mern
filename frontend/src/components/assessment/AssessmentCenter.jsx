@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Clock, CheckCircle, XCircle, Award, AlertCircle, RefreshCw } from 'lucide-react';
-import assessmentService from '../../services/assessmentService';
-import certificateService from '../../services/certificateService';
+import { Clock, CheckCircle, XCircle, Award, AlertCircle, RefreshCw, ChevronLeft, ChevronRight, HelpCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import assessmentService from '../../services/assessmentService.js';
+import certificateService from '../../services/certificateService.js';
 
 const AssessmentCenter = () => {
-  const { courseId } = useParams();
+  const { id: courseId } = useParams(); // changed from courseId to id to match App.jsx route param if needed, but route says :id? No, usually it's best to match. Let's assume route will be /courses/:id/assessment
   const navigate = useNavigate();
-  
+
   const [assessment, setAssessment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -65,8 +66,9 @@ const AssessmentCenter = () => {
 
   const handleSubmit = async () => {
     if (answers.includes(null)) {
-      setError('Please answer all questions before submitting');
-      return;
+      if (!window.confirm("You haven't answered all questions. Are you sure you want to submit?")) {
+        return;
+      }
     }
 
     try {
@@ -76,7 +78,7 @@ const AssessmentCenter = () => {
         answers,
         timeSpent
       });
-      
+
       setResults(result);
       setShowResults(true);
     } catch (err) {
@@ -98,10 +100,10 @@ const AssessmentCenter = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading assessment...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mx-auto mb-4"></div>
+          <p className="text-slate-400">Loading assessment...</p>
         </div>
       </div>
     );
@@ -109,13 +111,14 @@ const AssessmentCenter = () => {
 
   if (error && !assessment) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
-          <p className="text-gray-600 mb-4">{error}</p>
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-center max-w-md p-8 bg-slate-800 rounded-2xl border border-slate-700">
+          <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-6" />
+          <h2 className="text-2xl font-bold text-white mb-2">Access Denied</h2>
+          <p className="text-slate-400 mb-6">{error}</p>
           <button
             onClick={() => navigate(`/courses/${courseId}`)}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+            className="px-6 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-medium transition-colors"
           >
             Back to Course
           </button>
@@ -131,126 +134,145 @@ const AssessmentCenter = () => {
   const question = assessment.questions[currentQuestion];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
+    <div className="min-h-screen bg-slate-900 py-12 px-4 sm:px-6">
+      <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold text-gray-900">{assessment.title}</h1>
-            <div className="flex items-center space-x-4">
-              <div className={`flex items-center space-x-2 ${timeRemaining < 300 ? 'text-red-600' : 'text-gray-600'}`}>
-                <Clock className="h-5 w-5" />
-                <span className="font-mono">{formatTime(timeRemaining)}</span>
-              </div>
-              <div className="text-sm text-gray-600">
+        <div className="bg-slate-800 rounded-2xl shadow-xl border border-slate-700 p-6 mb-8 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1 bg-slate-700">
+            <motion.div
+              className="h-full bg-gradient-to-r from-indigo-500 to-purple-500"
+              initial={{ width: 0 }}
+              animate={{ width: `${getProgressPercentage()}%` }}
+              transition={{ duration: 0.5 }}
+            />
+          </div>
+
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 mt-2">
+            <div>
+              <h1 className="text-2xl font-bold text-white mb-1">{assessment.title}</h1>
+              <p className="text-slate-400 text-sm flex items-center gap-2">
+                <HelpCircle className="w-3 h-3" />
                 Question {currentQuestion + 1} of {assessment.questions.length}
-              </div>
+              </p>
+            </div>
+            <div className={`flex items-center space-x-2 px-4 py-2 rounded-xl border ${timeRemaining < 300
+                ? 'bg-red-500/10 text-red-400 border-red-500/20 animate-pulse'
+                : 'bg-slate-700/50 text-indigo-400 border-indigo-500/20'
+              }`}>
+              <Clock className="h-5 w-5" />
+              <span className="font-mono font-bold text-lg">{formatTime(timeRemaining)}</span>
             </div>
           </div>
-          
-          {/* Progress Bar */}
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div 
-              className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${getProgressPercentage()}%` }}
-            ></div>
-          </div>
         </div>
 
-        {/* Question */}
-        <div className="bg-white rounded-lg shadow-sm p-8 mb-6">
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">
-              {question.question}
-            </h2>
-            {question.points && (
-              <p className="text-sm text-gray-600">Points: {question.points}</p>
-            )}
-          </div>
+        {/* Question Card */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentQuestion}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+            className="bg-slate-800 rounded-2xl shadow-xl border border-slate-700 p-8 mb-8"
+          >
+            <div className="mb-8">
+              <h2 className="text-xl md:text-2xl font-semibold text-white leading-relaxed">
+                {question.question}
+              </h2>
+              {question.points && (
+                <span className="inline-block mt-3 px-3 py-1 bg-slate-700 rounded-lg text-xs font-medium text-slate-300">
+                  {question.points} Points
+                </span>
+              )}
+            </div>
 
-          {/* Answer Options */}
-          <div className="space-y-3">
-            {question.options.map((option, index) => (
-              <label
-                key={index}
-                className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-colors ${
-                  answers[currentQuestion] === option
-                    ? 'border-indigo-600 bg-indigo-50'
-                    : 'border-gray-200 hover:border-gray-300'
-                }`}
-              >
-                <input
-                  type="radio"
-                  name={`question-${currentQuestion}`}
-                  value={option}
-                  checked={answers[currentQuestion] === option}
-                  onChange={() => handleAnswerChange(currentQuestion, option)}
-                  className="mr-3 text-indigo-600"
-                />
-                <span className="text-gray-900">{option}</span>
-              </label>
-            ))}
-          </div>
-        </div>
+            {/* Options */}
+            <div className="space-y-4">
+              {question.options.map((option, index) => (
+                <label
+                  key={index}
+                  className={`group flex items-center p-5 border-2 rounded-xl cursor-pointer transition-all duration-200 ${answers[currentQuestion] === option
+                      ? 'border-indigo-500 bg-indigo-500/10 shadow-[0_0_20px_rgba(99,102,241,0.15)]'
+                      : 'border-slate-700 bg-slate-800/50 hover:bg-slate-700 hover:border-slate-600'
+                    }`}
+                >
+                  <div className={`w-6 h-6 rounded-full border-2 mr-4 flex items-center justify-center transition-colors ${answers[currentQuestion] === option
+                      ? 'border-indigo-500 bg-indigo-500'
+                      : 'border-slate-500 group-hover:border-slate-400'
+                    }`}>
+                    {answers[currentQuestion] === option && <div className="w-2 h-2 bg-white rounded-full" />}
+                  </div>
+                  <input
+                    type="radio"
+                    name={`question-${currentQuestion}`}
+                    value={option}
+                    checked={answers[currentQuestion] === option}
+                    onChange={() => handleAnswerChange(currentQuestion, option)}
+                    className="hidden"
+                  />
+                  <span className={`text-lg ${answers[currentQuestion] === option ? 'text-white font-medium' : 'text-slate-300 group-hover:text-white'
+                    }`}>
+                    {option}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </motion.div>
+        </AnimatePresence>
 
-        {/* Navigation */}
-        <div className="flex justify-between items-center">
+        {/* Footer Navigation */}
+        <div className="flex justify-between items-center bg-slate-800/50 p-4 rounded-xl backdrop-blur-sm border border-slate-700/50">
           <button
             onClick={handlePrevious}
             disabled={currentQuestion === 0}
-            className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2.5 rounded-lg border border-slate-600 text-slate-300 font-medium hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors"
           >
-            Previous
+            <ChevronLeft className="w-4 h-4" /> Previous
           </button>
 
-          <div className="flex space-x-2">
+          <div className="flex gap-1.5 overflow-x-auto max-w-[200px] md:max-w-md px-2 scrollbar-none">
             {assessment.questions.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentQuestion(index)}
-                className={`w-8 h-8 rounded-full text-sm font-medium ${
-                  index === currentQuestion
-                    ? 'bg-indigo-600 text-white'
+                className={`w-2.5 h-2.5 rounded-full transition-all ${index === currentQuestion
+                    ? 'bg-indigo-500 w-6'
                     : answers[index] !== null
-                    ? 'bg-green-100 text-green-700'
-                    : 'bg-gray-200 text-gray-600'
-                }`}
-              >
-                {index + 1}
-              </button>
+                      ? 'bg-emerald-500/50 hover:bg-emerald-500'
+                      : 'bg-slate-600 hover:bg-slate-500'
+                  }`}
+                title={`Question ${index + 1}`}
+              />
             ))}
           </div>
 
           {currentQuestion === assessment.questions.length - 1 ? (
             <button
               onClick={handleSubmit}
-              disabled={submitting || answers.includes(null)}
-              className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+              disabled={submitting}
+              className="px-8 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2 font-bold shadow-lg shadow-indigo-900/20 transition-all hover:scale-105"
             >
               {submitting ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  <span>Submitting...</span>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Submitting...
                 </>
               ) : (
-                <span>Submit Assessment</span>
+                <>
+                  Submit
+                  <CheckCircle className="w-4 h-4" />
+                </>
               )}
             </button>
           ) : (
             <button
               onClick={handleNext}
-              className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+              className="px-6 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium transition-colors flex items-center gap-2"
             >
-              Next
+              Next <ChevronRight className="w-4 h-4" />
             </button>
           )}
         </div>
-
-        {error && (
-          <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-600">{error}</p>
-          </div>
-        )}
       </div>
     </div>
   );
@@ -272,152 +294,160 @@ const AssessmentResults = ({ results, courseId }) => {
   };
 
   const handleRetakeAssessment = () => {
-    navigate(`/assessment/${courseId}`, { replace: true });
+    // Force reload or state reset - simpler to just reload page for now or navigate
+    window.location.reload();
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
-        {/* Results Header */}
-        <div className={`bg-white rounded-lg shadow-sm p-8 mb-6 ${
-          results.attempt.passed ? 'border-green-200' : 'border-red-200'
-        }`}>
-          <div className="text-center">
-            <div className={`inline-flex items-center justify-center w-20 h-20 rounded-full mb-4 ${
-              results.attempt.passed ? 'bg-green-100' : 'bg-red-100'
+    <div className="min-h-screen bg-slate-900 py-12 px-4">
+      <div className="max-w-3xl mx-auto">
+        {/* Result Card */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-slate-800 rounded-2xl shadow-2xl border border-slate-700 overflow-hidden mb-8"
+        >
+          <div className={`p-10 text-center relative overflow-hidden ${results.attempt.passed ? 'bg-emerald-900/20' : 'bg-red-900/20'
             }`}>
+            <div className={`absolute inset-0 opacity-10 ${results.attempt.passed
+                ? 'bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-emerald-500 via-transparent'
+                : 'bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-red-500 via-transparent'
+              }`}></div>
+
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 200, damping: 15 }}
+              className={`inline-flex items-center justify-center w-24 h-24 rounded-full mb-6 ${results.attempt.passed ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-500'
+                }`}
+            >
               {results.attempt.passed ? (
-                <CheckCircle className="h-10 w-10 text-green-600" />
+                <Award className="w-12 h-12" />
               ) : (
-                <XCircle className="h-10 w-10 text-red-600" />
+                <XCircle className="w-12 h-12" />
               )}
-            </div>
-            
-            <h1 className={`text-3xl font-bold mb-2 ${
-              results.attempt.passed ? 'text-green-600' : 'text-red-600'
-            }`}>
-              {results.attempt.passed ? 'Congratulations!' : 'Assessment Not Passed'}
+            </motion.div>
+
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
+              {results.attempt.passed ? 'Assessment Passed!' : 'Assessment Failed'}
             </h1>
-            
-            <p className="text-gray-600 mb-6">
-              {results.attempt.passed 
-                ? 'You have successfully passed the assessment and completed the course!'
-                : 'You did not meet the passing criteria. Please review the material and try again.'
+
+            <p className="text-slate-400 max-w-lg mx-auto text-lg">
+              {results.attempt.passed
+                ? 'Congratulations! You have demonstrated mastery of the course material.'
+                : 'Don\'t give up! Review the course materials and try again to earn your certificate.'
               }
             </p>
-
-            {/* Score Display */}
-            <div className="grid grid-cols-3 gap-4 mb-8">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <p className="text-sm text-gray-600 mb-1">Score</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {results.attempt.score}/{results.attempt.totalPoints}
-                </p>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <p className="text-sm text-gray-600 mb-1">Percentage</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {results.attempt.percentageScore}%
-                </p>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <p className="text-sm text-gray-600 mb-1">Grade</p>
-                <p className={`text-2xl font-bold ${
-                  results.attempt.passed ? 'text-green-600' : 'text-red-600'
-                }`}>
-                  {results.attempt.grade}
-                </p>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex justify-center space-x-4">
-              {results.attempt.passed && results.certificate && (
-                <button
-                  onClick={handleDownloadCertificate}
-                  disabled={downloadingCert}
-                  className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center space-x-2"
-                >
-                  <Award className="h-5 w-5" />
-                  <span>
-                    {downloadingCert ? 'Downloading...' : 'Download Certificate'}
-                  </span>
-                </button>
-              )}
-              
-              {!results.attempt.passed && results.nextAttemptAvailable && (
-                <button
-                  onClick={handleRetakeAssessment}
-                  className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 flex items-center space-x-2"
-                >
-                  <RefreshCw className="h-5 w-5" />
-                  <span>Retake Assessment</span>
-                </button>
-              )}
-              
-              <button
-                onClick={() => navigate(`/courses/${courseId}`)}
-                className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50"
-              >
-                Back to Course
-              </button>
-            </div>
-
-            {!results.attempt.passed && !results.nextAttemptAvailable && (
-              <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <p className="text-yellow-800">
-                  You have reached the maximum number of attempts. Please contact support for assistance.
-                </p>
-              </div>
-            )}
           </div>
-        </div>
 
-        {/* Detailed Results */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Detailed Results</h2>
-          <div className="space-y-4">
-            {results.attempt.results.map((result, index) => (
-              <div
-                key={index}
-                className={`p-4 border rounded-lg ${
-                  result.isCorrect ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'
-                }`}
+          {/* Stats */}
+          <div className="grid grid-cols-3 divide-x divide-slate-700 border-t border-slate-700 bg-slate-800/50">
+            <div className="p-6 text-center">
+              <div className="text-slate-400 text-xs uppercase tracking-wider font-semibold mb-1">Score</div>
+              <div className="text-3xl font-bold text-white">{results.attempt.score}</div>
+              <div className="text-xs text-slate-500">of {results.attempt.totalPoints} points</div>
+            </div>
+            <div className="p-6 text-center">
+              <div className="text-slate-400 text-xs uppercase tracking-wider font-semibold mb-1">Result</div>
+              <div className={`text-3xl font-bold ${results.attempt.passed ? 'text-emerald-400' : 'text-red-400'}`}>
+                {results.attempt.percentageScore}%
+              </div>
+              <div className="text-xs text-slate-500">min 80% to pass</div>
+            </div>
+            <div className="p-6 text-center">
+              <div className="text-slate-400 text-xs uppercase tracking-wider font-semibold mb-1">Grade</div>
+              <div className={`text-3xl font-bold ${results.attempt.passed ? 'text-emerald-400' : 'text-red-400'}`}>
+                {results.attempt.grade}
+              </div>
+            </div>
+          </div>
+
+          {/* Action Area */}
+          <div className="p-8 border-t border-slate-700 flex flex-col sm:flex-row gap-4 justify-center">
+            {results.attempt.passed && results.certificate ? (
+              <button
+                onClick={handleDownloadCertificate}
+                disabled={downloadingCert}
+                className="btn btn-primary bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-900/20 px-8 py-3 rounded-xl flex items-center justify-center gap-2"
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900 mb-2">
-                      {index + 1}. {result.question}
-                    </p>
-                    <div className="space-y-1 text-sm">
-                      <p>
-                        <span className="font-medium">Your answer:</span>{' '}
-                        <span className={result.isCorrect ? 'text-green-600' : 'text-red-600'}>
-                          {result.userAnswer}
-                        </span>
-                      </p>
-                      {!result.isCorrect && (
-                        <p>
-                          <span className="font-medium">Correct answer:</span>{' '}
-                          <span className="text-green-600">{result.correctAnswer}</span>
-                        </p>
-                      )}
-                      {result.explanation && (
-                        <p className="text-gray-600 mt-2">{result.explanation}</p>
-                      )}
+                {downloadingCert ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <Award className="w-5 h-5" />
+                    Download Certificate
+                  </>
+                )}
+              </button>
+            ) : null}
+
+            {!results.attempt.passed && results.nextAttemptAvailable && (
+              <button
+                onClick={handleRetakeAssessment}
+                className="btn bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-xl flex items-center justify-center gap-2"
+              >
+                <RefreshCw className="w-5 h-5" />
+                Retake Assessment
+              </button>
+            )}
+
+            <button
+              onClick={() => navigate(`/courses/${courseId}`)}
+              className="bg-slate-700 hover:bg-slate-600 text-white px-8 py-3 rounded-xl font-medium transition-colors border border-slate-600"
+            >
+              Return to Course
+            </button>
+          </div>
+        </motion.div>
+
+        {/* Question Review */}
+        <div className="space-y-4">
+          <h3 className="text-xl font-bold text-white mb-4 ml-2">Question Review</h3>
+          {results.attempt.results.map((result, index) => (
+            <div
+              key={index}
+              className={`p-5 rounded-xl border ${result.isCorrect
+                  ? 'bg-emerald-500/5 border-emerald-500/20'
+                  : 'bg-red-500/5 border-red-500/20'
+                }`}
+            >
+              <div className="flex gap-4">
+                <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${result.isCorrect ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'
+                  }`}>
+                  {result.isCorrect ? <CheckCircle className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
+                </div>
+                <div className="flex-1">
+                  <p className="text-white font-medium mb-3">{index + 1}. {result.question}</p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
+                      <span className="text-slate-400 block mb-1 text-xs">Your Answer</span>
+                      <span className={result.isCorrect ? 'text-emerald-400' : 'text-red-400'}>
+                        {result.userAnswer}
+                      </span>
                     </div>
-                  </div>
-                  <div className="ml-4">
-                    {result.isCorrect ? (
-                      <CheckCircle className="h-6 w-6 text-green-600" />
-                    ) : (
-                      <XCircle className="h-6 w-6 text-red-600" />
+                    {!result.isCorrect && (
+                      <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
+                        <span className="text-slate-400 block mb-1 text-xs">Correct Answer</span>
+                        <span className="text-emerald-400">
+                          {result.correctAnswer}
+                        </span>
+                      </div>
                     )}
                   </div>
+
+                  {result.explanation && !result.isCorrect && (
+                    <div className="mt-3 text-slate-400 text-sm italic border-l-2 border-slate-600 pl-3">
+                      {result.explanation}
+                    </div>
+                  )}
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

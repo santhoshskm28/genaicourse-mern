@@ -24,6 +24,7 @@ import CourseReadingProgress from './components/courses/CourseReadingProgress';
 import LessonPlayer from './components/lessons/LessonPlayer';
 import HowItWorks from './pages/HowItWorks';
 import Pricing from './pages/Pricing';
+import AssessmentCenter from './components/assessment/AssessmentCenter';
 
 // Admin Imports
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -52,6 +53,7 @@ const App = () => {
                             <Route path="/courses/:id/learn" element={<CourseViewer />} />
                             <Route path="/courses/:id/enroll" element={<CourseEnrollment />} />
                             <Route path="/courses/:id/access" element={<CourseAccess />} />
+                            <Route path="/courses/:id/assessment" element={<AssessmentCenter />} />
                             {/* <Route path="/courses/:courseId/lessons/:lessonId" element={<CourseReadingProgress />} /> */}
                             <Route path="/courses/:courseId/lessons/:lessonId" element={<LessonPlayer />} />
                             <Route path="/pricing" element={<Pricing />} />

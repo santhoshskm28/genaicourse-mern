@@ -87,7 +87,7 @@ const quizSchema = new mongoose.Schema({
     courseId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Course',
-        required: true
+        required: false
     },
     moduleId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -122,11 +122,11 @@ quizSchema.virtual('totalPoints').get(function () {
 // Virtual for average difficulty
 quizSchema.virtual('averageDifficulty').get(function () {
     if (this.questions.length === 0) return 'medium';
-    
+
     const difficultyMap = { easy: 1, medium: 2, hard: 3 };
-    const avgDifficulty = this.questions.reduce((sum, q) => 
+    const avgDifficulty = this.questions.reduce((sum, q) =>
         sum + difficultyMap[q.difficulty], 0) / this.questions.length;
-    
+
     return avgDifficulty <= 1.5 ? 'easy' : avgDifficulty <= 2.5 ? 'medium' : 'hard';
 });
 

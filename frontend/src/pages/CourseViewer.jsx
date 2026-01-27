@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import courseService from '../services/courseService.js';
 import Loader from '../components/common/Loader.jsx';
-import { FaChevronLeft, FaChevronRight, FaCheck, FaBars, FaTimes } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight, FaCheck, FaBars, FaTimes, FaClipboardCheck } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
 const CourseViewer = () => {
@@ -43,8 +43,16 @@ const CourseViewer = () => {
             setCurrentModuleIndex(prev => prev + 1);
             setCurrentLessonIndex(0);
         } else {
-            toast.success("Course Completed!");
-            navigate('/dashboard');
+            // End of course
+            if (course.quizId) {
+                toast.success("All lessons completed! Redirecting to assessment...");
+                setTimeout(() => {
+                    navigate(`/courses/${id}/assessment`);
+                }, 1500);
+            } else {
+                toast.success("Course Completed!");
+                navigate('/dashboard');
+            }
         }
     };
 
@@ -92,6 +100,20 @@ const CourseViewer = () => {
                             ))}
                         </div>
                     ))}
+                    {course.quizId && (
+                        <div className="mt-4 border-t border-slate-700 pt-4">
+                            <div className="px-4 py-2 bg-indigo-900/40 text-xs uppercase tracking-wider text-indigo-400 font-semibold">
+                                Final Assessment
+                            </div>
+                            <button
+                                onClick={() => navigate(`/courses/${id}/assessment`)}
+                                className="w-full text-left px-4 py-3 text-sm transition-all duration-200 border-l-4 border-transparent text-gray-300 hover:bg-slate-800 hover:text-white flex items-center gap-2"
+                            >
+                                <FaClipboardCheck className="text-indigo-400" />
+                                Take Assessment
+                            </button>
+                        </div>
+                    )}
                 </div>
             </motion.div>
 
