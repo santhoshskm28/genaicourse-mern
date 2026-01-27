@@ -10,7 +10,8 @@ import {
     updateCourse,
     deleteCourse,
     uploadCourseFromJSON,
-    getDashboardStats
+    getDashboardStats,
+    getCourseEnrollments
 } from '../controllers/adminController.js';
 
 import { protect, authorize } from '../middleware/auth.js';
@@ -45,6 +46,7 @@ router.get('/courses/:id', getCourse);
 router.post('/courses', createCourse);
 router.put('/courses/:id', updateCourse);
 router.delete('/courses/:id', deleteCourse);
+router.get('/courses/:id/enrollments', getCourseEnrollments);
 
 
 

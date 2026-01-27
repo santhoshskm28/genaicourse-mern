@@ -4,6 +4,8 @@ import { Clock, CheckCircle, XCircle, Award, AlertCircle, RefreshCw, ChevronLeft
 import { motion, AnimatePresence } from 'framer-motion';
 import assessmentService from '../../services/assessmentService.js';
 import certificateService from '../../services/certificateService.js';
+import courseService from '../../services/courseService.js';
+import { toast } from 'react-toastify';
 
 const AssessmentCenter = () => {
   const { id: courseId } = useParams(); // changed from courseId to id to match App.jsx route param if needed, but route says :id? No, usually it's best to match. Let's assume route will be /courses/:id/assessment
@@ -32,9 +34,17 @@ const AssessmentCenter = () => {
     }
   }, [timeRemaining, showResults]);
 
-  const loadAssessment = async () => {
+const loadAssessment = async () => {
     try {
       setLoading(true);
+      
+      // Check course completion first
+      const completionStatus = await courseService.checkCourseCompletion(courseId);
+      if (!completionStatus.data.allLessonsCompleted) {
+        setError('Please complete all lessons before taking the assessment.');
+        return;
+      }
+      
       const data = await assessmentService.getAssessment(courseId);
       setAssessment(data);
       setTimeRemaining(data.timeLimit * 60); // Convert minutes to seconds
@@ -282,20 +292,33 @@ const AssessmentResults = ({ results, courseId }) => {
   const navigate = useNavigate();
   const [downloadingCert, setDownloadingCert] = useState(false);
 
-  const handleDownloadCertificate = async () => {
+const handleDownloadCertificate = async () => {
     try {
       setDownloadingCert(true);
       await certificateService.downloadCertificate(results.certificate.id);
+      toast.success('Certificate downloaded successfully!');
     } catch (error) {
       console.error('Failed to download certificate:', error);
+      toast.error('Failed to download certificate');
     } finally {
       setDownloadingCert(false);
     }
   };
 
-  const handleRetakeAssessment = () => {
-    // Force reload or state reset - simpler to just reload page for now or navigate
-    window.location.reload();
+const handleRetakeAssessment = async () => {
+    try {
+      setLoading(true);
+      // Reset state and reload assessment
+      setShowResults(false);
+      setResults(null);
+      setCurrentQuestion(0);
+      setAnswers([]);
+      await loadAssessment();
+      toast.info('Assessment reset. Good luck!');
+    } catch (error) {
+      toast.error('Failed to retake assessment');
+      setLoading(false);
+    }
   };
 
   return (
@@ -384,13 +407,13 @@ const AssessmentResults = ({ results, courseId }) => {
               </button>
             ) : null}
 
-            {!results.attempt.passed && results.nextAttemptAvailable && (
+{!results.attempt.passed && (
               <button
                 onClick={handleRetakeAssessment}
                 className="btn bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-xl flex items-center justify-center gap-2"
               >
                 <RefreshCw className="w-5 h-5" />
-                Retake Assessment
+                Try Again
               </button>
             )}
 

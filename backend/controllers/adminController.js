@@ -397,6 +397,27 @@ export const uploadCourseFromJSON = async (req, res, next) => {
     }
 };
 
+/**
+ * @desc    Get all students enrolled in a specific course (Admin only)
+ * @route   GET /api/admin/courses/:id/enrollments
+ * @access  Private/Admin
+ */
+export const getCourseEnrollments = async (req, res, next) => {
+    try {
+        const enrollments = await UserProgress.find({ courseId: req.params.id })
+            .populate('userId', 'name email profile.avatar')
+            .sort({ enrolledAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            count: enrollments.length,
+            data: enrollments
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export default {
     getAllUsers,
     getUserById,
@@ -408,5 +429,6 @@ export default {
     updateCourse,
     deleteCourse,
     uploadCourseFromJSON,
-    getDashboardStats
+    getDashboardStats,
+    getCourseEnrollments
 };

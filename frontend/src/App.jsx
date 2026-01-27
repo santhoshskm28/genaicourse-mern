@@ -30,6 +30,7 @@ import AssessmentCenter from './components/assessment/AssessmentCenter';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import CourseForm from './pages/admin/CourseForm';
 import AdminJSONUpload from './pages/admin/AdminJSONUpload';
+import AdminCourseEnrollments from './pages/admin/AdminCourseEnrollments';
 
 
 
@@ -71,6 +72,7 @@ const App = () => {
                                 <Route path="/admin/courses/new" element={<CourseForm />} />
                                 <Route path="/admin/courses/json" element={<AdminJSONUpload />} />
                                 <Route path="/admin/courses/:id/edit" element={<CourseForm isEditing={true} />} />
+                                <Route path="/admin/courses/:id/enrollments" element={<AdminCourseEnrollments />} />
                             </Route>
                         </Routes>
                     </main>

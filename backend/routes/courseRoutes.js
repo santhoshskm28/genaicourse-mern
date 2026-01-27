@@ -27,6 +27,8 @@ const router = express.Router();
 
 // Public routes
 router.get('/', getCourses);
+// /enrolled must be before /:id so "enrolled" is not matched as course id
+router.get('/enrolled', protect, getEnrolledCourses);
 router.get('/:id', getCourse);
 
 // Protected routes (User)
@@ -36,7 +38,6 @@ router.put('/:id/progress', protect, updateCourseProgress);
 
 // Protected routes (User)
 router.post('/:id/reviews', protect, addReview);
-router.get('/enrolled', protect, getEnrolledCourses);
 router.post('/:id/bookmarks', protect, addBookmark);
 router.get('/:id/bookmarks', protect, getBookmarks);
 router.post('/:id/notes', protect, addNote);

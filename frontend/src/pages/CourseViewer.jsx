@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import courseService from '../services/courseService.js';
 import Loader from '../components/common/Loader.jsx';
-import { FaChevronLeft, FaChevronRight, FaCheck, FaBars, FaTimes, FaClipboardCheck } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight, FaCheck, FaBars, FaTimes, FaClipboardCheck, FaPlayCircle } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
 const CourseViewer = () => {
@@ -15,19 +15,33 @@ const CourseViewer = () => {
     const [currentModuleIndex, setCurrentModuleIndex] = useState(0);
     const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
     const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [progress, setProgress] = useState(null);
+    const [completedLessons, setCompletedLessons] = useState(new Set());
 
-    useEffect(() => {
-        const fetchCourse = async () => {
+useEffect(() => {
+        const fetchCourseData = async () => {
             try {
-                const { data } = await courseService.getCourse(id);
-                setCourse(data);
+                const [courseData, progressData] = await Promise.all([
+                    courseService.getCourse(id),
+                    courseService.getCourseProgress(id).catch(() => null)
+                ]);
+                setCourse(courseData.data);
+                
+                if (progressData?.data) {
+                    setProgress(progressData.data);
+                    const completed = new Set();
+                    progressData.data.completedLessons?.forEach(lesson => {
+                        completed.add(String(lesson.lessonId));
+                    });
+                    setCompletedLessons(completed);
+                }
             } catch (error) {
                 toast.error("Failed to load course");
             } finally {
                 setLoading(false);
             }
         };
-        fetchCourse();
+        fetchCourseData();
     }, [id]);
 
     if (loading) return <Loader />;
@@ -36,22 +50,47 @@ const CourseViewer = () => {
     const currentModule = course.modules[currentModuleIndex];
     const currentLesson = currentModule?.lessons[currentLessonIndex];
 
-    const handleNext = () => {
+const markCurrentLessonComplete = async () => {
+        try {
+            const lessonId = currentLesson._id || currentLesson.id;
+            const moduleId = currentModule._id || currentModule.id;
+            await courseService.markLessonComplete(id, moduleId, lessonId);
+
+            setCompletedLessons(prev => new Set([...prev, String(lessonId)]));
+            toast.success("Lesson completed!");
+        } catch (error) {
+            console.error('Failed to mark lesson complete:', error);
+            toast.error('Could not save progress. Make sure you are enrolled.');
+        }
+    };
+
+    const handleNext = async () => {
+        // Mark current lesson as complete
+        const lessonId = currentLesson._id || currentLesson.id;
+        if (!completedLessons.has(String(lessonId))) {
+            await markCurrentLessonComplete();
+        }
+
         if (currentLessonIndex < currentModule.lessons.length - 1) {
             setCurrentLessonIndex(prev => prev + 1);
         } else if (currentModuleIndex < course.modules.length - 1) {
             setCurrentModuleIndex(prev => prev + 1);
             setCurrentLessonIndex(0);
         } else {
-            // End of course
-            if (course.quizId) {
-                toast.success("All lessons completed! Redirecting to assessment...");
-                setTimeout(() => {
-                    navigate(`/courses/${id}/assessment`);
-                }, 1500);
+            // End of course - check if all lessons are completed
+            const totalLessons = course.modules.reduce((acc, mod) => acc + mod.lessons.length, 0);
+            if (completedLessons.size + 1 >= totalLessons) {
+                if (course.quizId) {
+                    toast.success("All lessons completed! Redirecting to assessment...");
+                    setTimeout(() => {
+                        navigate(`/courses/${id}/assessment`);
+                    }, 1500);
+                } else {
+                    toast.success("Course Completed!");
+                    navigate('/dashboard');
+                }
             } else {
-                toast.success("Course Completed!");
-                navigate('/dashboard');
+                toast.info("Please complete all lessons before taking the assessment.");
             }
         }
     };
@@ -83,21 +122,32 @@ const CourseViewer = () => {
                             <div className="px-4 py-2 bg-slate-800/50 text-xs uppercase tracking-wider text-gray-400 font-semibold">
                                 Module {mIdx + 1}
                             </div>
-                            {mod.lessons.map((less, lIdx) => (
-                                <button
-                                    key={less._id}
-                                    onClick={() => {
-                                        setCurrentModuleIndex(mIdx);
-                                        setCurrentLessonIndex(lIdx);
-                                    }}
-                                    className={`w-full text-left px-4 py-3 text-sm transition-all duration-200 border-l-4 ${mIdx === currentModuleIndex && lIdx === currentLessonIndex
-                                        ? 'bg-primary/10 border-primary text-white'
-                                        : 'border-transparent text-gray-400 hover:bg-slate-800'
-                                        }`}
-                                >
-                                    {less.title}
-                                </button>
-                            ))}
+{mod.lessons.map((less, lIdx) => {
+                                const lessonId = less._id || less.id;
+                                const isCompleted = completedLessons.has(String(lessonId));
+                                const isCurrent = mIdx === currentModuleIndex && lIdx === currentLessonIndex;
+                                
+                                return (
+                                    <button
+                                        key={lessonId}
+                                        onClick={() => {
+                                            setCurrentModuleIndex(mIdx);
+                                            setCurrentLessonIndex(lIdx);
+                                        }}
+                                        className={`w-full text-left px-4 py-3 text-sm transition-all duration-200 border-l-4 flex items-center justify-between group ${isCurrent
+                                            ? 'bg-primary/10 border-primary text-white'
+                                            : 'border-transparent text-gray-400 hover:bg-slate-800 hover:text-white'
+                                            }`}
+                                    >
+                                        <span className="flex-1 truncate">{less.title}</span>
+                                        {isCompleted ? (
+                                            <FaCheck className="text-emerald-400 text-xs" />
+                                        ) : (
+                                            <FaPlayCircle className="text-gray-600 text-xs opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        )}
+                                    </button>
+                                );
+                            })}
                         </div>
                     ))}
                     {course.quizId && (
@@ -119,13 +169,20 @@ const CourseViewer = () => {
 
             {/* Main Content */}
             <div className="flex-1 flex flex-col h-full relative z-10">
-                {/* Top Navigation */}
+{/* Top Navigation */}
                 <div className="glass-header h-16 flex items-center justify-between px-6">
                     <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-gray-400 hover:text-white">
                         <FaBars size={20} />
                     </button>
-                    <div className="text-sm text-gray-400">
-                        {currentLessonIndex + 1} / {currentModule.lessons.length}
+                    <div className="flex items-center gap-4">
+                        <div className="text-sm text-gray-400">
+                            {currentLessonIndex + 1} / {currentModule.lessons.length}
+                        </div>
+                        {progress && (
+                            <div className="text-sm text-gray-400">
+                                Progress: {Math.round((completedLessons.size / course.modules.reduce((acc, mod) => acc + mod.lessons.length, 0)) * 100)}%
+                            </div>
+                        )}
                     </div>
                 </div>
 

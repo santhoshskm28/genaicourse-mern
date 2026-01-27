@@ -20,6 +20,21 @@ const courseService = {
   updateCourseProgress: async (id, progressData) => {
     const response = await api.put(`/courses/${id}/progress`, progressData);
     return response.data;
+  },
+  markLessonComplete: async (courseId, moduleId, lessonId) => {
+    const response = await api.put(`/courses/${courseId}/progress`, {
+      moduleId,
+      lessonId
+    });
+    return response.data;
+  },
+  getEnrolledCourses: async () => {
+    const response = await api.get('/courses/enrolled');
+    return response.data;
+  },
+  checkCourseCompletion: async (courseId) => {
+    const response = await api.get(`/courses/${courseId}/completion-status`);
+    return response.data;
   }
 };
 

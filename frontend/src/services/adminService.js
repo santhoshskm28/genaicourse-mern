@@ -66,6 +66,12 @@ const adminService = {
         return response.data;
     },
 
+    // Get course enrollments
+    getCourseEnrollments: async (id) => {
+        const response = await api.get(`/admin/courses/${id}/enrollments`);
+        return response.data;
+    },
+
     // Get quiz by ID
     getQuiz: async (id) => {
         const response = await api.get(`/quizzes/${id}`);

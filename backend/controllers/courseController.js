@@ -262,9 +262,10 @@ export const getCourseProgress = async (req, res, next) => {
         }).populate('courseId', 'title modules');
 
         if (!progress) {
-            return res.status(404).json({
-                success: false,
-                message: 'You are not enrolled in this course'
+            return res.status(200).json({
+                success: true,
+                data: null,
+                message: 'Not enrolled in this course'
             });
         }
 
@@ -291,11 +292,24 @@ export const updateCourseProgress = async (req, res, next) => {
             courseId: req.params.id
         });
 
+        // Auto-enroll if not yet enrolled (e.g. user opened /learn without enrolling)
         if (!progress) {
-            return res.status(404).json({
-                success: false,
-                message: 'You are not enrolled in this course'
+            const courseToEnroll = await Course.findById(req.params.id);
+            if (!courseToEnroll) {
+                return res.status(404).json({ success: false, message: 'Course not found' });
+            }
+            if (!courseToEnroll.isPublished) {
+                return res.status(400).json({ success: false, message: 'Course is not available' });
+            }
+            progress = await UserProgress.create({
+                userId: req.user._id,
+                courseId: req.params.id
             });
+            const user = await User.findById(req.user._id);
+            user.enrollInCourse(req.params.id);
+            await user.save();
+            courseToEnroll.enrollmentCount += 1;
+            await courseToEnroll.save();
         }
 
         // Add completed lesson if provided

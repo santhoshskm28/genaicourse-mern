@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import adminService from '../../services/adminService.js';
 import Loader from '../../components/common/Loader.jsx';
 import AdminAssessmentManager from './AdminAssessmentManager.jsx';
-import { FaUser, FaBook, FaPlus, FaTrash, FaEdit, FaChartLine, FaGraduationCap, FaClipboardList } from 'react-icons/fa';
+import { FaUser, FaBook, FaPlus, FaTrash, FaEdit, FaChartLine, FaGraduationCap, FaClipboardList, FaUsers } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
 const AdminDashboard = () => {
@@ -290,6 +290,13 @@ const AdminDashboard = () => {
                                                         </td>
                                                         <td className="px-6 py-4">
                                                             <div className="flex justify-end gap-2">
+                                                                <button
+                                                                    onClick={() => navigate(`/admin/courses/${course._id || course.id}/enrollments`)}
+                                                                    className="p-2 text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-colors"
+                                                                    title="View Enrollments"
+                                                                >
+                                                                    <FaUsers />
+                                                                </button>
                                                                 <button
                                                                     onClick={() => navigate(`/admin/courses/${course._id || course.id}/edit`)}
                                                                     className="p-2 text-indigo-400 hover:bg-indigo-500/10 rounded-lg transition-colors"

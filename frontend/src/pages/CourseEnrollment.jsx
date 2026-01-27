@@ -29,7 +29,7 @@ const CourseEnrollment = () => {
         fetchCourse();
     }, [id]);
 
-    const handleEnroll = async () => {
+const handleEnroll = async () => {
         if (!isAuthenticated) {
             toast.info('Please login to enroll');
             return;
@@ -39,18 +39,18 @@ const CourseEnrollment = () => {
         try {
             await courseService.enrollCourse(id);
             toast.success('Successfully enrolled in course!');
-            window.location.reload(); // Reload to update enrollment status
+            // Navigate directly to course viewer after enrollment
+            window.location.href = `/courses/${id}/learn`;
         } catch (error) {
             setEnrolling(false);
             toast.error(error.response?.data?.message || 'Enrollment failed');
         }
     };
 
-    const handleStartLearning = () => {
+const handleStartLearning = () => {
         if (course?.modules?.length > 0 && course.modules[0].lessons?.length > 0) {
-            const firstLesson = course.modules[0].lessons[0];
-            const lessonId = firstLesson._id || firstLesson.id;
-            window.location.href = `/courses/${id}/lessons/${lessonId}`;
+            // Navigate to course viewer instead of specific lesson
+            window.location.href = `/courses/${id}/learn`;
         } else {
             toast.error('No lessons available');
         }
