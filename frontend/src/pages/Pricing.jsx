@@ -6,68 +6,68 @@ import { FaCheck, FaStar, FaCrown, FaRocket } from 'react-icons/fa';
 const Pricing = () => {
     const plans = [
         {
-            name: 'Free',
+            name: 'Initiate',
             price: '$0',
             period: 'forever',
-            description: 'Perfect for trying out our platform',
+            description: 'Begin your neural synchronization',
             features: [
-                'Access to 3 free courses',
-                'Basic course materials',
-                'Community forum access',
-                'Progress tracking',
-                'Certificate of completion'
+                'Access to 3 base modules',
+                'Core data materials',
+                'General community terminal',
+                'Basic sync tracking',
+                'Standard certification'
             ],
             limitations: [
-                'Limited course selection',
-                'No premium support',
-                'Basic learning paths'
+                'Limited clearance levels',
+                'No priority uplift',
+                'Basic neural paths'
             ],
-            buttonText: 'Get Started Free',
+            buttonText: 'Initialize Sync',
             buttonVariant: 'secondary',
             icon: <FaStar className="text-yellow-500" />,
             popular: false
         },
         {
-            name: 'Pro',
+            name: 'Specialist',
             price: '$29',
             period: 'per month',
-            description: 'Ideal for serious learners and professionals',
+            description: 'Advanced data for serious engineers',
             features: [
-                'Access to all courses',
-                'Advanced course materials',
-                'Priority support',
-                'Custom learning paths',
-                'Downloadable resources',
-                'Advanced progress analytics',
-                'Offline access',
-                'Certificate of completion',
-                'Monthly live sessions'
+                'Full academy access',
+                'Advanced neural materials',
+                'Priority uplift support',
+                'Custom learning matrices',
+                'Quantifiable data resources',
+                'Real-time sync analytics',
+                'Offline node access',
+                'Verified certification',
+                'Live mentor synchronization'
             ],
             limitations: [],
-            buttonText: 'Start Pro Trial',
+            buttonText: 'Uplift to Specialist',
             buttonVariant: 'primary',
-            icon: <FaCrown className="text-purple-500" />,
+            icon: <FaCrown className="text-purple-500 shadow-[0_0_20px_rgba(168,85,247,0.5)]" />,
             popular: true
         },
         {
             name: 'Enterprise',
             price: '$99',
             period: 'per month',
-            description: 'Complete solution for teams and organizations',
+            description: 'Full-court solutions for neural teams',
             features: [
-                'Everything in Pro',
-                'Unlimited team members',
-                'Custom course creation',
-                'Advanced analytics dashboard',
-                'API access',
-                'White-label solution',
-                'Dedicated account manager',
-                'Custom integrations',
-                'Priority phone support',
-                'SLA guarantee'
+                'Everything in Specialist',
+                'Unlimited team nodes',
+                'Private module creation',
+                'Global nexus dashboard',
+                'Full API clearance',
+                'White-label synchronization',
+                'Dedicated neural manager',
+                'Custom system integrations',
+                'High-priority signal help',
+                'Uptime SLA protocol'
             ],
             limitations: [],
-            buttonText: 'Contact Sales',
+            buttonText: 'Contact Command',
             buttonVariant: 'secondary',
             icon: <FaRocket className="text-blue-500" />,
             popular: false
@@ -75,73 +75,84 @@ const Pricing = () => {
     ];
 
     return (
-        <div className="section min-h-screen bg-slate-900">
+        <div className="section section-pt bg-slate-950 min-h-screen">
             <div className="container">
                 {/* Hero Section */}
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className="text-center mb-16"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.8 }}
+                    className="text-center mb-24"
                 >
-                    <h1 className="text-5xl md:text-7xl font-black mb-6">
-                        Simple, Transparent <span className="text-gradient">Pricing</span>
+                    <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="inline-block px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] font-black uppercase tracking-[0.3em] mb-6"
+                    >
+                        Access Clearance Plans
+                    </motion.div>
+                    <h1 className="text-6xl md:text-8xl font-black mb-8 tracking-tighter leading-tight">
+                        Power Your <br />
+                        <span className="text-gradient">Potential</span>
                     </h1>
-                    <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-                        Choose the perfect plan for your learning journey. No hidden fees, no surprises.
+                    <p className="text-xl text-slate-400 max-w-2xl mx-auto font-medium leading-relaxed">
+                        Select your synchronization level and gain access to the infinite knowledge of the GenAI Nexus.
                     </p>
                 </motion.div>
 
                 {/* Pricing Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 mb-32 items-stretch">
                     {plans.map((plan, index) => (
                         <motion.div
                             key={plan.name}
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6, delay: index * 0.1 }}
-                            className={`relative card p-8 bg-slate-800 border-none ${plan.popular ? 'ring-2 ring-primary shadow-2xl scale-105' : ''
-                                }`}
+                            transition={{ duration: 0.6, delay: index * 0.15 }}
+                            className={`glass-card p-10 flex flex-col group relative ${plan.popular ? 'border-indigo-500/30' : ''}`}
                         >
                             {plan.popular && (
-                                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                                    <span className="bg-primary text-white px-4 py-2 rounded-full text-sm font-bold">
+                                <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
+                                    <span className="bg-gradient-to-r from-indigo-500 to-fuchsia-500 text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-indigo-500/20">
                                         Most Popular
                                     </span>
                                 </div>
                             )}
 
-                            <div className="text-center mb-6">
-                                <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                            <div className="mb-10 block">
+                                <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center text-3xl mb-8 group-hover:scale-110 transition-transform duration-500">
                                     {plan.icon}
                                 </div>
-                                <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                                <div className="mb-2">
-                                    <span className="text-4xl font-black">{plan.price}</span>
-                                    <span className="text-gray-400">/{plan.period}</span>
+                                <h3 className="text-3xl font-black text-white mb-2">{plan.name}</h3>
+                                <div className="flex items-baseline gap-1 mb-4">
+                                    <span className="text-5xl font-black text-white tracking-tighter">{plan.price}</span>
+                                    <span className="text-slate-500 font-bold uppercase text-[10px] tracking-widest">{plan.price !== '$0' ? ` / ${plan.period}` : ' free'}</span>
                                 </div>
-                                <p className="text-gray-400 text-sm">{plan.description}</p>
+                                <p className="text-slate-400 text-sm font-medium leading-relaxed">{plan.description}</p>
                             </div>
 
-                            <div className="space-y-4 mb-8">
+                            <div className="space-y-4 mb-12 flex-1">
                                 {plan.features.map((feature, featureIndex) => (
-                                    <div key={featureIndex} className="flex items-center gap-3">
-                                        <FaCheck className="text-green-500 flex-shrink-0" />
-                                        <span className="text-sm">{feature}</span>
+                                    <div key={featureIndex} className="flex items-center gap-4">
+                                        <div className="w-5 h-5 rounded-md bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
+                                            <FaCheck className="text-emerald-500 text-[10px]" />
+                                        </div>
+                                        <span className="text-sm text-slate-300 font-medium">{feature}</span>
                                     </div>
                                 ))}
                                 {plan.limitations.map((limitation, limitationIndex) => (
-                                    <div key={limitationIndex} className="flex items-center gap-3">
-                                        <span className="text-red-500 flex-shrink-0">✗</span>
-                                        <span className="text-sm text-gray-500">{limitation}</span>
+                                    <div key={limitationIndex} className="flex items-center gap-4 opacity-40">
+                                        <div className="w-5 h-5 rounded-md bg-slate-500/10 flex items-center justify-center flex-shrink-0">
+                                            <span className="text-slate-500 text-xs font-black">×</span>
+                                        </div>
+                                        <span className="text-sm text-slate-500 font-medium">{limitation}</span>
                                     </div>
                                 ))}
                             </div>
 
                             <Link
                                 to={plan.name === 'Enterprise' ? '/contact' : '/register'}
-                                className={`btn ${plan.buttonVariant === 'primary' ? 'btn-primary' : 'btn-secondary'
-                                    } w-full text-center`}
+                                className={`btn-premium w-full !py-4 ${plan.buttonVariant === 'primary' ? 'btn-primary-gradient' : 'btn-outline-glass'
+                                    }`}
                             >
                                 {plan.buttonText}
                             </Link>
@@ -149,51 +160,35 @@ const Pricing = () => {
                     ))}
                 </div>
 
-                {/* FAQ Section */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
-                    className="text-center"
-                >
-                    <h2 className="text-3xl font-bold mb-8">Frequently Asked Questions</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                        <div className="text-left">
-                            <h3 className="text-lg font-semibold mb-2">Can I change plans anytime?</h3>
-                            <p className="text-gray-400 text-sm">Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately.</p>
-                        </div>
-                        <div className="text-left">
-                            <h3 className="text-lg font-semibold mb-2">Do you offer refunds?</h3>
-                            <p className="text-gray-400 text-sm">We offer a 30-day money-back guarantee for Pro and Enterprise plans.</p>
-                        </div>
-                        <div className="text-left">
-                            <h3 className="text-lg font-semibold mb-2">Is there a free trial?</h3>
-                            <p className="text-gray-400 text-sm">Yes, Pro plan comes with a 14-day free trial. No credit card required.</p>
-                        </div>
-                        <div className="text-left">
-                            <h3 className="text-lg font-semibold mb-2">What payment methods do you accept?</h3>
-                            <p className="text-gray-400 text-sm">We accept all major credit cards, PayPal, and bank transfers for Enterprise plans.</p>
-                        </div>
+                {/* FAQ Block */}
+                <div className="py-32 border-t border-white/5">
+                    <div className="text-center mb-20">
+                        <h2 className="text-4xl font-black text-white mb-4">Neural Query Lab</h2>
+                        <p className="text-slate-500 font-bold uppercase tracking-widest text-xs font-heading">Commonly Synchronized Queries</p>
                     </div>
-                </motion.div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-5xl mx-auto">
+                        <FAQItem question="Can I modify clearange levels?" answer="Synchronizations can be reconfigured at any point. Changes optimize instantly to your matrix." />
+                        <FAQItem question="Protocol for data reversals?" answer="A 30-day neural reversal window is active for Specialist and Enterprise nodes." />
+                        <FAQItem question="Simulated training access?" answer="Initiate clearance provides 14 cycles of simulation before permanent node binding." />
+                        <FAQItem question="Global credit clearance?" answer="Academy accepts all primary credit arrays and encrypted Specialist transfers." />
+                    </div>
+                </div>
 
-                {/* CTA Section */}
+                {/* Bottom Hub */}
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
-                    className="text-center mt-16 p-8 bg-slate-800/50 rounded-lg border border-slate-700"
+                    className="glass-card p-16 text-center border-indigo-500/20 bg-indigo-500/5"
                 >
-                    <h2 className="text-2xl font-bold mb-4">Ready to Start Learning?</h2>
-                    <p className="text-gray-400 mb-6">Join thousands of learners who are advancing their careers with GenAI Course.</p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Link to="/register" className="btn btn-primary">
-                            Start Free Trial
+                    <h2 className="text-4xl font-black text-white mb-6">Forge Your Career Hub</h2>
+                    <p className="text-slate-400 mb-10 max-w-2xl mx-auto font-medium">Join 12,000+ engineers currently synchronizing with the Nexus. The future of intelligence is decentralized.</p>
+                    <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                        <Link to="/register" className="btn-premium btn-primary-gradient !px-12">
+                            Initialize Free Node
                         </Link>
-                        <Link to="/courses" className="btn btn-secondary">
-                            Browse Courses
+                        <Link to="/courses" className="btn-premium btn-outline-glass !px-12">
+                            Explore Neural Layers
                         </Link>
                     </div>
                 </motion.div>
@@ -201,5 +196,12 @@ const Pricing = () => {
         </div>
     );
 };
+
+const FAQItem = ({ question, answer }) => (
+    <div className="group">
+        <h3 className="text-lg font-bold text-white mb-3 group-hover:text-indigo-400 transition-colors uppercase tracking-tight">{question}</h3>
+        <p className="text-slate-400 text-sm font-medium leading-relaxed">{answer}</p>
+    </div>
+);
 
 export default Pricing;

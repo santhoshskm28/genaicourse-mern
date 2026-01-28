@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaRocket, FaCode, FaBrain, FaChevronRight, FaPlay, FaShieldAlt, FaGlobalAsia } from 'react-icons/fa';
+import { FaRocket, FaCode, FaBrain, FaChevronRight, FaPlay, FaShieldAlt, FaGlobeAsia } from 'react-icons/fa';
 
 const Home = () => {
     return (
@@ -110,7 +110,7 @@ const Home = () => {
                     <h2 className="text-slate-500 font-bold uppercase tracking-[0.3em] text-sm mb-12">Trusted by innovate teams</h2>
                     <div className="flex flex-wrap justify-center gap-12 md:gap-24 opacity-30 grayscale contrast-125">
                         <FaShieldAlt className="text-5xl" />
-                        <FaGlobalAsia className="text-5xl" />
+                        <FaGlobeAsia className="text-5xl" />
                         <FaCode className="text-5xl" />
                         <FaBrain className="text-5xl" />
                     </div>

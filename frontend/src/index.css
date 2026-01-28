@@ -1,8 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
   /* Ultra-Modern Premium Palette */
@@ -22,10 +22,9 @@
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
 
+  --shadow-premium: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   --glass-border: rgba(255, 255, 255, 0.05);
   --glass-highlight: rgba(255, 255, 255, 0.03);
-
-  --shadow-premium: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 * {
@@ -72,18 +71,28 @@ h4,
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
 
+  /* Core Layout */
+  .section {
+    @apply py-24 md:py-32 relative overflow-hidden;
+  }
+
+  .section-pt {
+    @apply pt-32 md:pt-40;
+  }
+
   /* Stunning Typography */
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-sky-400 to-fuchsia-400;
   }
 
   .title-hero {
-    @apply text-5xl md:text-7xl lg:text-8xl font-black tracking-tight leading-tight mb-6;
+    @apply text-5xl md:text-7xl lg:text-9xl font-black tracking-tighter leading-[0.9] mb-6;
   }
 
   /* Premium Cards & Glassmorphism */
   .glass-card {
-    @apply bg-slate-900/40 backdrop-blur-xl border border-white/5 shadow-premium rounded-3xl overflow-hidden hover:bg-slate-900/50 hover:border-white/10 transition-all duration-500;
+    @apply bg-slate-950/40 backdrop-blur-xl border border-white/5 shadow-2xl rounded-3xl overflow-hidden hover:bg-slate-950/50 hover:border-white/10 transition-all duration-500;
+    box-shadow: var(--shadow-premium);
   }
 
   .interactive-glow {
@@ -110,7 +119,7 @@ h4,
 
   /* Smooth Inputs */
   .input-premium {
-    @apply w-full bg-slate-900/40 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all text-white placeholder:text-slate-500;
+    @apply w-full bg-slate-950/40 border border-white/10 rounded-2xl px-5 py-4 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all text-white placeholder:text-slate-500;
   }
 }
 
