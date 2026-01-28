@@ -16,8 +16,9 @@ const CertificateViewer = ({ certificateId, onClose }) => {
   const loadCertificate = async () => {
     try {
       setLoading(true);
-      const data = await certificateService.getCertificateDetails(certificateId);
-      setCertificate(data);
+      const response = await certificateService.getCertificateDetails(certificateId);
+      // Handle both direct object and nested data structure
+      setCertificate(response.data || response);
     } catch (error) {
       console.error('Failed to load certificate:', error);
     } finally {
@@ -56,7 +57,6 @@ const CertificateViewer = ({ certificateId, onClose }) => {
   const handlePreview = async () => {
     try {
       setPreviewMode(true);
-      // You could implement a modal preview here
     } catch (error) {
       console.error('Failed to preview certificate:', error);
     }
@@ -223,7 +223,34 @@ const CertificateViewer = ({ certificateId, onClose }) => {
             <span>{downloading ? 'Downloading...' : 'Download PDF'}</span>
           </button>
         </div>
-      </div>
+</div>
+
+      {/* Preview Modal */}
+      {previewMode && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-6xl w-full max-h-[90vh] overflow-hidden">
+            <div className="flex justify-between items-center p-4 border-b">
+              <h3 className="text-lg font-semibold">Certificate Preview</h3>
+              <button
+                onClick={() => setPreviewMode(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="p-4 overflow-auto" style={{ maxHeight: 'calc(90vh - 80px)' }}>
+              <iframe
+                src={`/api/certificates/${certificateId}/preview`}
+                className="w-full h-full border-0"
+                style={{ minHeight: '600px' }}
+                title="Certificate Preview"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

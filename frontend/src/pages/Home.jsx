@@ -1,74 +1,148 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { FaRocket, FaCode, FaBrain, FaChevronRight, FaPlay, FaShieldAlt, FaGlobalAsia } from 'react-icons/fa';
 
 const Home = () => {
     return (
-        <div className="min-h-screen">
+        <div className="min-h-screen relative">
+            {/* Background Decorations */}
+            <div className="fixed inset-0 overflow-hidden -z-10 pointer-events-none">
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500/10 blur-[120px] rounded-full animate-float" />
+                <div className="absolute bottom-[20%] right-[-5%] w-[30%] h-[50%] bg-fuchsia-500/10 blur-[150px] rounded-full" />
+            </div>
+
             {/* Hero Section */}
-            <section className="relative pt-32 pb-20 overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-full -z-10">
-                    <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-primary opacity-20 blur-[100px]" />
-                    <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-secondary opacity-10 blur-[120px]" />
+            <section className="relative pt-48 pb-32 overflow-hidden">
+                <div className="container relative z-10">
+                    <div className="max-w-4xl mx-auto text-center">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.5 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.5 }}
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-indigo-400 text-xs font-bold uppercase tracking-widest mb-8"
+                        >
+                            <span className="flex h-2 w-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                            Revolutionizing AI Education
+                        </motion.div>
+
+                        <motion.h1
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, ease: "easeOut" }}
+                            className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[0.9] mb-8"
+                        >
+                            Future of <br />
+                            <span className="text-gradient">Intelligent</span> Learning
+                        </motion.h1>
+
+                        <motion.p
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
+                            className="text-xl md:text-2xl text-slate-400 mb-12 max-w-2xl mx-auto font-medium leading-relaxed"
+                        >
+                            Master Generative AI, LLMs, and Prompt Engineering on the world's most advanced learning platform.
+                        </motion.p>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.4 }}
+                            className="flex flex-col sm:flex-row justify-center gap-6"
+                        >
+                            <Link to="/courses" className="btn-premium btn-primary-gradient group">
+                                Explore Courses
+                                <FaChevronRight className="group-hover:translate-x-1 transition-transform" />
+                            </Link>
+                            <Link to="/register" className="btn-premium btn-outline-glass group">
+                                <FaPlay className="text-[10px] text-indigo-400" />
+                                Start Learning Free
+                            </Link>
+                        </motion.div>
+                    </div>
                 </div>
 
-                <div className="container text-center">
-                    <motion.h1
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                        className="text-6xl md:text-8xl font-black mb-6 tracking-tight"
-                    >
-                        Master <span className="text-gradient">GenAI</span>
-                    </motion.h1>
+                {/* Floating Elements Animation */}
+                <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/5 to-transparent -rotate-12"></div>
+            </section>
 
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
-                        className="text-xl md:text-2xl text-gray-400 mb-10 max-w-2xl mx-auto font-light"
-                    >
-                        The ultimate platform to learn Large Language Models, Prompt Engineering, and AI Development.
-                    </motion.p>
-
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.5, delay: 0.4 }}
-                        className="flex justify-center gap-6"
-                    >
-                        <Link to="/courses" className="btn btn-primary text-lg px-8 py-4">
-                            Start Learning
-                        </Link>
-                        <Link to="/register" className="btn btn-secondary text-lg px-8 py-4">
-                            Get Started Free
-                        </Link>
-                    </motion.div>
+            {/* Feature Grid */}
+            <section className="py-32 relative">
+                <div className="container">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <FeatureCard
+                            icon={<FaBrain className="text-indigo-400" />}
+                            title="AI-Powered Learning"
+                            desc="personalized learning paths generated by state-of-the-art LLMs for maximum retention."
+                            delay={0.1}
+                        />
+                        <FeatureCard
+                            icon={<FaCode className="text-blue-400" />}
+                            title="Hands-on Lab"
+                            desc="Real-world prompt engineering labs and AI development environments in your browser."
+                            delay={0.2}
+                        />
+                        <FeatureCard
+                            icon={<FaRocket className="text-fuchsia-400" />}
+                            title="Career Growth"
+                            desc="Get certified and join the top 1% of developers working on Generative AI solutions."
+                            delay={0.3}
+                        />
+                    </div>
                 </div>
             </section>
 
-            {/* Stats Section */}
-            <section className="py-20 border-y border-slate-800 bg-slate-900/50">
-                <div className="container grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                    <StatItem number="10+" label="Premium Courses" delay={0} />
-                    <StatItem number="5k+" label="Active Students" delay={0.2} />
-                    <StatItem number="100%" label="Completion Rate" delay={0.4} />
+            {/* Stats Section with Glass Effect */}
+            <section className="py-24">
+                <div className="container">
+                    <div className="glass-card grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/10 py-12">
+                        <StatItem value="150+" label="AI Modules" />
+                        <StatItem value="12k+" label="Global Students" />
+                        <StatItem value="98%" label="Success Rate" />
+                    </div>
+                </div>
+            </section>
+
+            {/* Trust Section */}
+            <section className="py-32 bg-slate-900/40 border-y border-white/5">
+                <div className="container flex flex-col items-center">
+                    <h2 className="text-slate-500 font-bold uppercase tracking-[0.3em] text-sm mb-12">Trusted by innovate teams</h2>
+                    <div className="flex flex-wrap justify-center gap-12 md:gap-24 opacity-30 grayscale contrast-125">
+                        <FaShieldAlt className="text-5xl" />
+                        <FaGlobalAsia className="text-5xl" />
+                        <FaCode className="text-5xl" />
+                        <FaBrain className="text-5xl" />
+                    </div>
                 </div>
             </section>
         </div>
     );
 };
 
-const StatItem = ({ number, label, delay }) => (
+const FeatureCard = ({ icon, title, desc, delay }) => (
     <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ delay, duration: 0.5 }}
+        className="glass-card group p-10 hover:-translate-y-2 transition-all duration-500"
     >
-        <div className="text-5xl font-bold text-white mb-2">{number}</div>
-        <div className="text-gray-400 uppercase tracking-widest text-sm">{label}</div>
+        <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-3xl mb-8 group-hover:scale-110 transition-transform duration-500 border border-white/10 group-hover:border-indigo-500/50">
+            {icon}
+        </div>
+        <h3 className="text-2xl font-bold text-white mb-4">{title}</h3>
+        <p className="text-slate-400 leading-relaxed font-medium">{desc}</p>
     </motion.div>
+);
+
+const StatItem = ({ value, label }) => (
+    <div className="p-8 text-center flex flex-col items-center justify-center group">
+        <div className="text-5xl font-black text-white mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-fuchsia-400 transition-all duration-500">
+            {value}
+        </div>
+        <div className="text-slate-500 font-bold uppercase tracking-widest text-xs">{label}</div>
+    </div>
 );
 
 export default Home;

@@ -2,6 +2,7 @@ import Certificate from '../models/Certificate.js';
 import User from '../models/User.js';
 import Course from '../models/Course.js';
 import UserProgress from '../models/UserProgress.js';
+import { generateCertificatePDF, generateCertificateHTML } from '../services/certificateService.js';
 
 /**
  * @desc    Generate certificate for completed course
@@ -213,6 +214,16 @@ export const verifyCertificate = async (req, res, next) => {
  */
 export const downloadCertificate = async (req, res, next) => {
     try {
+        console.log(`Certificate download request for ID: ${req.params.id} by user: ${req.user._id}`);
+
+        // Validate certificate ID format
+        if (!req.params.id || !req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid certificate ID format'
+            });
+        }
+
         const certificate = await Certificate.findById(req.params.id)
             .populate('userId', 'name email')
             .populate('courseId', 'title description');
@@ -238,17 +249,58 @@ export const downloadCertificate = async (req, res, next) => {
             });
         }
 
-        // In a real implementation, you would generate a PDF here
-        // For now, we'll return the certificate data
-        res.status(200).json({
-            success: true,
-            message: 'Certificate download initiated',
-            data: {
-                certificateUrl: certificate.certificateUrl || `/api/certificates/${certificate._id}`,
-                fileName: `certificate_${certificate.certificateId}.pdf`
-            }
-        });
+        // Prepare certificate data with validation
+        const certificateData = {
+            userName: certificate.userName || 'Certificate Holder',
+            courseTitle: certificate.courseTitle || 'Course Completion',
+            score: certificate.score || 0,
+            grade: certificate.grade || 'Pass',
+            completionDate: certificate.completionDate || new Date(),
+            certificateId: certificate.certificateId || 'CERT-' + Date.now(),
+            instructorName: certificate.instructorName || 'Course Instructor'
+        };
+
+        console.log(`Generating PDF for certificate: ${certificateData.certificateId}`);
+
+        const pdfBuffer = await generateCertificatePDF(certificateData);
+
+        if (!pdfBuffer || pdfBuffer.length === 0) {
+            throw new Error('Generated PDF is empty or invalid');
+        }
+
+        const fileName = `certificate_${certificateData.certificateId}.pdf`;
+
+        // Set headers for PDF download - Using res.type to avoid charset appending
+        res.type('application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+        res.setHeader('Content-Length', pdfBuffer.length);
+        res.setHeader('Cache-Control', 'private, max-age=3600'); // Cache for 1 hour
+
+        // Use res.end for binary data to prevent Express from trying to be smart with encoding
+        res.end(pdfBuffer, 'binary');
+
+        console.log(`Certificate downloaded successfully: ${certificateData.certificateId}`);
     } catch (error) {
+        console.error('Certificate download error:', error);
+
+        // Handle specific error cases
+        if (error.message.includes('PDF generation service temporarily unavailable')) {
+            return res.status(503).json({
+                success: false,
+                message: 'PDF generation service temporarily unavailable. Please try again in a few minutes.'
+            });
+        } else if (error.message.includes('timed out')) {
+            return res.status(504).json({
+                success: false,
+                message: 'Certificate generation timed out. Please try again.'
+            });
+        } else if (error.message.includes('Invalid certificate data')) {
+            return res.status(400).json({
+                success: false,
+                message: 'Certificate data is invalid. Please contact support.'
+            });
+        }
+
         next(error);
     }
 };
@@ -274,7 +326,7 @@ export const revokeCertificate = async (req, res, next) => {
         certificate.isRevoked = true;
         certificate.revokedAt = new Date();
         certificate.revokedReason = reason || 'Revoked by administrator';
-        
+
         await certificate.save();
 
         res.status(200).json({
@@ -295,7 +347,7 @@ export const revokeCertificate = async (req, res, next) => {
 export const getAllCertificates = async (req, res, next) => {
     try {
         const { page = 1, limit = 10, search, revoked } = req.query;
-        
+
         const query = {};
         if (search) {
             query.$or = [
@@ -342,6 +394,102 @@ const calculateGrade = (score) => {
     return 'Pass';
 };
 
+/**
+ * @desc    Preview certificate HTML
+ * @route   GET /api/certificates/:id/preview
+ * @access  Private
+ */
+export const previewCertificate = async (req, res, next) => {
+    try {
+        const certificate = await Certificate.findById(req.params.id)
+            .populate('userId', 'name email')
+            .populate('courseId', 'title description');
+
+        if (!certificate) {
+            return res.status(404).json({
+                success: false,
+                message: 'Certificate not found'
+            });
+        }
+
+        if (certificate.userId._id.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to preview this certificate'
+            });
+        }
+
+        if (certificate.isRevoked) {
+            return res.status(400).json({
+                success: false,
+                message: 'Certificate has been revoked'
+            });
+        }
+
+        const certificateData = {
+            userName: certificate.userName,
+            courseTitle: certificate.courseTitle,
+            score: certificate.score,
+            grade: certificate.grade,
+            completionDate: certificate.completionDate,
+            certificateId: certificate.certificateId,
+            instructorName: certificate.instructorName || 'Course Instructor'
+        };
+
+        const html = generateCertificateHTML(certificateData);
+
+        res.setHeader('Content-Type', 'text/html');
+        res.send(html);
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * @desc    Share certificate (get shareable link)
+ * @route   POST /api/certificates/:id/share
+ * @access  Private
+ */
+export const shareCertificate = async (req, res, next) => {
+    try {
+        const certificate = await Certificate.findById(req.params.id);
+
+        if (!certificate) {
+            return res.status(404).json({
+                success: false,
+                message: 'Certificate not found'
+            });
+        }
+
+        if (certificate.userId.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to share this certificate'
+            });
+        }
+
+        if (certificate.isRevoked) {
+            return res.status(400).json({
+                success: false,
+                message: 'Certificate has been revoked'
+            });
+        }
+
+        const shareableLink = `${process.env.CLIENT_URL || 'http://localhost:3000'}/verify-certificate/${certificate.certificateId}`;
+
+        res.status(200).json({
+            success: true,
+            data: {
+                shareableLink,
+                certificateId: certificate.certificateId,
+                expiryDate: null // Certificates don't expire in this system
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export default {
     generateCertificate,
     getUserCertificates,
@@ -349,5 +497,7 @@ export default {
     verifyCertificate,
     downloadCertificate,
     revokeCertificate,
-    getAllCertificates
+    getAllCertificates,
+    previewCertificate,
+    shareCertificate
 };

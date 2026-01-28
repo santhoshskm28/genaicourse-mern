@@ -7,6 +7,7 @@ import {
     deleteCourse,
     enrollCourse,
     getCourseProgress,
+    getCourseCompletionStatus,
     updateCourseProgress,
     addReview,
     getEnrolledCourses,
@@ -34,6 +35,7 @@ router.get('/:id', getCourse);
 // Protected routes (User)
 router.post('/:id/enroll', protect, enrollCourse);
 router.get('/:id/progress', protect, getCourseProgress);
+router.get('/:id/completion-status', protect, getCourseCompletionStatus);
 router.put('/:id/progress', protect, updateCourseProgress);
 
 // Protected routes (User)

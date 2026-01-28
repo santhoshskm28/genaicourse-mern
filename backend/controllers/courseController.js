@@ -279,6 +279,37 @@ export const getCourseProgress = async (req, res, next) => {
 };
 
 /**
+ * @desc    Get course completion status (all lessons completed) for assessment gate
+ * @route   GET /api/courses/:id/completion-status
+ * @access  Private
+ */
+export const getCourseCompletionStatus = async (req, res, next) => {
+    try {
+        const progress = await UserProgress.findOne({
+            userId: req.user._id,
+            courseId: req.params.id
+        });
+        const course = await Course.findById(req.params.id).select('modules');
+        if (!course) {
+            return res.status(404).json({ success: false, message: 'Course not found' });
+        }
+        const totalLessons = course.modules?.reduce(
+            (acc, m) => acc + (m.lessons?.length ?? 0),
+            0
+        ) ?? 0;
+        const completedCount = progress?.completedLessons?.length ?? 0;
+        const allLessonsCompleted = totalLessons > 0 && completedCount >= totalLessons;
+
+        res.status(200).json({
+            success: true,
+            data: { allLessonsCompleted, completedCount, totalLessons }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
  * @desc    Update course progress
  * @route   PUT /api/courses/:id/progress
  * @access  Private
@@ -701,6 +732,7 @@ export default {
     deleteCourse,
     enrollCourse,
     getCourseProgress,
+    getCourseCompletionStatus,
     updateCourseProgress,
     addReview,
     getEnrolledCourses,

@@ -54,6 +54,16 @@ const assessmentService = {
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to check assessment availability');
     }
+  },
+
+  // Check user progress for assessment eligibility
+  checkProgress: async (courseId) => {
+    try {
+      const response = await api.get(`/assessments/${courseId}/progress-check`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Failed to check progress');
+    }
   }
 };
 

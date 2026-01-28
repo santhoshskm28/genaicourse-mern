@@ -1,51 +1,59 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaBookOpen, FaClock, FaSignal } from 'react-icons/fa';
+import { FaBookOpen, FaClock, FaChevronRight } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 
 const CourseCard = ({ course }) => {
     return (
-        <div className="card h-full flex flex-col overflow-hidden p-0 bg-slate-800 border-none">
-            <div className="relative h-48 overflow-hidden">
+        <div className="glass-card group flex flex-col h-full !pb-0 active:scale-[0.98] transition-transform">
+            {/* Thumbnail Box */}
+            <div className="relative h-60 overflow-hidden">
                 <img
-                    src={course.thumbnail || 'https://placehold.co/400x250?text=Course'}
+                    src={course.thumbnail || 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800'}
                     alt={course.title}
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                    className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:rotate-1"
                 />
-                <div className="absolute top-4 right-4 bg-slate-900/80 backdrop-blur-sm px-2 py-1 rounded text-xs font-bold text-white uppercase tracking-wider">
-                    {course.level}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60"></div>
+
+                {/* Badges */}
+                <div className="absolute top-6 left-6 flex flex-col gap-2">
+                    <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-lg text-[10px] font-black uppercase tracking-widest text-white border border-white/20">
+                        {course.level}
+                    </span>
+                    <span className="px-3 py-1 bg-indigo-500 rounded-lg text-[10px] font-black uppercase tracking-widest text-white shadow-lg shadow-indigo-500/30">
+                        {course.category}
+                    </span>
                 </div>
             </div>
 
-            <div className="p-6 flex flex-col flex-1">
-                <div className="flex items-center text-xs text-primary font-bold mb-2 uppercase tracking-wide">
-                    {course.category}
-                </div>
-
-                <h3 className="text-xl font-bold mb-3 text-white line-clamp-2" title={course.title}>
+            {/* Content Box */}
+            <div className="p-8 flex flex-col flex-1">
+                <h3 className="text-2xl font-black text-white mb-4 line-clamp-2 leading-tight tracking-tight group-hover:text-indigo-400 transition-colors">
                     {course.title}
                 </h3>
 
-                <p className="text-gray-400 text-sm mb-6 line-clamp-3">
+                <p className="text-slate-400 text-sm mb-8 line-clamp-2 font-medium leading-relaxed">
                     {course.description}
                 </p>
 
-                <div className="mt-auto">
-                    <div className="flex items-center justify-between text-gray-500 text-sm mb-4 border-t border-slate-700 pt-4">
-                        <div className="flex items-center">
-                            <FaBookOpen className="mr-1.5" />
-                            <span>{course.totalLessons || 0} Lessons</span>
+                <div className="mt-auto space-y-6">
+                    <div className="flex items-center gap-6 py-4 border-t border-white/5">
+                        <div className="flex items-center gap-2 text-slate-500 font-bold text-[10px] uppercase tracking-widest">
+                            <FaBookOpen className="text-indigo-500/60" size={14} />
+                            <span>{course.totalLessons || 0} Layers</span>
                         </div>
-                        <div className="flex items-center">
-                            <FaClock className="mr-1.5" />
-                            <span>{course.totalDuration || 60}m</span>
+                        <div className="flex items-center gap-2 text-slate-500 font-bold text-[10px] uppercase tracking-widest">
+                            <FaClock className="text-indigo-500/60" size={14} />
+                            <span>{course.totalDuration || 60} Nodes</span>
                         </div>
                     </div>
 
                     <Link
-                        to={`/courses/${course._id}`}
-                        className="w-full btn btn-primary flex items-center justify-center group"
+                        to={`/courses/${course._id || course.id}`}
+                        className="btn-premium btn-primary-gradient w-full group/btn !py-3 mb-2"
                     >
-                        View Course
+                        Initialize Module
+                        <FaChevronRight className="text-[10px] group-hover/btn:translate-x-1 transition-transform" />
                     </Link>
                 </div>
             </div>

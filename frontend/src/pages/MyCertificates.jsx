@@ -18,8 +18,9 @@ const MyCertificates = () => {
   const loadCertificates = async () => {
     try {
       setLoading(true);
-      const data = await certificateService.getUserCertificates();
-      setCertificates(data);
+      const response = await certificateService.getUserCertificates();
+      // Handle both direct array and nested data structure
+      setCertificates(response.certificates || response.data?.certificates || response);
     } catch (error) {
       console.error('Failed to load certificates:', error);
     } finally {

@@ -6,7 +6,9 @@ import {
     verifyCertificate,
     downloadCertificate,
     revokeCertificate,
-    getAllCertificates
+    getAllCertificates,
+    previewCertificate,
+    shareCertificate
 } from '../controllers/certificateController.js';
 import { protect, authorize } from '../middleware/auth.js';
 
@@ -33,6 +35,12 @@ router.get('/:id/download', protect, downloadCertificate);
 
 // Revoke certificate (admin only)
 router.put('/:id/revoke', protect, authorize('admin'), revokeCertificate);
+
+// Preview certificate
+router.get('/:id/preview', protect, previewCertificate);
+
+// Share certificate
+router.post('/:id/share', protect, shareCertificate);
 
 // Get all certificates (admin only)
 router.get('/admin/all', protect, authorize('admin'), getAllCertificates);

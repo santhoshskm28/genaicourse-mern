@@ -3,7 +3,8 @@ import { useLocation } from 'react-router-dom';
 import courseService from '../services/courseService.js';
 import CourseCard from '../components/courses/CourseCard.jsx';
 import Loader from '../components/common/Loader.jsx';
-import { FaSearch } from 'react-icons/fa';
+import { FaSearch, FaFilter, FaLayerGroup, FaGraduationCap } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 
 const CourseCatalogue = () => {
     const [courses, setCourses] = useState([]);
@@ -17,22 +18,16 @@ const CourseCatalogue = () => {
     const location = useLocation();
 
     useEffect(() => {
-        // Parse query params if any
         const searchParams = new URLSearchParams(location.search);
         const search = searchParams.get('search') || '';
-
-        if (search) {
-            setFilters(prev => ({ ...prev, search }));
-        }
+        if (search) setFilters(prev => ({ ...prev, search }));
     }, [location.search]);
 
     useEffect(() => {
         const fetchCourses = async () => {
-            console.log('Fetching courses with filters:', filters);
             setLoading(true);
             try {
                 const data = await courseService.getAllCourses(filters);
-                console.log('Fetched courses data:', data);
                 setCourses(data.data?.courses || []);
             } catch (error) {
                 console.error('Fetch error:', error);
@@ -41,11 +36,7 @@ const CourseCatalogue = () => {
             }
         };
 
-        // Debounce search
-        const timeoutId = setTimeout(() => {
-            fetchCourses();
-        }, 500);
-
+        const timeoutId = setTimeout(fetchCourses, 500);
         return () => clearTimeout(timeoutId);
     }, [filters]);
 
@@ -54,71 +45,100 @@ const CourseCatalogue = () => {
     };
 
     return (
-        <div className="section min-h-screen">
-            <div className="container">
-                <h1 className="section-title">Course Catalogue</h1>
+        <div className="section pt-32 min-h-screen">
+            <div className="container overflow-visible">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-center mb-16"
+                >
+                    <h1 className="text-5xl md:text-7xl font-black mb-4 uppercase tracking-tighter">
+                        Nexus <span className="text-gradient">Academy</span>
+                    </h1>
+                    <p className="text-slate-400 font-bold tracking-widest uppercase text-xs">Explore the Infinite Possibilities of AI</p>
+                </motion.div>
 
-                {/* Filters */}
-                <div className="bg-slate-800 p-6 rounded-lg mb-10 shadow-lg border border-slate-700">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {/* Search */}
-                        <div className="relative">
-                            <span className="absolute left-3 top-3.5 text-gray-400">
-                                <FaSearch />
-                            </span>
+                {/* Filters Hub */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="glass-card p-6 mb-16 relative overflow-visible z-10"
+                >
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                        <div className="lg:col-span-5 relative group">
+                            <FaSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
                             <input
                                 type="text"
                                 name="search"
                                 value={filters.search}
                                 onChange={handleFilterChange}
-                                placeholder="Search courses..."
-                                className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 pl-10 pr-4 text-white focus:ring-2 focus:ring-primary outline-none"
+                                placeholder="Search by neural keyword..."
+                                className="input-premium pl-14"
                             />
                         </div>
 
-                        {/* Category Filter */}
-                        <select
-                            name="category"
-                            value={filters.category}
-                            onChange={handleFilterChange}
-                            className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-white focus:ring-2 focus:ring-primary outline-none"
-                        >
-                            <option value="">All Categories</option>
-                            <option value="AI/ML">AI & Machine Learning</option>
-                            <option value="Web Development">Web Development</option>
-                            <option value="Data Science">Data Science</option>
-                            <option value="Cloud Computing">Cloud Computing</option>
-                            <option value="Human Resources">Human Resources</option>
-                        </select>
+                        <div className="lg:col-span-3 relative">
+                            <FaLayerGroup className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500" />
+                            <select
+                                name="category"
+                                value={filters.category}
+                                onChange={handleFilterChange}
+                                className="input-premium pl-14 appearance-none"
+                            >
+                                <option value="">All Streams</option>
+                                <option value="AI/ML">Neural Networks</option>
+                                <option value="Web Development">Interface Design</option>
+                                <option value="Data Science">Quantum Data</option>
+                                <option value="Cloud Computing">Cloud Layers</option>
+                            </select>
+                        </div>
 
-                        {/* Level Filter */}
-                        <select
-                            name="level"
-                            value={filters.level}
-                            onChange={handleFilterChange}
-                            className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-white focus:ring-2 focus:ring-primary outline-none"
-                        >
-                            <option value="">All Levels</option>
-                            <option value="Beginner">Beginner</option>
-                            <option value="Intermediate">Intermediate</option>
-                            <option value="Advanced">Advanced</option>
-                        </select>
+                        <div className="lg:col-span-3 relative">
+                            <FaGraduationCap className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500" />
+                            <select
+                                name="level"
+                                value={filters.level}
+                                onChange={handleFilterChange}
+                                className="input-premium pl-14 appearance-none"
+                            >
+                                <option value="">All Clearance</option>
+                                <option value="Beginner">Initiate</option>
+                                <option value="Intermediate">specialist</option>
+                                <option value="Advanced">Grandmaster</option>
+                            </select>
+                        </div>
+
+                        <div className="lg:col-span-1 flex justify-center">
+                            <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400">
+                                <FaFilter size={18} />
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </motion.div>
 
-                {/* Results */}
+                {/* Grid Results */}
                 {loading ? (
-                    <Loader />
+                    <div className="flex justify-center py-20">
+                        <div className="w-12 h-12 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
+                    </div>
                 ) : courses.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {courses.map(course => (
-                            <CourseCard key={course._id || course.id} course={course} />
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                        {courses.map((course, idx) => (
+                            <motion.div
+                                key={course._id || course.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.1 * idx }}
+                            >
+                                <CourseCard course={course} />
+                            </motion.div>
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center py-20 bg-slate-800/50 rounded-lg border border-dashed border-slate-700">
-                        <h3 className="text-xl font-bold text-gray-300">No courses found</h3>
-                        <p className="text-gray-500 mt-2">Try adjusting your filters or search terms</p>
+                    <div className="text-center py-32 glass-card border-dashed">
+                        <h3 className="text-3xl font-black text-slate-700 mb-2 uppercase tracking-widest">Signal Lost</h3>
+                        <p className="text-slate-500 font-bold uppercase text-xs tracking-widest">Adjust your filters to reconnect with the academy</p>
                     </div>
                 )}
             </div>

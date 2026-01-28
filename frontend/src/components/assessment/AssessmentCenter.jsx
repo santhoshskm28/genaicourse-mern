@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Clock, CheckCircle, XCircle, Award, AlertCircle, RefreshCw, ChevronLeft, ChevronRight, HelpCircle } from 'lucide-react';
+import { Clock, CheckCircle, XCircle, Award, AlertCircle, RefreshCw, ChevronLeft, ChevronRight, HelpCircle, ArrowRight, BookOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import assessmentService from '../../services/assessmentService.js';
 import certificateService from '../../services/certificateService.js';
@@ -8,7 +8,7 @@ import courseService from '../../services/courseService.js';
 import { toast } from 'react-toastify';
 
 const AssessmentCenter = () => {
-  const { id: courseId } = useParams(); // changed from courseId to id to match App.jsx route param if needed, but route says :id? No, usually it's best to match. Let's assume route will be /courses/:id/assessment
+  const { id: courseId } = useParams();
   const navigate = useNavigate();
 
   const [assessment, setAssessment] = useState(null);
@@ -34,23 +34,24 @@ const AssessmentCenter = () => {
     }
   }, [timeRemaining, showResults]);
 
-const loadAssessment = async () => {
+  const loadAssessment = async () => {
     try {
       setLoading(true);
-      
-      // Check course completion first
+      setError('');
+
       const completionStatus = await courseService.checkCourseCompletion(courseId);
-      if (!completionStatus.data.allLessonsCompleted) {
+      if (!completionStatus?.data?.allLessonsCompleted) {
         setError('Please complete all lessons before taking the assessment.');
         return;
       }
-      
+
       const data = await assessmentService.getAssessment(courseId);
       setAssessment(data);
-      setTimeRemaining(data.timeLimit * 60); // Convert minutes to seconds
+      setTimeRemaining(data.timeLimit * 60);
       setAnswers(new Array(data.questions.length).fill(null));
     } catch (err) {
-      setError(err.message || 'Failed to load assessment');
+      const msg = err.response?.data?.message || err.message || 'Failed to load assessment';
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -92,7 +93,8 @@ const loadAssessment = async () => {
       setResults(result);
       setShowResults(true);
     } catch (err) {
-      setError(err.message || 'Failed to submit assessment');
+      console.error('Assessment submission error:', err);
+      setError(err.response?.data?.message || 'Failed to submit assessment');
     } finally {
       setSubmitting(false);
     }
@@ -110,148 +112,179 @@ const loadAssessment = async () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mx-auto mb-4"></div>
-          <p className="text-slate-400">Loading assessment...</p>
-        </div>
+      <div className="min-h-screen bg-[#020617] flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center"
+        >
+          <div className="w-16 h-16 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin mx-auto mb-6 shadow-[0_0_20px_rgba(99,102,241,0.2)]"></div>
+          <p className="text-slate-400 font-bold tracking-widest uppercase text-xs">Initializing Neural Assessment...</p>
+        </motion.div>
       </div>
     );
   }
 
   if (error && !assessment) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="text-center max-w-md p-8 bg-slate-800 rounded-2xl border border-slate-700">
-          <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-6" />
-          <h2 className="text-2xl font-bold text-white mb-2">Access Denied</h2>
-          <p className="text-slate-400 mb-6">{error}</p>
+      <div className="min-h-screen bg-[#020617] flex items-center justify-center p-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="glass-card max-w-md w-full p-10 text-center"
+        >
+          <div className="w-20 h-20 bg-red-500/10 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-red-500/20">
+            <AlertCircle className="h-10 w-10 text-red-500" />
+          </div>
+          <h2 className="text-3xl font-black text-white mb-4">Access Restricted</h2>
+          <p className="text-slate-400 mb-8 font-medium leading-relaxed">{error}</p>
           <button
             onClick={() => navigate(`/courses/${courseId}`)}
-            className="px-6 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-medium transition-colors"
+            className="btn-premium btn-primary-gradient w-full"
           >
-            Back to Course
+            Return to Course
           </button>
-        </div>
+        </motion.div>
       </div>
     );
   }
 
   if (showResults && results) {
-    return <AssessmentResults results={results} courseId={courseId} />;
+    return (
+      <AssessmentResults
+        results={results}
+        courseId={courseId}
+        onRetake={() => {
+          setShowResults(false);
+          setResults(null);
+          setCurrentQuestion(0);
+          setAnswers([]);
+          setError('');
+          loadAssessment();
+        }}
+      />
+    );
   }
 
   const question = assessment.questions[currentQuestion];
 
   return (
-    <div className="min-h-screen bg-slate-900 py-12 px-4 sm:px-6">
+    <div className="min-h-screen bg-[#020617] py-24 px-4 sm:px-6">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="bg-slate-800 rounded-2xl shadow-xl border border-slate-700 p-6 mb-8 relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1 bg-slate-700">
+        {/* Header Card */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="glass-card p-8 mb-10 group"
+        >
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="px-3 py-1 bg-indigo-500/10 text-indigo-400 text-[10px] font-black uppercase tracking-widest rounded-lg border border-indigo-500/20">Active Session</span>
+                <h1 className="text-2xl font-black text-white">{assessment.title}</h1>
+              </div>
+              <div className="flex items-center gap-4 text-slate-500 font-bold text-xs uppercase tracking-widest">
+                <span className="flex items-center gap-1.5"><HelpCircle size={14} />Question {currentQuestion + 1} of {assessment.questions.length}</span>
+                <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
+                <span className="flex items-center gap-1.5"><BookOpen size={14} />80% to pass</span>
+              </div>
+            </div>
+
+            <div className={`flex flex-col items-center px-8 py-4 rounded-3xl border-2 transition-all duration-500 ${timeRemaining < 300 ? 'bg-red-500/10 border-red-500/30 text-red-500 animate-pulse' : 'bg-white/5 border-white/5 text-indigo-400'
+              }`}>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] mb-1 opacity-60">Time Remaining</span>
+              <div className="flex items-center gap-2">
+                <Clock className="h-5 w-5" />
+                <span className="font-mono text-2xl font-black">{formatTime(timeRemaining)}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="mt-8 h-2 bg-white/5 rounded-full overflow-hidden">
             <motion.div
-              className="h-full bg-gradient-to-r from-indigo-500 to-purple-500"
+              className="h-full bg-gradient-to-r from-indigo-500 to-fuchsia-500 shadow-[0_0_15px_rgba(99,102,241,0.5)]"
               initial={{ width: 0 }}
-              animate={{ width: `${getProgressPercentage()}%` }}
-              transition={{ duration: 0.5 }}
+              animate={{ width: `${((currentQuestion + 1) / assessment.questions.length) * 100}%` }}
+              transition={{ duration: 0.8 }}
             />
           </div>
+        </motion.div>
 
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 mt-2">
-            <div>
-              <h1 className="text-2xl font-bold text-white mb-1">{assessment.title}</h1>
-              <p className="text-slate-400 text-sm flex items-center gap-2">
-                <HelpCircle className="w-3 h-3" />
-                Question {currentQuestion + 1} of {assessment.questions.length}
-              </p>
-            </div>
-            <div className={`flex items-center space-x-2 px-4 py-2 rounded-xl border ${timeRemaining < 300
-                ? 'bg-red-500/10 text-red-400 border-red-500/20 animate-pulse'
-                : 'bg-slate-700/50 text-indigo-400 border-indigo-500/20'
-              }`}>
-              <Clock className="h-5 w-5" />
-              <span className="font-mono font-bold text-lg">{formatTime(timeRemaining)}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Question Card */}
+        {/* Question Section */}
         <AnimatePresence mode="wait">
           <motion.div
             key={currentQuestion}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3 }}
-            className="bg-slate-800 rounded-2xl shadow-xl border border-slate-700 p-8 mb-8"
+            className="glass-card p-10 mb-8"
           >
-            <div className="mb-8">
-              <h2 className="text-xl md:text-2xl font-semibold text-white leading-relaxed">
-                {question.question}
-              </h2>
-              {question.points && (
-                <span className="inline-block mt-3 px-3 py-1 bg-slate-700 rounded-lg text-xs font-medium text-slate-300">
-                  {question.points} Points
-                </span>
-              )}
-            </div>
+            <div className="flex items-start gap-6">
+              <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center font-black text-indigo-400 text-xl flex-shrink-0">
+                {currentQuestion + 1}
+              </div>
+              <div className="flex-1">
+                <h2 className="text-2xl font-bold text-white mb-10 leading-snug">
+                  {question.question}
+                </h2>
 
-            {/* Options */}
-            <div className="space-y-4">
-              {question.options.map((option, index) => (
-                <label
-                  key={index}
-                  className={`group flex items-center p-5 border-2 rounded-xl cursor-pointer transition-all duration-200 ${answers[currentQuestion] === option
-                      ? 'border-indigo-500 bg-indigo-500/10 shadow-[0_0_20px_rgba(99,102,241,0.15)]'
-                      : 'border-slate-700 bg-slate-800/50 hover:bg-slate-700 hover:border-slate-600'
-                    }`}
-                >
-                  <div className={`w-6 h-6 rounded-full border-2 mr-4 flex items-center justify-center transition-colors ${answers[currentQuestion] === option
-                      ? 'border-indigo-500 bg-indigo-500'
-                      : 'border-slate-500 group-hover:border-slate-400'
-                    }`}>
-                    {answers[currentQuestion] === option && <div className="w-2 h-2 bg-white rounded-full" />}
-                  </div>
-                  <input
-                    type="radio"
-                    name={`question-${currentQuestion}`}
-                    value={option}
-                    checked={answers[currentQuestion] === option}
-                    onChange={() => handleAnswerChange(currentQuestion, option)}
-                    className="hidden"
-                  />
-                  <span className={`text-lg ${answers[currentQuestion] === option ? 'text-white font-medium' : 'text-slate-300 group-hover:text-white'
-                    }`}>
-                    {option}
-                  </span>
-                </label>
-              ))}
+                <div className="grid grid-cols-1 gap-4">
+                  {question.options.map((option, index) => {
+                    const isSelected = answers[currentQuestion] === option;
+                    return (
+                      <motion.label
+                        key={index}
+                        whileHover={{ scale: 1.01 }}
+                        whileTap={{ scale: 0.99 }}
+                        className={`flex items-center p-6 rounded-2xl cursor-pointer border-2 transition-all duration-300 relative overflow-hidden group/opt ${isSelected ? 'bg-indigo-500/10 border-indigo-500' : 'bg-white/5 border-white/5 hover:bg-white/10 hover:border-white/10'
+                          }`}
+                      >
+                        {isSelected && (
+                          <motion.div
+                            layoutId="active-opt"
+                            className="absolute inset-0 bg-indigo-500/5 -z-10"
+                          />
+                        )}
+                        <div className={`w-6 h-6 rounded-lg border-2 mr-6 flex items-center justify-center transition-all ${isSelected ? 'bg-indigo-500 border-indigo-500' : 'bg-transparent border-white/20 group-hover/opt:border-indigo-500/50'
+                          }`}>
+                          {isSelected && <CheckCircle className="w-4 h-4 text-white" />}
+                        </div>
+                        <input
+                          type="radio"
+                          name={`q-${currentQuestion}`}
+                          checked={isSelected}
+                          onChange={() => handleAnswerChange(currentQuestion, option)}
+                          className="hidden"
+                        />
+                        <span className={`text-lg transition-all ${isSelected ? 'text-white font-bold' : 'text-slate-400 group-hover/opt:text-slate-200'}`}>
+                          {option}
+                        </span>
+                      </motion.label>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </motion.div>
         </AnimatePresence>
 
-        {/* Footer Navigation */}
-        <div className="flex justify-between items-center bg-slate-800/50 p-4 rounded-xl backdrop-blur-sm border border-slate-700/50">
+        {/* Controls */}
+        <div className="flex justify-between items-center gap-6">
           <button
             onClick={handlePrevious}
             disabled={currentQuestion === 0}
-            className="px-6 py-2.5 rounded-lg border border-slate-600 text-slate-300 font-medium hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors"
+            className="btn-premium btn-outline-glass !py-3 !px-6 disabled:opacity-20"
           >
-            <ChevronLeft className="w-4 h-4" /> Previous
+            <ChevronLeft size={18} /> Back
           </button>
 
-          <div className="flex gap-1.5 overflow-x-auto max-w-[200px] md:max-w-md px-2 scrollbar-none">
-            {assessment.questions.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentQuestion(index)}
-                className={`w-2.5 h-2.5 rounded-full transition-all ${index === currentQuestion
-                    ? 'bg-indigo-500 w-6'
-                    : answers[index] !== null
-                      ? 'bg-emerald-500/50 hover:bg-emerald-500'
-                      : 'bg-slate-600 hover:bg-slate-500'
+          <div className="flex gap-2">
+            {assessment.questions.map((_, idx) => (
+              <div
+                key={idx}
+                className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentQuestion ? 'w-8 bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]' : answers[idx] ? 'w-2 bg-emerald-500/50' : 'w-2 bg-white/10'
                   }`}
-                title={`Question ${index + 1}`}
               />
             ))}
           </div>
@@ -260,26 +293,17 @@ const loadAssessment = async () => {
             <button
               onClick={handleSubmit}
               disabled={submitting}
-              className="px-8 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2 font-bold shadow-lg shadow-indigo-900/20 transition-all hover:scale-105"
+              className="btn-premium btn-primary-gradient !py-3 !px-10"
             >
-              {submitting ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Submitting...
-                </>
-              ) : (
-                <>
-                  Submit
-                  <CheckCircle className="w-4 h-4" />
-                </>
-              )}
+              {submitting ? 'Submitting...' : 'Finish Quest'}
+              <ArrowRight size={18} />
             </button>
           ) : (
             <button
               onClick={handleNext}
-              className="px-6 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium transition-colors flex items-center gap-2"
+              className="btn-premium bg-white/10 hover:bg-white/20 text-white !py-3 !px-8"
             >
-              Next <ChevronRight className="w-4 h-4" />
+              Next Question <ChevronRight size={18} />
             </button>
           )}
         </div>
@@ -288,193 +312,152 @@ const loadAssessment = async () => {
   );
 };
 
-const AssessmentResults = ({ results, courseId }) => {
+const AssessmentResults = ({ results, courseId, onRetake }) => {
   const navigate = useNavigate();
   const [downloadingCert, setDownloadingCert] = useState(false);
+  const isPassed = results.attempt?.passed ?? results.passed;
 
-const handleDownloadCertificate = async () => {
+  const handleDownloadCertificate = async () => {
     try {
       setDownloadingCert(true);
-      await certificateService.downloadCertificate(results.certificate.id);
-      toast.success('Certificate downloaded successfully!');
+      let certificateId = results.certificate?.id || results.certificate?._id || results.certificate?.certificateId || results.certificateId;
+
+      if (!certificateId) throw new Error('Certificate ID not found. Please refresh.');
+
+      await certificateService.downloadCertificate(certificateId);
+      toast.success('Certificate Secured!');
     } catch (error) {
-      console.error('Failed to download certificate:', error);
-      toast.error('Failed to download certificate');
+      toast.error(error.message || 'Download failed');
     } finally {
       setDownloadingCert(false);
     }
   };
 
-const handleRetakeAssessment = async () => {
-    try {
-      setLoading(true);
-      // Reset state and reload assessment
-      setShowResults(false);
-      setResults(null);
-      setCurrentQuestion(0);
-      setAnswers([]);
-      await loadAssessment();
-      toast.info('Assessment reset. Good luck!');
-    } catch (error) {
-      toast.error('Failed to retake assessment');
-      setLoading(false);
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-slate-900 py-12 px-4">
-      <div className="max-w-3xl mx-auto">
-        {/* Result Card */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="bg-slate-800 rounded-2xl shadow-2xl border border-slate-700 overflow-hidden mb-8"
-        >
-          <div className={`p-10 text-center relative overflow-hidden ${results.attempt.passed ? 'bg-emerald-900/20' : 'bg-red-900/20'
-            }`}>
-            <div className={`absolute inset-0 opacity-10 ${results.attempt.passed
-                ? 'bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-emerald-500 via-transparent'
-                : 'bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-red-500 via-transparent'
-              }`}></div>
+    <div className="min-h-screen bg-[#020617] py-24 px-4 overflow-hidden relative">
+      {/* Victory/Defeat Background Glow */}
+      <div className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full -z-10 blur-[150px] opacity-20 pointer-events-none transition-colors duration-1000 ${isPassed ? 'bg-emerald-500' : 'bg-red-500'
+        }`}></div>
 
+      <div className="max-w-4xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 30 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          className="glass-card overflow-hidden"
+        >
+          {/* Hero State */}
+          <div className={`p-16 text-center relative overflow-hidden ${isPassed ? 'bg-emerald-500/10' : 'bg-red-500/10'}`}>
             <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", stiffness: 200, damping: 15 }}
-              className={`inline-flex items-center justify-center w-24 h-24 rounded-full mb-6 ${results.attempt.passed ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-500'
+              initial={{ scale: 0, rotate: -45 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
+              className={`w-32 h-32 rounded-[2.5rem] flex items-center justify-center mx-auto mb-10 shadow-2xl relative z-10 ${isPassed ? 'bg-emerald-500 text-white animate-float' : 'bg-red-500 text-white'
                 }`}
             >
-              {results.attempt.passed ? (
-                <Award className="w-12 h-12" />
-              ) : (
-                <XCircle className="w-12 h-12" />
-              )}
+              {isPassed ? <Award size={64} /> : <XCircle size={64} />}
             </motion.div>
 
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
-              {results.attempt.passed ? 'Assessment Passed!' : 'Assessment Failed'}
-            </h1>
+            <h2 className="text-5xl md:text-6xl font-black text-white mb-6 uppercase tracking-tighter">
+              {isPassed ? 'Mastery Achieved' : 'Incomplete Quest'}
+            </h2>
 
-            <p className="text-slate-400 max-w-lg mx-auto text-lg">
-              {results.attempt.passed
-                ? 'Congratulations! You have demonstrated mastery of the course material.'
-                : 'Don\'t give up! Review the course materials and try again to earn your certificate.'
+            <p className="text-xl text-slate-400 max-w-xl mx-auto font-medium leading-[1.6]">
+              {isPassed
+                ? "You've successfully conquered the final challenge. Your professional certification is ready for validation."
+                : "The neural paths aren't fully formed yet. Review the data modules and attempt the synchronization again."
               }
             </p>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-3 divide-x divide-slate-700 border-t border-slate-700 bg-slate-800/50">
-            <div className="p-6 text-center">
-              <div className="text-slate-400 text-xs uppercase tracking-wider font-semibold mb-1">Score</div>
-              <div className="text-3xl font-bold text-white">{results.attempt.score}</div>
-              <div className="text-xs text-slate-500">of {results.attempt.totalPoints} points</div>
-            </div>
-            <div className="p-6 text-center">
-              <div className="text-slate-400 text-xs uppercase tracking-wider font-semibold mb-1">Result</div>
-              <div className={`text-3xl font-bold ${results.attempt.passed ? 'text-emerald-400' : 'text-red-400'}`}>
-                {results.attempt.percentageScore}%
-              </div>
-              <div className="text-xs text-slate-500">min 80% to pass</div>
-            </div>
-            <div className="p-6 text-center">
-              <div className="text-slate-400 text-xs uppercase tracking-wider font-semibold mb-1">Grade</div>
-              <div className={`text-3xl font-bold ${results.attempt.passed ? 'text-emerald-400' : 'text-red-400'}`}>
-                {results.attempt.grade}
-              </div>
-            </div>
+          {/* Stats Dashboard */}
+          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/5 border-t border-white/5 bg-slate-900/40">
+            <ResultStat label="Sync Score" value={`${results.attempt?.score ?? results.score ?? 0}`} sub={`of ${results.attempt?.totalPoints ?? results.totalPoints ?? 0} pts`} />
+            <ResultStat label="Neural Accuracy" value={`${results.attempt?.percentageScore ?? results.percentageScore ?? 0}%`} sub="80% required" highlight={isPassed} />
+            <ResultStat label="Rank Assigned" value={results.attempt?.grade ?? results.grade ?? 'N/A'} sub="Standard Certified" />
           </div>
 
-          {/* Action Area */}
-          <div className="p-8 border-t border-slate-700 flex flex-col sm:flex-row gap-4 justify-center">
-            {results.attempt.passed && results.certificate ? (
+          {/* Footer Actions */}
+          <div className="p-10 flex flex-col sm:flex-row justify-center gap-4 bg-slate-950/20">
+            {isPassed ? (
               <button
                 onClick={handleDownloadCertificate}
                 disabled={downloadingCert}
-                className="btn btn-primary bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-900/20 px-8 py-3 rounded-xl flex items-center justify-center gap-2"
+                className="btn-premium btn-primary-gradient !py-4 !px-12 text-lg shadow-[0_10px_30px_rgba(99,102,241,0.3)]"
               >
-                {downloadingCert ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <Award className="w-5 h-5" />
-                    Download Certificate
-                  </>
-                )}
+                {downloadingCert ? 'Forging PDF...' : 'Secure Certificate'}
+                <Award size={20} />
               </button>
-            ) : null}
-
-{!results.attempt.passed && (
+            ) : (
               <button
-                onClick={handleRetakeAssessment}
-                className="btn bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-xl flex items-center justify-center gap-2"
+                onClick={onRetake}
+                className="btn-premium bg-indigo-600 hover:bg-indigo-700 text-white !py-4 !px-12 text-lg"
               >
-                <RefreshCw className="w-5 h-5" />
-                Try Again
+                Restart Synchronization <RefreshCw size={20} />
               </button>
             )}
 
             <button
               onClick={() => navigate(`/courses/${courseId}`)}
-              className="bg-slate-700 hover:bg-slate-600 text-white px-8 py-3 rounded-xl font-medium transition-colors border border-slate-600"
+              className="btn-premium btn-outline-glass !py-4 !px-10"
             >
-              Return to Course
+              Back to Module Hub
             </button>
           </div>
         </motion.div>
 
-        {/* Question Review */}
-        <div className="space-y-4">
-          <h3 className="text-xl font-bold text-white mb-4 ml-2">Question Review</h3>
-          {results.attempt.results.map((result, index) => (
-            <div
-              key={index}
-              className={`p-5 rounded-xl border ${result.isCorrect
-                  ? 'bg-emerald-500/5 border-emerald-500/20'
-                  : 'bg-red-500/5 border-red-500/20'
-                }`}
-            >
-              <div className="flex gap-4">
-                <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${result.isCorrect ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'
-                  }`}>
-                  {result.isCorrect ? <CheckCircle className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
-                </div>
-                <div className="flex-1">
-                  <p className="text-white font-medium mb-3">{index + 1}. {result.question}</p>
+        {/* Review Modules */}
+        <div className="mt-16">
+          <h3 className="text-slate-500 font-black uppercase tracking-[0.2em] text-xs mb-8 flex items-center gap-3">
+            <span className="w-8 h-px bg-slate-800"></span>
+            Neural Pattern Review
+          </h3>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                    <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
-                      <span className="text-slate-400 block mb-1 text-xs">Your Answer</span>
-                      <span className={result.isCorrect ? 'text-emerald-400' : 'text-red-400'}>
-                        {result.userAnswer}
-                      </span>
-                    </div>
-                    {!result.isCorrect && (
-                      <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
-                        <span className="text-slate-400 block mb-1 text-xs">Correct Answer</span>
-                        <span className="text-emerald-400">
-                          {result.correctAnswer}
-                        </span>
-                      </div>
-                    )}
+          <div className="space-y-6">
+            {(results.attempt?.results ?? results.results ?? []).map((result, idx) => (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 * idx }}
+                key={idx}
+                className={`glass-card p-6 border-l-4 ${result.isCorrect ? 'border-l-emerald-500 bg-emerald-500/5' : 'border-l-red-500 bg-red-500/5'}`}
+              >
+                <div className="flex gap-6">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${result.isCorrect ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-500'}`}>
+                    {result.isCorrect ? <CheckCircle size={20} /> : <XCircle size={20} />}
                   </div>
-
-                  {result.explanation && !result.isCorrect && (
-                    <div className="mt-3 text-slate-400 text-sm italic border-l-2 border-slate-600 pl-3">
-                      {result.explanation}
+                  <div className="flex-1">
+                    <h4 className="text-white font-bold text-lg mb-4">{result.question}</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="p-4 rounded-xl bg-slate-950/40 border border-white/5">
+                        <span className="text-[10px] uppercase font-black tracking-widest text-slate-500 mb-1 block">Your Response</span>
+                        <span className={`font-bold ${result.isCorrect ? 'text-emerald-400' : 'text-red-400'}`}>{result.userAnswer}</span>
+                      </div>
+                      {!result.isCorrect && (
+                        <div className="p-4 rounded-xl bg-slate-950/40 border border-emerald-500/20">
+                          <span className="text-[10px] uppercase font-black tracking-widest text-emerald-500 mb-1 block">Valid Neural Path</span>
+                          <span className="font-bold text-emerald-400">{result.correctAnswer}</span>
+                        </div>
+                      )}
                     </div>
-                  )}
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
   );
 };
+
+const ResultStat = ({ label, value, sub, highlight }) => (
+  <div className="p-10 text-center flex flex-col items-center group">
+    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-2">{label}</span>
+    <div className={`text-5xl font-black mb-1 transition-all duration-500 ${highlight ? 'text-emerald-400 scale-110 drop-shadow-[0_0_10px_rgba(52,211,153,0.3)]' : 'text-white group-hover:text-indigo-400'}`}>
+      {value}
+    </div>
+    <span className="text-xs font-bold text-slate-600 uppercase tracking-widest">{sub}</span>
+  </div>
+);
 
 export default AssessmentCenter;

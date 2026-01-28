@@ -61,6 +61,24 @@ export const takeAssessment = asyncHandler(async (req, res) => {
   const { answers, timeSpent } = req.body;
   const userId = req.user.id;
 
+  // Validate required fields
+  if (!answers || !Array.isArray(answers)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Answers are required and must be an array'
+    });
+  }
+
+  // Validate courseId
+  if (!courseId) {
+    return res.status(400).json({
+      success: false,
+      message: 'Course ID is required'
+    });
+  }
+
+  console.log(`Assessment submission: userId=${userId}, courseId=${courseId}, answers=${answers.length}, timeSpent=${timeSpent}`);
+
   // Get course and quiz
   const course = await Course.findById(courseId);
   if (!course) {
@@ -84,14 +102,13 @@ export const takeAssessment = asyncHandler(async (req, res) => {
   // Calculate total lessons from modules since course.lessons doesn't exist at top level
   const totalLessonsCount = course.modules ? course.modules.reduce((acc, module) => acc + (module.lessons ? module.lessons.length : 0), 0) : 0;
 
-  console.log(`Assessment submission debug: userId=${userId}, courseId=${courseId}, completed=${completedLessonsCount}, total=${totalLessonsCount}`);
-
   if (completedLessonsCount < totalLessonsCount) {
-    console.log('Assessment blocked: Incomplete lessons');
     return res.status(400).json({
-      message: 'You must complete all lessons before taking the assessment',
+      success: false,
+      message: `You must complete all lessons before taking the assessment. Completed: ${completedLessonsCount}/${totalLessonsCount}`,
       lessonsCompleted: completedLessonsCount,
-      totalLessons: totalLessonsCount
+      totalLessons: totalLessonsCount,
+      progressPercentage: Math.round((completedLessonsCount / totalLessonsCount) * 100)
     });
   }
 
@@ -101,10 +118,7 @@ export const takeAssessment = asyncHandler(async (req, res) => {
     quizId: quiz._id
   }).sort({ createdAt: -1 });
 
-  console.log(`Assessment debug: Previous attempts=${previousAttempts.length}, Max allowed=${quiz.maxAttempts}`);
-
   if (previousAttempts.length >= quiz.maxAttempts) {
-    console.log('Assessment blocked: Max attempts reached');
     return res.status(400).json({
       message: `Maximum attempts (${quiz.maxAttempts}) reached`,
       attempts: previousAttempts.length
@@ -156,13 +170,11 @@ export const takeAssessment = asyncHandler(async (req, res) => {
     percentageScore = Math.round((score / totalPoints) * 100);
   }
 
-  console.log(`Assessment debug: Score=${score}, TotalPoints=${totalPoints}, Percentage=${percentageScore}`);
-
   // Determine pass/fail (80% required)
   const passed = percentageScore >= 80;
   const grade = passed ? getGrade(percentageScore) : 'Fail';
 
-  // Prepare answers in the correct format for UserQuizAttempt model (already calculated in loop)
+  // Prepare answers in the correct format for UserQuizAttempt model
   const formattedAnswers = results.map((res, index) => {
     return {
       questionIndex: index,
@@ -175,15 +187,15 @@ export const takeAssessment = asyncHandler(async (req, res) => {
 
   const timeStarted = new Date();
   const timeCompleted = new Date();
-  const duration = timeSpent || 0; // timeSpent should be in seconds
+  const duration = timeSpent || 0;
 
-  // Save attempt with correct schema
+  // Save attempt
   const attempt = await UserQuizAttempt.create({
     userId,
     quizId: quiz._id,
     attemptNumber: previousAttempts.length + 1,
     answers: formattedAnswers,
-    score: percentageScore, // Model expects percentage (0-100)
+    score: percentageScore,
     totalPoints,
     passed,
     timeStarted,
@@ -191,18 +203,15 @@ export const takeAssessment = asyncHandler(async (req, res) => {
     duration
   });
 
-  // Update user progress using the model methods
+  // Update user progress
   userProgress.completeQuiz(quiz._id, attempt._id, percentageScore, passed);
 
   if (passed) {
-    // Check if certificate already exists to avoid duplicate key error (400)
     let certificate = await Certificate.findOne({ userId, courseId });
 
     if (!certificate) {
-      console.log('Generating new certificate...');
       certificate = await generateCertificate(userId, courseId, percentageScore, grade);
     } else {
-      console.log('User already has a certificate, updating it...');
       certificate.score = percentageScore;
       certificate.grade = grade;
       certificate.completionDate = new Date();
@@ -215,16 +224,17 @@ export const takeAssessment = asyncHandler(async (req, res) => {
 
   await userProgress.save();
 
-  // Update user stats - need to fetch fresh user data
+  // Update user stats
   const user = await User.findById(userId);
   if (passed) {
     user.stats.coursesCompleted += 1;
     user.stats.certificatesEarned += 1;
     user.stats.averageScore = ((user.stats.averageScore * (user.stats.coursesCompleted - 1)) + percentageScore) / user.stats.coursesCompleted;
+    await user.save();
   }
-  await user.save();
 
   res.json({
+    success: true,
     message: passed ? 'Congratulations! You passed the assessment.' : 'You did not pass. Please try again.',
     attempt: {
       id: attempt._id,
@@ -251,13 +261,12 @@ export const takeAssessment = asyncHandler(async (req, res) => {
 // @route   GET /api/assessments/:courseId/results/:attemptId
 // @access  Private
 export const getAssessmentResults = asyncHandler(async (req, res) => {
-  const { courseId, attemptId } = req.params;
+  const { attemptId } = req.params;
   const userId = req.user.id;
 
   const attempt = await UserQuizAttempt.findOne({
     _id: attemptId,
-    userId,
-    courseId
+    userId
   }).populate('quizId', 'title passingScore maxAttempts');
 
   if (!attempt) {
@@ -265,17 +274,23 @@ export const getAssessmentResults = asyncHandler(async (req, res) => {
   }
 
   res.json({
+    success: true,
     attempt: {
       id: attempt._id,
       score: attempt.score,
       totalPoints: attempt.totalPoints,
-      percentageScore: attempt.percentageScore,
+      percentageScore: attempt.score,
       passed: attempt.passed,
       grade: attempt.grade,
       attemptNumber: attempt.attemptNumber,
-      timeSpent: attempt.timeSpent,
+      timeSpent: attempt.duration,
       createdAt: attempt.createdAt,
-      results: attempt.results
+      results: attempt.answers.map(ans => ({
+        questionIndex: ans.questionIndex,
+        userAnswer: ans.userAnswer,
+        isCorrect: ans.isCorrect,
+        points: ans.pointsEarned
+      }))
     },
     quiz: {
       title: attempt.quizId.title,
@@ -292,7 +307,7 @@ export const getAssessmentHistory = asyncHandler(async (req, res) => {
   const { courseId } = req.params;
   const userId = req.user.id;
 
-  const attempts = await UserQuizAttempt.find({ userId, courseId })
+  const attempts = await UserQuizAttempt.find({ userId, quizId: { $in: await Quiz.find({ courseId }).distinct('_id') } })
     .sort({ createdAt: -1 })
     .select('score percentageScore passed grade attemptNumber createdAt timeSpent');
 
@@ -301,7 +316,7 @@ export const getAssessmentHistory = asyncHandler(async (req, res) => {
 
   res.json({
     attempts,
-    courseCompleted: userProgress?.certificate ? true : false, // Check if certificate exists as completion indicator
+    courseCompleted: userProgress?.certificate ? true : false,
     completedAt: userProgress?.completedAt,
     hasCertificate: !!userProgress?.certificate,
     certificateId: userProgress?.certificate
@@ -322,8 +337,11 @@ function getGrade(score) {
 // Helper function to generate certificate
 async function generateCertificate(userId, courseId, score, grade) {
   const user = await User.findById(userId).select('name email');
-  const course = await Course.findById(courseId).select('title description instructor');
+  const course = await Course.findById(courseId)
+    .select('title description createdBy modules')
+    .populate('createdBy', 'name');
 
+  const totalModules = course.modules?.length ?? 0;
   const certificateData = {
     userId,
     courseId,
@@ -331,21 +349,27 @@ async function generateCertificate(userId, courseId, score, grade) {
     userEmail: user.email,
     courseTitle: course.title,
     courseDescription: course.description,
-    instructorName: course.instructor,
+    instructorName: course.createdBy?.name || 'Course Instructor',
     score,
     grade,
     completionDate: new Date(),
-    certificateId: `CERT-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+    certificateId: `CERT-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+    totalTimeSpent: 0,
+    modulesCompleted: totalModules,
+    totalModules
   };
 
   const certificate = await Certificate.create(certificateData);
-
-  // Generate PDF certificate
   const pdfBuffer = await generateCertificatePDF(certificateData);
-
-  // Save PDF (you could save to cloud storage here)
   certificate.certificateUrl = `/api/certificates/${certificate._id}/download`;
   await certificate.save();
 
   return certificate;
 }
+
+export default {
+  getAssessmentForCourse,
+  takeAssessment,
+  getAssessmentResults,
+  getAssessmentHistory
+};
