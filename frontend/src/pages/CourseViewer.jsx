@@ -18,7 +18,7 @@ const CourseViewer = () => {
     const [progress, setProgress] = useState(null);
     const [completedLessons, setCompletedLessons] = useState(new Set());
 
-useEffect(() => {
+    useEffect(() => {
         const fetchCourseData = async () => {
             try {
                 const [courseData, progressData] = await Promise.all([
@@ -26,7 +26,7 @@ useEffect(() => {
                     courseService.getCourseProgress(id).catch(() => null)
                 ]);
                 setCourse(courseData.data);
-                
+
                 if (progressData?.data) {
                     setProgress(progressData.data);
                     const completed = new Set();
@@ -50,7 +50,7 @@ useEffect(() => {
     const currentModule = course.modules[currentModuleIndex];
     const currentLesson = currentModule?.lessons[currentLessonIndex];
 
-const markCurrentLessonComplete = async () => {
+    const markCurrentLessonComplete = async () => {
         try {
             const lessonId = currentLesson._id || currentLesson.id;
             const moduleId = currentModule._id || currentModule.id;
@@ -79,18 +79,24 @@ const markCurrentLessonComplete = async () => {
         } else {
             // End of course - check if all lessons are completed
             const totalLessons = course.modules.reduce((acc, mod) => acc + mod.lessons.length, 0);
-            if (completedLessons.size + 1 >= totalLessons) {
+
+            // Add the current lesson to the completed set if it's not already there
+            const updatedCompleted = new Set([...completedLessons, String(lessonId)]);
+
+            if (updatedCompleted.size >= totalLessons) {
                 if (course.quizId) {
-                    toast.success("All lessons completed! Redirecting to assessment...");
-                    setTimeout(() => {
-                        navigate(`/courses/${id}/assessment`);
-                    }, 1500);
+                    toast.success("Congratulations! Course completed. Redirecting to assessment...");
+                    navigate(`/courses/${id}/assessment`);
                 } else {
                     toast.success("Course Completed!");
                     navigate('/dashboard');
                 }
             } else {
                 toast.info("Please complete all lessons before taking the assessment.");
+                // Still try to redirect if they are on the last lesson, but maybe they skipped some
+                if (course.quizId && window.confirm("You haven't completed all lessons. Take the assessment anyway?")) {
+                    navigate(`/courses/${id}/assessment`);
+                }
             }
         }
     };
@@ -122,11 +128,11 @@ const markCurrentLessonComplete = async () => {
                             <div className="px-4 py-2 bg-slate-800/50 text-xs uppercase tracking-wider text-gray-400 font-semibold">
                                 Module {mIdx + 1}
                             </div>
-{mod.lessons.map((less, lIdx) => {
+                            {mod.lessons.map((less, lIdx) => {
                                 const lessonId = less._id || less.id;
                                 const isCompleted = completedLessons.has(String(lessonId));
                                 const isCurrent = mIdx === currentModuleIndex && lIdx === currentLessonIndex;
-                                
+
                                 return (
                                     <button
                                         key={lessonId}
@@ -169,7 +175,7 @@ const markCurrentLessonComplete = async () => {
 
             {/* Main Content */}
             <div className="flex-1 flex flex-col h-full relative z-10">
-{/* Top Navigation */}
+                {/* Top Navigation */}
                 <div className="glass-header h-16 flex items-center justify-between px-6">
                     <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-gray-400 hover:text-white">
                         <FaBars size={20} />
@@ -247,9 +253,11 @@ const markCurrentLessonComplete = async () => {
                         </button>
                         <button
                             onClick={handleNext}
-                            className="btn btn-primary"
+                            className={`btn ${currentModuleIndex === course.modules.length - 1 && currentLessonIndex === currentModule.lessons.length - 1 ? 'btn-primary-gradient' : 'btn-primary'}`}
                         >
-                            Next <FaChevronRight className="ml-2" />
+                            {currentModuleIndex === course.modules.length - 1 && currentLessonIndex === currentModule.lessons.length - 1
+                                ? 'Finish & Take Assessment'
+                                : 'Next'} <FaChevronRight className="ml-2" />
                         </button>
                     </div>
                 </div>

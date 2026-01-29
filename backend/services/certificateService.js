@@ -6,9 +6,48 @@ import { promises as fs } from 'fs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+let browserInstance = null;
+
+const getBrowser = async () => {
+    if (browserInstance && browserInstance.connected) {
+        return browserInstance;
+    }
+
+    if (browserInstance) {
+        try {
+            await browserInstance.close();
+        } catch (e) {
+            console.error('Error closing old browser instance:', e);
+        }
+    }
+
+    browserInstance = await puppeteer.launch({
+        headless: 'new',
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--disable-gpu',
+            '--no-first-run',
+            '--no-zygote',
+            '--hide-scrollbars',
+            '--disable-notifications',
+            '--disable-extensions'
+        ]
+    });
+
+    browserInstance.on('disconnected', () => {
+        console.log('Puppeteer browser disconnected');
+        browserInstance = null;
+    });
+
+    return browserInstance;
+};
+
 // @desc    Generate PDF certificate
 export const generateCertificatePDF = async (certificateData) => {
-    let browser;
+    let page;
     try {
         console.log('Starting PDF generation for certificate:', certificateData.certificateId);
 
@@ -17,70 +56,49 @@ export const generateCertificatePDF = async (certificateData) => {
             throw new Error('Missing required certificate data: userName, courseTitle, and certificateId are required');
         }
 
-        // Launch Puppeteer with minimal, reliable configuration
-        browser = await puppeteer.launch({
-            headless: true,
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage'
-            ]
-        });
+        const browser = await getBrowser();
+        page = await browser.newPage();
 
-        const page = await browser.newPage();
-
-        // Set viewport for consistent rendering - reduced height to ensure 1 page
-        await page.setViewport({ width: 1122, height: 794 }); // A4 at 96 PPI
+        // Set viewport for consistent rendering
+        await page.setViewport({ width: 1122, height: 794 });
 
         // Generate HTML certificate
         const html = generateCertificateHTML(certificateData);
 
         // Set content and wait for it to render
+        // Using 'domcontentloaded' + small delay for speed, fallback to networkidle2 if images fail
         await page.setContent(html, {
-            waitUntil: 'networkidle0',
-            timeout: 15000
+            waitUntil: 'domcontentloaded',
+            timeout: 20000
         });
 
-        // Wait for fonts and styles to load
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Wait a tiny bit for fonts/styles - enough for most local/cached runs
+        await new Promise(resolve => setTimeout(resolve, 800));
 
-        // Generate PDF with optimized options
+        // Generate PDF
         const pdfBuffer = await page.pdf({
             format: 'A4',
             landscape: true,
             printBackground: true,
-            margin: {
-                top: '0',
-                right: '0',
-                bottom: '0',
-                left: '0'
-            },
+            margin: { top: '0', right: '0', bottom: '0', left: '0' },
             timeout: 30000
         });
 
-        await browser.close();
+        await page.close();
         console.log(`PDF generated successfully for certificate: ${certificateData.certificateId}`);
 
         return pdfBuffer;
     } catch (error) {
         console.error('Error generating PDF certificate:', error);
 
-        // Ensure browser is closed on error
-        if (browser) {
-            try {
-                await browser.close();
-            } catch (closeError) {
-                console.error('Error closing browser during error handling:', closeError);
-            }
+        if (page) {
+            try { await page.close(); } catch (e) { }
         }
 
-        // Provide more specific error messages
+        // If it's a protocol error, the browser might be dead, null it out so next call restarts
         if (error.message.includes('Protocol error')) {
-            throw new Error('PDF generation service temporarily unavailable. Please try again later.');
-        } else if (error.message.includes('Timeout')) {
-            throw new Error('PDF generation timed out. Please try again.');
-        } else if (error.message.includes('Missing required certificate data')) {
-            throw new Error('Invalid certificate data provided.');
+            browserInstance = null;
+            throw new Error('PDF generation service temporarily unavailable. Restarting engine...');
         }
 
         throw new Error(`Failed to generate PDF certificate: ${error.message}`);

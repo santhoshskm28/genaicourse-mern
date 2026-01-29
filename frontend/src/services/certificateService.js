@@ -22,10 +22,10 @@ const certificateService = {
       }
 
       console.log(`Attempting to download certificate: ${certificateId}`);
-      
+
       const response = await api.get(`/certificates/${certificateId}/download`, {
         responseType: 'blob',
-        timeout: 30000 // 30 second timeout
+        timeout: 60000 // 60 second timeout for PDF generation
       });
 
       console.log('Download response status:', response.status);
@@ -41,14 +41,14 @@ const certificateService = {
       // Create blob and download
       const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(pdfBlob);
-      
+
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', `certificate-${certificateId}.pdf`);
       document.body.appendChild(link);
       link.click();
       link.remove();
-      
+
       // Clean up URL after a short delay
       setTimeout(() => {
         window.URL.revokeObjectURL(url);
@@ -57,7 +57,7 @@ const certificateService = {
       return response.data;
     } catch (error) {
       console.error('Certificate download error:', error);
-      
+
       if (error.code === 'ECONNABORTED') {
         throw new Error('Download timeout. Please try again.');
       } else if (error.response?.status === 404) {
@@ -69,7 +69,7 @@ const certificateService = {
       } else if (error.response?.status === 500) {
         throw new Error('Server error occurred. Please try again in a few moments.');
       }
-      
+
       const errorMessage = error.response?.data?.message || error.message || 'Failed to download certificate';
       throw new Error(errorMessage);
     }
