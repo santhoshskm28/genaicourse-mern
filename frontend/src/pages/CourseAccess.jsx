@@ -73,9 +73,9 @@ const CourseAccess = () => {
     const totalLessons = getTotalLessons();
 
     return (
-        <div className="min-h-screen bg-slate-900">
+        <div className="min-h-screen bg-slate-900 pt-24">
             {/* Header */}
-            <div className="bg-slate-800 border-b border-slate-700 sticky top-0 z-50">
+            <div className="bg-slate-800 border-b border-slate-700 sticky top-20 z-40 shadow-md">
                 <div className="container py-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-6">

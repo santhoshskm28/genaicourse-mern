@@ -39,7 +39,7 @@ const AdminJSONUpload = () => {
     };
 
     return (
-        <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="container mx-auto px-4 py-8 max-w-4xl pt-28">
             <div className="mb-8">
                 <h1 className="text-3xl font-bold text-white mb-2">JSON Course Publisher</h1>
                 <p className="text-slate-400">Paste your course JSON data below to upload a new course.</p>
@@ -87,8 +87,8 @@ const AdminJSONUpload = () => {
                         onClick={handleSave}
                         disabled={!jsonInput.trim() || isSaving}
                         className={`px-6 py-3 rounded-lg font-bold flex items-center gap-2 transition-all ${!jsonInput.trim() || isSaving
-                                ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
-                                : 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-900/20'
+                            ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
+                            : 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-900/20'
                             }`}
                     >
                         {isSaving ? 'Publishing...' : 'Publish Course'}

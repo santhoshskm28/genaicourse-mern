@@ -29,7 +29,7 @@ const CourseEnrollment = () => {
         fetchCourse();
     }, [id]);
 
-const handleEnroll = async () => {
+    const handleEnroll = async () => {
         if (!isAuthenticated) {
             toast.info('Please login to enroll');
             return;
@@ -47,7 +47,7 @@ const handleEnroll = async () => {
         }
     };
 
-const handleStartLearning = () => {
+    const handleStartLearning = () => {
         if (course?.modules?.length > 0 && course.modules[0].lessons?.length > 0) {
             // Navigate to course viewer instead of specific lesson
             window.location.href = `/courses/${id}/learn`;
@@ -59,7 +59,7 @@ const handleStartLearning = () => {
     if (loading) return <Loader />;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24">
             {/* Hero Section */}
             <div className="bg-slate-800 border-b border-slate-700">
                 <div className="container py-16">

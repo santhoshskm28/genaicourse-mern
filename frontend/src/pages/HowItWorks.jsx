@@ -3,7 +3,7 @@ import { FaBookReader, FaLaptopCode, FaCertificate, FaArrowRight } from 'react-i
 
 const HowItWorks = () => {
     return (
-        <div className="section">
+        <div className="section section-pt">
             <div className="container max-w-4xl mx-auto">
                 <h1 className="section-title">How It Works</h1>
                 <p className="text-xl text-center text-gray-400 mb-16 max-w-2xl mx-auto">

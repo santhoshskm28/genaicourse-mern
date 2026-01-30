@@ -30,7 +30,7 @@ const Pricing = () => {
         {
             name: 'Specialist',
             price: '$29',
-            period: 'per month',
+            period: 'per course',
             description: 'Advanced data for serious engineers',
             features: [
                 'Full academy access',
@@ -52,7 +52,7 @@ const Pricing = () => {
         {
             name: 'Enterprise',
             price: '$99',
-            period: 'per month',
+            period: 'per course',
             description: 'Full-court solutions for neural teams',
             features: [
                 'Everything in Specialist',
@@ -188,7 +188,7 @@ const Pricing = () => {
                             Initialize Free Node
                         </Link>
                         <Link to="/courses" className="btn-premium btn-outline-glass !px-12">
-                            Explore Neural Layers
+                            Explore Neural Lessons
                         </Link>
                     </div>
                 </motion.div>

@@ -340,7 +340,6 @@ export function generateCertificateHTML(data) {
             <div class="stats">
                 <div class="stat-box"><span class="stat-label">Date of Issue</span><span class="stat-val">${new Date(data.completionDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span></div>
                 <div class="stat-box"><span class="stat-label">Achievement</span><span class="stat-val">${data.score}% Score</span></div>
-                <div class="stat-box"><span class="stat-label">Verification ID</span><span class="stat-val">${data.certificateId}</span></div>
             </div>
             
             <div class="footer-sigs">

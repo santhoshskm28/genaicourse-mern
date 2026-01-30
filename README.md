@@ -137,29 +137,106 @@ ID: 69719ad9d9caabe01a8f659c
 
 ```
 genaicourse-mern/
-├── backend/                 # Node.js/Express API
-│   ├── controllers/         # Route controllers
-│   ├── models/             # MongoDB models
-│   ├── routes/             # API routes
-│   ├── middleware/         # Custom middleware
-│   ├── config/             # Database configuration
-│   ├── __tests__/          # Backend tests
-│   ├── Dockerfile          # Backend container config
+├── backend/                        # Backend API (Node.js/Express)
+│   ├── config/                     # Configuration files
+│   │   └── database.js             # MongoDB connection setup
+│   ├── controllers/                # Request handlers
+│   │   ├── adminController.js      # Admin-specific logic
+│   │   ├── assessmentController.js # Quiz & assessment logic
+│   │   ├── authController.js       # User authentication
+│   │   ├── certificateController.js# Certificate generation/retrieval
+│   │   ├── courseController.js     # Course CRUD operations
+│   │   └── uploadController.js     # File upload handling
+│   ├── middleware/                 # Express middleware
+│   │   ├── auth.js                 # JWT verification
+│   │   ├── error.js                # Global error handler
+│   │   ├── checkRole.js            # Role-based access control
+│   │   └── uploadMiddleware.js     # Multer config
+│   ├── models/                     # Mongoose schemas
+│   │   ├── Course.js               # Course structure
+│   │   ├── User.js                 # User profile & auth
+│   │   ├── UserQuizAttempt.js      # Assessment records
+│   │   └── Module.js / Lesson.js   # (If separated)
+│   ├── routes/                     # API route definitions
+│   │   ├── admin.js
+│   │   ├── auth.js
+│   │   ├── assessments.js
+│   │   ├── certificates.js
+│   │   ├── courses.js
+│   │   └── upload.js
+│   ├── services/                   # Business logic services
+│   │   ├── certificateService.js   # Puppeteer PDF generation
+│   │   └── pdfService.js           # PDF parsing logic
+│   ├── utils/                      # Utilities
+│   │   ├── seeder.js               # Database seeding script
+│   │   └── validators.js           # Input validation helpers
+│   ├── .env.example                # Environment variables template
+│   ├── server.js                   # Entry point
 │   └── package.json
-├── frontend/                # React/Vite frontend
+│
+├── frontend/                       # Frontend SPA (React/Vite)
+│   ├── public/                     # Static assets
 │   ├── src/
-│   │   ├── components/     # Reusable components
-│   │   ├── pages/          # Page components
-│   │   ├── context/        # React context
-│   │   ├── services/       # API services
-│   │   └── utils/          # Utility functions
-│   ├── public/             # Static assets
-│   ├── Dockerfile          # Frontend container config
-│   └── package.json
-├── .github/workflows/       # GitHub Actions CI/CD
-├── docker-compose.yml       # Development containers
-├── docker-compose.prod.yml  # Production containers
-└── package.json            # Root package.json
+│   │   ├── components/             # Reusable UI components
+│   │   │   ├── admin/              # Admin-specific components
+│   │   │   │   ├── CourseAssessmentUpload.jsx
+│   │   │   │   └── ...
+│   │   │   ├── assessment/         # Assessment interface
+│   │   │   │   └── AssessmentCenter.jsx
+│   │   │   ├── certificates/       # Certificate display
+│   │   │   │   └── CertificateViewer.jsx
+│   │   │   ├── common/             # Global components
+│   │   │   │   ├── APIStatus.jsx
+│   │   │   │   ├── Footer.jsx
+│   │   │   │   ├── Loader.jsx
+│   │   │   │   └── Navbar.jsx
+│   │   │   ├── courses/            # Course-related components
+│   │   │   │   ├── CourseCard.jsx
+│   │   │   │   └── CourseReadingProgress.jsx
+│   │   │   ├── lessons/            # Lesson player
+│   │   │   │   └── LessonPlayer.jsx
+│   │   │   └── routing/            # Protected route wrappers
+│   │   │       ├── AdminRoute.jsx
+│   │   │       └── PrivateRoute.jsx
+│   │   ├── context/                # Global state wrappers
+│   │   │   └── AuthContext.jsx
+│   │   ├── pages/                  # Main page views
+│   │   │   ├── admin/              # Admin pages
+│   │   │   │   ├── AdminCourseEnrollments.jsx
+│   │   │   │   ├── AdminDashboard.jsx
+│   │   │   │   ├── AdminJSONUpload.jsx
+│   │   │   │   └── CourseForm.jsx
+│   │   │   ├── CourseAccess.jsx
+│   │   │   ├── CourseCatalogue.jsx
+│   │   │   ├── CourseDetail.jsx
+│   │   │   ├── CourseEnrollment.jsx
+│   │   │   ├── CourseViewer.jsx
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── Home.jsx
+│   │   │   ├── HowItWorks.jsx
+│   │   │   ├── Login.jsx
+│   │   │   ├── Pricing.jsx
+│   │   │   └── Register.jsx
+│   │   ├── services/               # API client services
+│   │   │   ├── adminService.js
+│   │   │   ├── api.js              # Axios instance
+│   │   │   ├── assessmentService.js
+│   │   │   ├── authService.js
+│   │   │   ├── certificateService.js
+│   │   │   └── courseService.js
+│   │   ├── App.jsx                 # Main app component & routes
+│   │   ├── index.css               # Global styles (Tailwind)
+│   │   └── main.jsx                # Entry point
+│   ├── .env.example
+│   ├── index.html
+│   ├── package.json
+│   ├── tailwind.config.js
+│   └── vite.config.js
+│
+├── .gitignore
+├── docker-compose.yml
+├── docker-compose.prod.yml
+└── README.md
 ```
 
 ## 🔗 API Endpoints
@@ -210,7 +287,7 @@ genaicourse-mern/
 
 ### Assessment System
 - **Timer**: Configurable time limits per assessment
-- **Question Types**: Multiple choice with 2-6 options
+- **Question Types**: Multiple choice with 2-4 options
 - **Scoring**: Points per question, customizable passing scores
 - **Results**: Immediate feedback with detailed review
 - **Retries**: Configurable maximum attempts

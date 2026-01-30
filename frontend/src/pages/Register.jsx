@@ -44,7 +44,7 @@ const Register = () => {
     };
 
     return (
-        <div className="section min-h-[80vh] flex items-center justify-center">
+        <div className="section section-pt min-h-[80vh] flex items-center justify-center">
             <div className="card w-full max-w-md animate-[fadeIn_0.5s_ease-out]">
                 <h2 className="text-3xl font-bold text-center mb-8">Create Account</h2>
 

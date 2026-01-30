@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import courseService from '../../services/courseService.js';
-import { FaArrowLeft, FaArrowRight, FaBars, FaTimes } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaBars, FaTimes, FaClipboardCheck, FaCheck } from 'react-icons/fa';
+import AssessmentCenter from '../assessment/AssessmentCenter.jsx';
 
 const LessonPlayer = () => {
     const { courseId, lessonId } = useParams();
@@ -11,6 +12,7 @@ const LessonPlayer = () => {
     const [loading, setLoading] = useState(true);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [currentModuleIndex, setCurrentModuleIndex] = useState(0);
+    const [showAssessment, setShowAssessment] = useState(false);
 
     useEffect(() => {
         const fetchCourse = async () => {
@@ -62,7 +64,7 @@ const LessonPlayer = () => {
 
     const getAllLessons = () => {
         if (!course) return [];
-        
+
         const allLessons = [];
         course.modules.forEach((module, moduleIndex) => {
             module.lessons.forEach((lesson, lessonIndex) => {
@@ -79,7 +81,7 @@ const LessonPlayer = () => {
 
     const getCurrentLessonIndex = () => {
         const allLessons = getAllLessons();
-        return allLessons.findIndex(lesson => 
+        return allLessons.findIndex(lesson =>
             lesson.id === currentLesson?.id || lesson._id === currentLesson?._id
         );
     };
@@ -87,7 +89,7 @@ const LessonPlayer = () => {
     const navigateToLesson = (direction) => {
         const allLessons = getAllLessons();
         const currentIndex = getCurrentLessonIndex();
-        
+
         let nextIndex;
         if (direction === 'next') {
             nextIndex = currentIndex + 1;
@@ -102,6 +104,7 @@ const LessonPlayer = () => {
     };
 
     const handleLessonClick = (lesson) => {
+        setShowAssessment(false);
         navigate(`/courses/${courseId}/lessons/${lesson.id || lesson._id}`);
         setSidebarOpen(false);
     };
@@ -151,7 +154,7 @@ const LessonPlayer = () => {
             `}>
                 <div className="p-6">
                     <div className="mb-6">
-                        <Link 
+                        <Link
                             to={`/courses/${courseId}`}
                             className="flex items-center text-gray-400 hover:text-white transition-colors"
                         >
@@ -173,18 +176,18 @@ const LessonPlayer = () => {
                                     <div className="space-y-2">
                                         {module.lessons.map((lesson, lessonIndex) => {
                                             const isCurrent = lesson.id === currentLesson.id || lesson._id === currentLesson._id;
-                                            const lessonGlobalIndex = allLessons.findIndex(l => 
+                                            const lessonGlobalIndex = allLessons.findIndex(l =>
                                                 l.id === lesson.id || l._id === lesson._id
                                             );
-                                            
+
                                             return (
                                                 <button
                                                     key={lesson.id || lesson._id || lessonIndex}
                                                     onClick={() => handleLessonClick(lesson)}
                                                     className={`
                                                         w-full text-left p-3 rounded-lg transition-all duration-200
-                                                        ${isCurrent 
-                                                            ? 'bg-primary text-white' 
+                                                        ${isCurrent
+                                                            ? 'bg-primary text-white'
                                                             : 'text-gray-400 hover:bg-slate-700 hover:text-white'
                                                         }
                                                     `}
@@ -216,128 +219,178 @@ const LessonPlayer = () => {
             {/* Main Content Area */}
             <div className="flex-1 overflow-y-auto">
                 <main className="max-w-4xl mx-auto px-6 py-8">
-                    {/* Lesson Header */}
-                    <div className="mb-8">
-                        <div className="text-sm text-primary font-semibold mb-2">
-                            {course.modules[currentModuleIndex]?.title}
+                    {showAssessment ? (
+                        <div className="py-10">
+                            <div className="flex items-center gap-4 mb-10">
+                                <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+                                    <FaClipboardCheck size={24} />
+                                </div>
+                                <div>
+                                    <h2 className="text-3xl font-black text-white">Final Assessment</h2>
+                                    <p className="text-slate-500 text-sm font-medium uppercase tracking-widest">Neural Pattern Verification in Progress</p>
+                                </div>
+                            </div>
+
+                            <div className="bg-slate-800 rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl">
+                                <AssessmentCenter isEmbedded={true} courseId={courseId} />
+                            </div>
+
+                            <div className="mt-12 flex justify-center">
+                                <button
+                                    onClick={() => setShowAssessment(false)}
+                                    className="px-8 py-3 bg-slate-800 text-gray-400 hover:text-white rounded-xl border border-white/5 transition-all"
+                                >
+                                    Back to Final Lesson
+                                </button>
+                            </div>
                         </div>
-                        <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                            {currentLesson.title}
-                        </h1>
-                        
-                        {currentLesson.duration && (
-                            <div className="flex items-center text-gray-400 text-sm">
-                                <span>Duration: {currentLesson.duration} minutes</span>
-                                {currentLesson.difficulty && (
-                                    <>
-                                        <span className="mx-2">•</span>
-                                        <span>Level: {currentLesson.difficulty}</span>
-                                    </>
-                                )}
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Lesson Content */}
-                    <div className="bg-slate-800 rounded-lg p-8 mb-8">
-                        <div className="prose prose-invert max-w-none">
-                            {/* Key Points */}
-                            {currentLesson.keyPoints && currentLesson.keyPoints.length > 0 && (
-                                <div className="mb-6">
-                                    <h3 className="text-xl font-semibold text-white mb-4">Key Points</h3>
-                                    <ul className="space-y-2">
-                                        {currentLesson.keyPoints.map((point, index) => (
-                                            <li key={index} className="text-gray-300 flex items-start">
-                                                <span className="text-primary mr-2">•</span>
-                                                <span>{point}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
+                    ) : (
+                        <>
+                            {/* Lesson Header */}
+                            <div className="mb-8">
+                                <div className="text-sm text-primary font-semibold mb-2">
+                                    {course.modules[currentModuleIndex]?.title}
                                 </div>
-                            )}
+                                <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                                    {currentLesson.title}
+                                </h1>
 
-                            {/* Main Content */}
-                            <div className="text-gray-300 leading-relaxed">
-                                {currentLesson.content ? (
-                                    <div className="whitespace-pre-wrap">{currentLesson.content}</div>
-                                ) : (
-                                    <p className="text-gray-400 italic">No content available for this lesson.</p>
-                                )}
-                            </div>
-
-                            {/* Learning Objectives */}
-                            {currentLesson.learningObjectives && currentLesson.learningObjectives.length > 0 && (
-                                <div className="mt-8 pt-6 border-t border-slate-700">
-                                    <h3 className="text-xl font-semibold text-white mb-4">Learning Objectives</h3>
-                                    <ul className="space-y-2">
-                                        {currentLesson.learningObjectives.map((objective, index) => (
-                                            <li key={index} className="text-gray-300 flex items-start">
-                                                <span className="text-primary mr-2">✓</span>
-                                                <span>{objective}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
-
-                            {/* Resources */}
-                            {currentLesson.resources && currentLesson.resources.length > 0 && (
-                                <div className="mt-8 pt-6 border-t border-slate-700">
-                                    <h3 className="text-xl font-semibold text-white mb-4">Resources</h3>
-                                    <div className="space-y-2">
-                                        {currentLesson.resources.map((resource, index) => (
-                                            <a
-                                                key={index}
-                                                href={resource.url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="flex items-center text-primary hover:text-primary-light transition-colors"
-                                            >
-                                                <span>{resource.title || resource.url}</span>
-                                            </a>
-                                        ))}
+                                {currentLesson.duration && (
+                                    <div className="flex items-center text-gray-400 text-sm">
+                                        <span>Duration: {currentLesson.duration} minutes</span>
+                                        {currentLesson.difficulty && (
+                                            <>
+                                                <span className="mx-2">•</span>
+                                                <span>Level: {currentLesson.difficulty}</span>
+                                            </>
+                                        )}
                                     </div>
+                                )}
+                            </div>
+
+                            {/* Lesson Content */}
+                            <div className="bg-slate-800 rounded-lg p-8 mb-8">
+                                <div className="prose prose-invert max-w-none">
+                                    {/* Key Points */}
+                                    {currentLesson.keyPoints && currentLesson.keyPoints.length > 0 && (
+                                        <div className="mb-6">
+                                            <h3 className="text-xl font-semibold text-white mb-4">Key Points</h3>
+                                            <ul className="space-y-2">
+                                                {currentLesson.keyPoints.map((point, index) => (
+                                                    <li key={index} className="text-gray-300 flex items-start">
+                                                        <span className="text-primary mr-2">•</span>
+                                                        <span>{point}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+
+                                    {/* Main Content */}
+                                    <div className="text-gray-300 leading-relaxed">
+                                        {currentLesson.content ? (
+                                            <div className="whitespace-pre-wrap">{currentLesson.content}</div>
+                                        ) : (
+                                            <p className="text-gray-400 italic">No content available for this lesson.</p>
+                                        )}
+                                    </div>
+
+                                    {/* Learning Objectives */}
+                                    {currentLesson.learningObjectives && currentLesson.learningObjectives.length > 0 && (
+                                        <div className="mt-8 pt-6 border-t border-slate-700">
+                                            <h3 className="text-xl font-semibold text-white mb-4">Learning Objectives</h3>
+                                            <ul className="space-y-2">
+                                                {currentLesson.learningObjectives.map((objective, index) => (
+                                                    <li key={index} className="text-gray-300 flex items-start">
+                                                        <span className="text-primary mr-2">✓</span>
+                                                        <span>{objective}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+
+                                    {/* Resources */}
+                                    {currentLesson.resources && currentLesson.resources.length > 0 && (
+                                        <div className="mt-8 pt-6 border-t border-slate-700">
+                                            <h3 className="text-xl font-semibold text-white mb-4">Resources</h3>
+                                            <div className="space-y-2">
+                                                {currentLesson.resources.map((resource, index) => (
+                                                    <a
+                                                        key={index}
+                                                        href={resource.url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="flex items-center text-primary hover:text-primary-light transition-colors"
+                                                    >
+                                                        <span>{resource.title || resource.url}</span>
+                                                    </a>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
-                            )}
-                        </div>
-                    </div>
+                            </div>
 
-                    {/* Navigation */}
-                    <div className="flex justify-between items-center">
-                        <button
-                            onClick={() => navigateToLesson('previous')}
-                            disabled={!hasPrevious}
-                            className={`
+                            {/* Navigation */}
+                            <div className="flex justify-between items-center mt-12 pt-8 border-t border-slate-800">
+                                <button
+                                    onClick={() => {
+                                        if (showAssessment) {
+                                            setShowAssessment(false);
+                                        } else {
+                                            navigateToLesson('previous');
+                                        }
+                                    }}
+                                    disabled={!showAssessment && !hasPrevious}
+                                    className={`
                                 flex items-center px-6 py-3 rounded-lg font-medium transition-colors
-                                ${hasPrevious 
-                                    ? 'bg-slate-700 text-white hover:bg-slate-600' 
-                                    : 'bg-slate-800 text-gray-500 cursor-not-allowed'
-                                }
+                                ${(!showAssessment && !hasPrevious)
+                                            ? 'bg-slate-800 text-gray-500 cursor-not-allowed'
+                                            : 'bg-slate-700 text-white hover:bg-slate-600'
+                                        }
                             `}
-                        >
-                            <FaArrowLeft className="mr-2" />
-                            Previous Lesson
-                        </button>
+                                >
+                                    <FaArrowLeft className="mr-2" />
+                                    {showAssessment ? 'Review Lesson' : 'Previous Lesson'}
+                                </button>
 
-                        <div className="text-gray-400 text-sm">
-                            Lesson {currentIndex + 1} of {allLessons.length}
-                        </div>
+                                {!showAssessment && (
+                                    <div className="text-gray-400 text-sm">
+                                        Lesson {currentIndex + 1} of {allLessons.length}
+                                    </div>
+                                )}
 
-                        <button
-                            onClick={() => navigateToLesson('next')}
-                            disabled={!hasNext}
-                            className={`
-                                flex items-center px-6 py-3 rounded-lg font-medium transition-colors
-                                ${hasNext 
-                                    ? 'bg-primary text-white hover:bg-primary-dark' 
-                                    : 'bg-slate-800 text-gray-500 cursor-not-allowed'
-                                }
-                            `}
-                        >
-                            Next Lesson
-                            <FaArrowRight className="ml-2" />
-                        </button>
-                    </div>
+                                {!showAssessment ? (
+                                    hasNext ? (
+                                        <button
+                                            onClick={() => navigateToLesson('next')}
+                                            className="flex items-center px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-colors"
+                                        >
+                                            Next Lesson
+                                            <FaArrowRight className="ml-2" />
+                                        </button>
+                                    ) : (
+                                        <button
+                                            onClick={() => setShowAssessment(true)}
+                                            className="flex items-center px-8 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20"
+                                        >
+                                            Take Assessment
+                                            <FaClipboardCheck className="ml-2" />
+                                        </button>
+                                    )
+                                ) : (
+                                    <Link
+                                        to="/dashboard"
+                                        className="flex items-center px-6 py-3 bg-slate-700 text-white rounded-lg font-medium hover:bg-slate-600 transition-colors"
+                                    >
+                                        Finish Later
+                                        <FaCheck className="ml-2" />
+                                    </Link>
+                                )}
+                            </div>
+                        </>
+                    )}
                 </main>
             </div>
 

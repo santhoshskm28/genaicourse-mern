@@ -3,10 +3,12 @@ import { useLocation } from 'react-router-dom';
 import courseService from '../services/courseService.js';
 import CourseCard from '../components/courses/CourseCard.jsx';
 import Loader from '../components/common/Loader.jsx';
-import { FaSearch, FaFilter, FaLayerGroup, FaGraduationCap } from 'react-icons/fa';
+import { FaSearch, FaFilter, FaArrowLeft } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 const CourseCatalogue = () => {
+    const navigate = useNavigate();
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filters, setFilters] = useState({
@@ -50,12 +52,20 @@ const CourseCatalogue = () => {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-center mb-16"
+                    className="flex flex-col items-center mb-16 relative"
                 >
-                    <h1 className="text-5xl md:text-7xl font-black mb-4 uppercase tracking-tighter">
-                        Nexus <span className="text-gradient">Academy</span>
+                    <button
+                        onClick={() => navigate(-1)}
+                        className="absolute left-0 top-0 p-3 bg-white/5 border border-white/10 rounded-2xl text-slate-400 hover:text-white transition-all flex items-center gap-2 group"
+                    >
+                        <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" />
+                        <span className="text-xs font-black uppercase tracking-widest">Back</span>
+                    </button>
+
+                    <h1 className="text-5xl md:text-7xl font-black mb-4 uppercase tracking-tighter text-center">
+                        GenAi <span className="text-gradient">Course</span>
                     </h1>
-                    <p className="text-slate-400 font-bold tracking-widest uppercase text-xs">Explore the Infinite Possibilities of AI</p>
+                    <p className="text-slate-400 font-bold tracking-widest uppercase text-xs text-center">Explore the Infinite Possibilities of AI</p>
                 </motion.div>
 
                 {/* Filters Hub */}
@@ -65,9 +75,12 @@ const CourseCatalogue = () => {
                     transition={{ delay: 0.1 }}
                     className="glass-card p-6 mb-16 relative overflow-visible z-10"
                 >
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-                        <div className="lg:col-span-5 relative group">
-                            <FaSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
+                    <div className="flex flex-col lg:flex-row justify-between items-center gap-6">
+                        <div className="flex items-center gap-4">
+                        </div>
+
+                        <div className="w-full lg:w-1/3 relative group px-2">
+                            <FaSearch className="absolute left-7 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
                             <input
                                 type="text"
                                 name="search"
@@ -76,43 +89,6 @@ const CourseCatalogue = () => {
                                 placeholder="Search by neural keyword..."
                                 className="input-premium pl-14"
                             />
-                        </div>
-
-                        <div className="lg:col-span-3 relative">
-                            <FaLayerGroup className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500" />
-                            <select
-                                name="category"
-                                value={filters.category}
-                                onChange={handleFilterChange}
-                                className="input-premium pl-14 appearance-none"
-                            >
-                                <option value="">All Streams</option>
-                                <option value="AI/ML">Neural Networks</option>
-                                <option value="Web Development">Interface Design</option>
-                                <option value="Data Science">Quantum Data</option>
-                                <option value="Cloud Computing">Cloud Layers</option>
-                            </select>
-                        </div>
-
-                        <div className="lg:col-span-3 relative">
-                            <FaGraduationCap className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500" />
-                            <select
-                                name="level"
-                                value={filters.level}
-                                onChange={handleFilterChange}
-                                className="input-premium pl-14 appearance-none"
-                            >
-                                <option value="">All Clearance</option>
-                                <option value="Beginner">Initiate</option>
-                                <option value="Intermediate">specialist</option>
-                                <option value="Advanced">Grandmaster</option>
-                            </select>
-                        </div>
-
-                        <div className="lg:col-span-1 flex justify-center">
-                            <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400">
-                                <FaFilter size={18} />
-                            </div>
                         </div>
                     </div>
                 </motion.div>

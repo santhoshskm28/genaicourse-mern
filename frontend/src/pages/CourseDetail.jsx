@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext.jsx';
 import courseService from '../services/courseService.js';
 import Loader from '../components/common/Loader.jsx';
 import { toast } from 'react-toastify';
-import { FaPlay, FaCheckCircle, FaLock, FaList } from 'react-icons/fa';
+import { FaPlay, FaCheckCircle, FaLock, FaList, FaArrowLeft } from 'react-icons/fa';
 
 const CourseDetail = () => {
     const { id } = useParams();
@@ -75,10 +75,17 @@ const CourseDetail = () => {
     if (!course) return null;
 
     return (
-        <div className="bg-dark min-h-screen">
+        <div className="bg-dark min-h-screen pt-24">
             {/* Header */}
             <div className="bg-slate-900 py-16 border-b border-slate-800">
                 <div className="container">
+                    <button
+                        onClick={() => navigate('/courses')}
+                        className="mb-8 p-3 bg-white/5 border border-white/10 rounded-2xl text-slate-400 hover:text-white transition-all flex items-center gap-2 group w-fit"
+                    >
+                        <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" />
+                        <span className="text-xs font-black uppercase tracking-widest">Back to Library</span>
+                    </button>
                     <div className="flex flex-col md:flex-row gap-10 items-start">
                         <div className="flex-1">
                             <span className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-bold mb-4 border border-primary/20">

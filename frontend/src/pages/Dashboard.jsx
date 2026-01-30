@@ -39,7 +39,7 @@ const Dashboard = () => {
     if (loading) return <Loader />;
 
     return (
-        <div className="section min-h-screen">
+        <div className="section section-pt min-h-screen">
             <div className="container">
                 <div className="flex items-center justify-between mb-10">
                     <div>
@@ -64,7 +64,7 @@ const Dashboard = () => {
                             <FaTrophy size={24} />
                         </div>
                         <div>
-<div className="text-2xl font-bold">
+                            <div className="text-2xl font-bold">
                                 {enrolledCourses.filter(c => c && c.progressPercentage === 100).length}
                             </div>
                             <div className="text-sm text-gray-400">Certificates Earned</div>
@@ -76,7 +76,7 @@ const Dashboard = () => {
 
                 {enrolledCourses.length > 0 ? (
                     <div className="grid grid-2">
-{enrolledCourses.filter(progress => progress).map(progress => (
+                        {enrolledCourses.filter(progress => progress).map(progress => (
                             <div key={progress._id} className="card p-6 flex flex-col md:flex-row gap-6 items-center">
                                 <div className="w-full md:w-48 h-32 rounded-lg bg-slate-700 overflow-hidden flex-shrink-0">
                                     <img

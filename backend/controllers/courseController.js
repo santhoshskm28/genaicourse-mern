@@ -28,7 +28,12 @@ export const getCourses = async (req, res, next) => {
         }
 
         if (search) {
-            query.$text = { $search: search };
+            query.$or = [
+                { title: { $regex: search, $options: 'i' } },
+                { description: { $regex: search, $options: 'i' } },
+                { 'modules.lessons.title': { $regex: search, $options: 'i' } },
+                { 'modules.lessons.content': { $regex: search, $options: 'i' } }
+            ];
         }
 
         const { page = 1, limit = 10, sortBy = 'createdAt' } = req.query;
@@ -435,7 +440,7 @@ export const addReview = async (req, res, next) => {
 export const getEnrolledCourses = async (req, res, next) => {
     try {
         const { page = 1, limit = 10, status } = req.query;
-        
+
         const userProgress = await UserProgress.find({ userId: req.user._id })
             .populate('courseId', 'title thumbnail category level averageRating')
             .sort({ lastAccessedAt: -1 })
@@ -494,7 +499,7 @@ export const addBookmark = async (req, res, next) => {
         }
 
         const success = progress.addBookmark(moduleId, lessonId, timestamp, note);
-        
+
         if (!success) {
             return res.status(400).json({
                 success: false,
@@ -613,7 +618,7 @@ export const getNotes = async (req, res, next) => {
 export const getCourseAnalytics = async (req, res, next) => {
     try {
         const courseId = req.params.id;
-        
+
         const course = await Course.findById(courseId);
         if (!course) {
             return res.status(404).json({
@@ -632,9 +637,9 @@ export const getCourseAnalytics = async (req, res, next) => {
 
         // Get enrollment and completion data
         const totalEnrollments = await UserProgress.countDocuments({ courseId });
-        const completions = await UserProgress.countDocuments({ 
-            courseId, 
-            progressPercentage: 100 
+        const completions = await UserProgress.countDocuments({
+            courseId,
+            progressPercentage: 100
         });
         const inProgress = totalEnrollments - completions;
 
@@ -695,7 +700,7 @@ export const getCourseAnalytics = async (req, res, next) => {
 // Helper function for enrollment trend
 const getEnrollmentTrend = async (courseId) => {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-    
+
     return await UserProgress.aggregate([
         { $match: { courseId, enrolledAt: { $gte: thirtyDaysAgo } } },
         {
@@ -711,7 +716,7 @@ const getEnrollmentTrend = async (courseId) => {
 // Helper function for completion trend
 const getCompletionTrend = async (courseId) => {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-    
+
     return await UserProgress.aggregate([
         { $match: { courseId, completedAt: { $gte: thirtyDaysAgo } } },
         {

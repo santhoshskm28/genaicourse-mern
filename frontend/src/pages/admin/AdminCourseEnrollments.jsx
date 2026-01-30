@@ -39,7 +39,7 @@ const AdminCourseEnrollments = () => {
     if (loading) return <Loader />;
 
     return (
-        <div className="min-h-screen bg-slate-900 text-slate-200 font-sans p-6">
+        <div className="min-h-screen bg-slate-900 text-slate-200 font-sans p-6 pt-28">
             <div className="container mx-auto max-w-6xl">
                 <div className="mb-8 flex items-center gap-4">
                     <Link to="/admin/dashboard" className="p-2 bg-slate-800 rounded-lg hover:bg-slate-700 transition-colors">

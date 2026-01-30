@@ -40,11 +40,7 @@ const CourseCard = ({ course }) => {
                     <div className="flex items-center gap-6 py-4 border-t border-white/5">
                         <div className="flex items-center gap-2 text-slate-500 font-bold text-[10px] uppercase tracking-widest">
                             <FaBookOpen className="text-indigo-500/60" size={14} />
-                            <span>{course.totalLessons || 0} Layers</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-slate-500 font-bold text-[10px] uppercase tracking-widest">
-                            <FaClock className="text-indigo-500/60" size={14} />
-                            <span>{course.totalDuration || 60} Nodes</span>
+                            <span>{course.totalLessons || 0} Lessons</span>
                         </div>
                     </div>
 

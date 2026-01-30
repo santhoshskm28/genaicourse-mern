@@ -92,7 +92,7 @@ const AdminDashboard = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-slate-900 text-slate-200 font-sans selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-slate-900 text-slate-200 font-sans selection:bg-indigo-500/30 pt-28">
             {/* Top Navigation Bar could go here */}
 
             <div className="container mx-auto px-6 py-8">

@@ -7,8 +7,9 @@ import certificateService from '../../services/certificateService.js';
 import courseService from '../../services/courseService.js';
 import { toast } from 'react-toastify';
 
-const AssessmentCenter = () => {
-  const { id: courseId } = useParams();
+const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
+  const { id: paramCourseId, courseId: routeCourseId } = useParams();
+  const courseId = propCourseId || paramCourseId || routeCourseId;
   const navigate = useNavigate();
 
   const [assessment, setAssessment] = useState(null);
@@ -112,7 +113,7 @@ const AssessmentCenter = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#020617] flex items-center justify-center">
+      <div className={`${isEmbedded ? '' : 'min-h-screen'} bg-[#020617] flex items-center justify-center p-12`}>
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -127,7 +128,7 @@ const AssessmentCenter = () => {
 
   if (error && !assessment) {
     return (
-      <div className="min-h-screen bg-[#020617] flex items-center justify-center p-6">
+      <div className={`${isEmbedded ? '' : 'min-h-screen'} bg-[#020617] flex items-center justify-center p-6`}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -154,6 +155,7 @@ const AssessmentCenter = () => {
       <AssessmentResults
         results={results}
         courseId={courseId}
+        isEmbedded={isEmbedded}
         onRetake={() => {
           setShowResults(false);
           setResults(null);
@@ -169,7 +171,7 @@ const AssessmentCenter = () => {
   const question = assessment.questions[currentQuestion];
 
   return (
-    <div className="min-h-screen bg-[#020617] py-24 px-4 sm:px-6">
+    <div className={`${isEmbedded ? 'py-10' : 'min-h-screen bg-[#020617] py-24'} px-4 sm:px-6`}>
       <div className="max-w-4xl mx-auto">
         {/* Header Card */}
         <motion.div
@@ -312,7 +314,7 @@ const AssessmentCenter = () => {
   );
 };
 
-const AssessmentResults = ({ results, courseId, onRetake }) => {
+const AssessmentResults = ({ results, courseId, onRetake, isEmbedded = false }) => {
   const navigate = useNavigate();
   const [downloadingCert, setDownloadingCert] = useState(false);
   const isPassed = results.attempt?.passed ?? results.passed;
@@ -334,10 +336,12 @@ const AssessmentResults = ({ results, courseId, onRetake }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] py-24 px-4 overflow-hidden relative">
+    <div className={`${isEmbedded ? 'py-10' : 'min-h-screen bg-[#020617] py-24'} px-4 overflow-hidden relative`}>
       {/* Victory/Defeat Background Glow */}
-      <div className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full -z-10 blur-[150px] opacity-20 pointer-events-none transition-colors duration-1000 ${isPassed ? 'bg-emerald-500' : 'bg-red-500'
-        }`}></div>
+      {!isEmbedded && (
+        <div className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full -z-10 blur-[150px] opacity-20 pointer-events-none transition-colors duration-1000 ${isPassed ? 'bg-emerald-500' : 'bg-red-500'
+          }`}></div>
+      )}
 
       <div className="max-w-4xl mx-auto">
         <motion.div
@@ -358,13 +362,13 @@ const AssessmentResults = ({ results, courseId, onRetake }) => {
             </motion.div>
 
             <h2 className="text-5xl md:text-6xl font-black text-white mb-6 uppercase tracking-tighter">
-              {isPassed ? 'Mastery Achieved' : 'Incomplete Quest'}
+              {isPassed ? 'Mastery Achieved' : 'Oops... You failed!'}
             </h2>
 
             <p className="text-xl text-slate-400 max-w-xl mx-auto font-medium leading-[1.6]">
               {isPassed
                 ? "You've successfully conquered the final challenge. Your professional certification is ready for validation."
-                : "The neural paths aren't fully formed yet. Review the data modules and attempt the synchronization again."
+                : "You didn’t pass this time. Please review the lessons and try the quiz again."
               }
             </p>
           </div>
@@ -432,12 +436,7 @@ const AssessmentResults = ({ results, courseId, onRetake }) => {
                         <span className="text-[10px] uppercase font-black tracking-widest text-slate-500 mb-1 block">Your Response</span>
                         <span className={`font-bold ${result.isCorrect ? 'text-emerald-400' : 'text-red-400'}`}>{result.userAnswer}</span>
                       </div>
-                      {!result.isCorrect && (
-                        <div className="p-4 rounded-xl bg-slate-950/40 border border-emerald-500/20">
-                          <span className="text-[10px] uppercase font-black tracking-widest text-emerald-500 mb-1 block">Valid Neural Path</span>
-                          <span className="font-bold text-emerald-400">{result.correctAnswer}</span>
-                        </div>
-                      )}
+
                     </div>
                   </div>
                 </div>

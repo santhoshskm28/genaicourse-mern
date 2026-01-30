@@ -263,7 +263,12 @@ const courseSchema = new mongoose.Schema({
 });
 
 // Index for better query performance
-courseSchema.index({ title: 'text', description: 'text' });
+courseSchema.index({
+    title: 'text',
+    description: 'text',
+    'modules.lessons.title': 'text',
+    'modules.lessons.content': 'text'
+});
 courseSchema.index({ category: 1, isPublished: 1 });
 
 // Virtual for total lessons count

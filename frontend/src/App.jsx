@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -7,7 +7,6 @@ import { AuthProvider, useAuth } from '@/context/AuthContext.jsx';
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
 import Loader from './components/common/Loader';
-import APIStatus from './components/common/APIStatus';
 import AdminRoute from './components/routing/AdminRoute';
 
 // Page Imports
@@ -44,51 +43,66 @@ const App = () => {
     return (
         <AuthProvider>
             <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-                <div className="min-h-screen bg-slate-900 text-white font-sans selection:bg-primary selection:text-white">
-                    <Navbar />
-                    <main>
-                        <Routes>
-                            <Route path="/" element={<Home />} />
-                            <Route path="/courses" element={<CourseCatalogue />} />
-                            <Route path="/courses/:id" element={<CourseDetail />} />
-                            <Route path="/courses/:id/learn" element={<CourseViewer />} />
-                            <Route path="/courses/:id/enroll" element={<CourseEnrollment />} />
-                            <Route path="/courses/:id/access" element={<CourseAccess />} />
-                            <Route path="/courses/:id/assessment" element={<AssessmentCenter />} />
-                            {/* <Route path="/courses/:courseId/lessons/:lessonId" element={<CourseReadingProgress />} /> */}
-                            <Route path="/courses/:courseId/lessons/:lessonId" element={<LessonPlayer />} />
-                            <Route path="/pricing" element={<Pricing />} />
-                            <Route path="/login" element={<Login />} />
-                            <Route path="/register" element={<Register />} />
-                            <Route path="/how-it-works" element={<HowItWorks />} />
-
-                            <Route element={<PrivateRoute />}>
-                                <Route path="/dashboard" element={<Dashboard />} />
-                            </Route>
-
-                            {/* Admin Routes */}
-                            <Route element={<AdminRoute />}>
-                                <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                                <Route path="/admin/courses/new" element={<CourseForm />} />
-                                <Route path="/admin/courses/json" element={<AdminJSONUpload />} />
-                                <Route path="/admin/courses/:id/edit" element={<CourseForm isEditing={true} />} />
-                                <Route path="/admin/courses/:id/enrollments" element={<AdminCourseEnrollments />} />
-                            </Route>
-                        </Routes>
-                    </main>
-                    <Footer />
-
-                    <ToastContainer
-                        position="bottom-right"
-                        theme="dark"
-                        toastClassName="bg-slate-800 text-white font-sans"
-                    />
-
-                    {/* API Connection Status - Development Only */}
-                    {import.meta.env.DEV && <APIStatus />}
-                </div>
+                <AppContent />
             </Router>
         </AuthProvider>
+    );
+};
+
+const AppContent = () => {
+    const location = useLocation();
+
+    // Pages that should not show the standard navbar
+    const hideNavbarPaths = [
+        '/learn',
+        '/lessons/',
+        '/assessment'
+    ];
+
+    const shouldHideNavbar = hideNavbarPaths.some(path => location.pathname.includes(path));
+
+    return (
+        <div className="min-h-screen bg-slate-900 text-white font-sans selection:bg-primary selection:text-white">
+            {!shouldHideNavbar && <Navbar />}
+            <main>
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/courses" element={<CourseCatalogue />} />
+                    <Route path="/courses/:id" element={<CourseDetail />} />
+                    <Route path="/courses/:id/learn" element={<CourseViewer />} />
+                    <Route path="/courses/:id/enroll" element={<CourseEnrollment />} />
+                    <Route path="/courses/:id/access" element={<CourseAccess />} />
+                    <Route path="/courses/:id/assessment" element={<AssessmentCenter />} />
+                    {/* <Route path="/courses/:courseId/lessons/:lessonId" element={<CourseReadingProgress />} /> */}
+                    <Route path="/courses/:courseId/lessons/:lessonId" element={<LessonPlayer />} />
+                    <Route path="/pricing" element={<Pricing />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/how-it-works" element={<HowItWorks />} />
+
+                    <Route element={<PrivateRoute />}>
+                        <Route path="/dashboard" element={<Dashboard />} />
+                    </Route>
+
+                    {/* Admin Routes */}
+                    <Route element={<AdminRoute />}>
+                        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                        <Route path="/admin/courses/new" element={<CourseForm />} />
+                        <Route path="/admin/courses/json" element={<AdminJSONUpload />} />
+                        <Route path="/admin/courses/:id/edit" element={<CourseForm isEditing={true} />} />
+                        <Route path="/admin/courses/:id/enrollments" element={<AdminCourseEnrollments />} />
+                    </Route>
+                </Routes>
+            </main>
+            <Footer />
+
+            <ToastContainer
+                position="bottom-right"
+                theme="dark"
+                toastClassName="bg-slate-800 text-white font-sans"
+            />
+
+        </div>
     );
 };
 
