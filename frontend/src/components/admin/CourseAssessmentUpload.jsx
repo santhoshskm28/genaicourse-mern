@@ -71,7 +71,7 @@ const CourseAssessmentUpload = ({ courseId, onAssessmentUploaded, existingQuiz }
 
   const handleJsonUpload = async () => {
     if (!jsonInput.trim()) {
-      setError('Please enter assessment JSON data');
+      setError('Please enter assessments JSON data');
       return;
     }
 
