@@ -62,11 +62,20 @@ export const generateCertificatePDF = async (certificateData) => {
         // Set viewport for consistent rendering
         await page.setViewport({ width: 1122, height: 794 });
 
+        // Read the certified logo and convert to base64
+        const logoPath = path.resolve(__dirname, '../../frontend/public/certified logo.png');
+        let logoBase64 = '';
+        try {
+            const logoBuffer = await fs.readFile(logoPath);
+            logoBase64 = `data:image/png;base64,${logoBuffer.toString('base64')}`;
+        } catch (e) {
+            console.warn('Error reading certified logo, proceeding without it:', e.message);
+        }
+
         // Generate HTML certificate
-        const html = generateCertificateHTML(certificateData);
+        const html = generateCertificateHTML({ ...certificateData, certifiedLogo: logoBase64 });
 
         // Set content and wait for it to render
-        // Using 'domcontentloaded' + small delay for speed, fallback to networkidle2 if images fail
         await page.setContent(html, {
             waitUntil: 'domcontentloaded',
             timeout: 20000
@@ -242,76 +251,65 @@ export function generateCertificateHTML(data) {
             margin-bottom: 30px;
         }
         
-        .stats {
-            display: flex;
-            gap: 40px;
+        .score-box {
             margin-bottom: 40px;
+            text-align: center;
         }
         
-        .stat-box {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .stat-label {
-            font-size: 9px;
-            text-transform: uppercase;
-            color: #94a3b8;
-            letter-spacing: 1px;
-        }
-        
-        .stat-val {
-            font-size: 12px;
-            font-weight: 600;
+        .score-val {
+            font-size: 14px;
+            font-weight: 800;
             color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .footer-sigs {
             width: 100%;
             display: flex;
             justify-content: space-between;
-            align-items: flex-end;
+            align-items: center;
             margin-top: auto;
+            padding-bottom: 20px;
         }
         
         .sig {
-            width: 180px;
+            width: 220px;
             text-align: center;
         }
         
         .sig-font {
             font-family: 'Playfair Display', serif;
-            font-size: 20px;
+            font-size: 18px;
             font-style: italic;
-            margin-bottom: 2px;
+            margin-bottom: 5px;
+            color: var(--primary);
         }
         
         .sig-line {
             height: 1px;
             background: #cbd5e1;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
         
         .sig-label {
             font-size: 10px;
             color: #64748b;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            font-weight: 600;
         }
         
-        .seal-emboss {
-            width: 90px;
-            height: 90px;
-            border: 2px solid var(--gold);
-            border-radius: 50%;
+        .certified-logo-box {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 8px;
-            color: var(--gold);
-            text-align: center;
-            font-weight: 700;
-            border-style: double;
+        }
+
+        .certified-logo {
+            height: 110px;
+            width: auto;
+            object-fit: contain;
         }
     </style>
 </head>
@@ -337,24 +335,25 @@ export function generateCertificateHTML(data) {
             <p class="achievement-text">has demonstrated exceptional mastery and successfully completed all requirements for the professional certification in</p>
             <h3 class="course-name">${data.courseTitle}</h3>
             
-            <div class="stats">
-                <div class="stat-box"><span class="stat-label">Date of Issue</span><span class="stat-val">${new Date(data.completionDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span></div>
-                <div class="stat-box"><span class="stat-label">Achievement</span><span class="stat-val">${data.score}% Score</span></div>
+            <div class="score-box">
+                <span class="score-val">ACHIEVEMENT: ${data.score}% Score</span>
             </div>
             
             <div class="footer-sigs">
                 <div class="sig">
-                    <div class="sig-font">${data.instructorName || 'Lead Instructor'}</div>
+                    <div class="sig-font">${new Date(data.completionDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
                     <div class="sig-line"></div>
-                    <div class="sig-label">Lead Instructor</div>
+                    <div class="sig-label">Date of Issue</div>
                 </div>
                 
-                <div class="seal-emboss">GENAI<br/>OFFICIAL<br/>VERIFIED</div>
+                <div class="certified-logo-box">
+                    ${data.certifiedLogo ? `<img src="${data.certifiedLogo}" class="certified-logo" alt="Certified" />` : ''}
+                </div>
                 
                 <div class="sig">
                     <div class="sig-font">GenAICourse.io</div>
                     <div class="sig-line"></div>
-                    <div class="sig-label">Director of Academics</div>
+                    <div class="sig-label">GenAICourse.io</div>
                 </div>
             </div>
         </div>

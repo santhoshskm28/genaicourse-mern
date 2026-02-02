@@ -46,7 +46,7 @@ const CourseViewer = () => {
     }, [id]);
 
     if (loading) return <Loader />;
-    if (!course) return <div className="text-center mt-20">Course not found</div>;
+    if (!course) return <div className="text-center mt-20 text-brand">Course not found</div>;
 
     const currentModule = course.modules[currentModuleIndex];
     const currentLesson = currentModule?.lessons[currentLessonIndex];
@@ -114,222 +114,183 @@ const CourseViewer = () => {
     };
 
     return (
-        <div className="flex h-screen bg-slate-900 text-white overflow-hidden font-sans">
-            {/* Sidebar with Glassmorphism */}
-            <motion.div
-                initial={{ x: -300 }}
-                animate={{ x: sidebarOpen ? 0 : -300 }}
-                className="fixed md:relative z-20 h-full w-80 glass-panel border-r border-slate-700 flex flex-col"
-            >
-                <div className="p-5 border-b border-slate-700 flex justify-between items-center">
-                    <h2 className="font-bold truncate">{course.title}</h2>
-                    <button onClick={() => setSidebarOpen(false)} className="md:hidden"><FaTimes /></button>
-                </div>
-                <div className="flex-1 overflow-y-auto">
-                    {course.modules.map((mod, mIdx) => (
-                        <div key={mod._id}>
-                            <div className="px-4 py-2 bg-slate-800/50 text-xs uppercase tracking-wider text-gray-400 font-semibold">
-                                Module {mIdx + 1}
-                            </div>
-                            {mod.lessons.map((less, lIdx) => {
-                                const lessonId = less._id || less.id;
-                                const isCompleted = completedLessons.has(String(lessonId));
-                                const isCurrent = mIdx === currentModuleIndex && lIdx === currentLessonIndex;
+        <div className="min-h-screen bg-gray-50 text-brand font-sans pt-20">
+            <div className="container mx-auto px-4 py-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Left Column: Course Info & Progress */}
+                    <div className="lg:col-span-2 space-y-8">
+                        <div>
+                            <Link to="/dashboard" className="inline-flex items-center text-gray-500 hover:text-brand mb-6 transition-colors font-medium">
+                                <FaChevronLeft className="mr-2 text-xs" /> Back to My Learning
+                            </Link>
 
-                                return (
-                                    <button
-                                        key={lessonId}
-                                        onClick={() => {
-                                            setShowAssessment(false);
-                                            setCurrentModuleIndex(mIdx);
-                                            setCurrentLessonIndex(lIdx);
-                                        }}
-                                        className={`w-full text-left px-4 py-3 text-sm transition-all duration-200 border-l-4 flex items-center justify-between group ${!showAssessment && isCurrent
-                                            ? 'bg-primary/10 border-primary text-white'
-                                            : 'border-transparent text-gray-400 hover:bg-slate-800 hover:text-white'
-                                            }`}
-                                    >
-                                        <span className="flex-1 truncate">{less.title}</span>
-                                        {isCompleted ? (
-                                            <FaCheck className="text-emerald-400 text-xs" />
-                                        ) : (
-                                            <FaPlayCircle className="text-gray-600 text-xs opacity-0 group-hover:opacity-100 transition-opacity" />
-                                        )}
-                                    </button>
-                                );
-                            })}
-                        </div>
-                    ))}
-                    {course.quizId && (
-                        <div className="mt-4 border-t border-slate-700 pt-4">
-                            <div className="px-4 py-2 bg-indigo-900/40 text-xs uppercase tracking-wider text-indigo-400 font-semibold">
-                                Final Assessment
-                            </div>
-                            <button
-                                onClick={() => setShowAssessment(true)}
-                                className={`w-full text-left px-4 py-3 text-sm transition-all duration-200 border-l-4 flex items-center gap-2 group ${showAssessment
-                                    ? 'bg-indigo-500/10 border-indigo-500 text-white'
-                                    : 'border-transparent text-gray-400 hover:bg-slate-800 hover:text-white'
-                                    }`}
-                            >
-                                <FaClipboardCheck className={showAssessment ? 'text-indigo-400' : 'text-gray-500 group-hover:text-indigo-400'} />
-                                <span className="flex-1 truncate">Final Assessment</span>
-                            </button>
-                        </div>
-                    )}
-                </div>
-            </motion.div>
+                            <h1 className="text-3xl md:text-4xl font-black text-brand mb-4 leading-tight">
+                                {course.title}
+                            </h1>
+                            <p className="text-gray-600 text-lg leading-relaxed mb-6">
+                                {course.description}
+                            </p>
 
-            {/* Main Content */}
-            <div className="flex-1 flex flex-col h-full relative z-10">
-                {/* Top Navigation */}
-                <div className="glass-header h-16 flex items-center justify-between px-6">
-                    <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-gray-400 hover:text-white">
-                        <FaBars size={20} />
-                    </button>
-                    <div className="flex items-center gap-4">
-                        <div className="text-sm text-gray-400">
-                            {currentLessonIndex + 1} / {currentModule.lessons.length}
-                        </div>
-                        {progress && (
-                            <div className="text-sm text-gray-400">
-                                Progress: {Math.round((completedLessons.size / course.modules.reduce((acc, mod) => acc + mod.lessons.length, 0)) * 100)}%
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                {/* Dynamic Content with Animation */}
-                <div className="flex-1 overflow-y-auto p-6 md:p-12 flex justify-center">
-                    <AnimatePresence mode='wait'>
-                        <motion.div
-                            key={showAssessment ? 'assessment' : currentLesson._id}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            transition={{ duration: 0.4 }}
-                            className="max-w-4xl w-full"
-                        >
-                            {!showAssessment ? (
-                                <>
-                                    <span className="text-primary font-bold uppercase tracking-widest text-xs mb-2 block">
-                                        Module {currentModuleIndex + 1}: {currentModule.title}
-                                    </span>
-                                    <h1 className="text-4xl md:text-5xl font-extrabold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">
-                                        {currentLesson.title}
-                                    </h1>
-
-                                    <div className="prose prose-invert prose-lg max-w-none text-gray-300 leading-relaxed mb-12">
-                                        {currentLesson.content.split('\n').map((p, i) => (
-                                            <p key={i} className="mb-4">{p}</p>
-                                        ))}
-                                    </div>
-
-                                    {currentLesson.keyPoints?.length > 0 && (
-                                        <motion.div
-                                            initial={{ opacity: 0, scale: 0.95 }}
-                                            animate={{ opacity: 1, scale: 1 }}
-                                            transition={{ delay: 0.2 }}
-                                            className="glass-panel rounded-xl p-8 mb-12"
-                                        >
-                                            <h3 className="text-xl font-bold mb-4 flex items-center">
-                                                <span className="w-1.5 h-6 bg-secondary rounded mr-3"></span>
-                                                Key Takeaways
-                                            </h3>
-                                            <ul className="grid gap-3">
-                                                {currentLesson.keyPoints.map((point, idx) => (
-                                                    <li key={idx} className="flex items-start text-gray-300">
-                                                        <FaCheck className="text-emerald-400 mt-1 mr-3 flex-shrink-0" />
-                                                        {point}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </motion.div>
-                                    )}
-
-                                    {isLastLesson && course.quizId && (
-                                        <div className="mt-20 pt-20 border-t border-slate-800 text-center">
-                                            <h2 className="text-3xl font-black text-white mb-4">Neural Synchronization Complete</h2>
-                                            <p className="text-slate-500 mb-10 max-w-xl mx-auto">You've mastered all the modules. It's time to validate your knowledge and secure your certification.</p>
-                                            <button
-                                                onClick={() => setShowAssessment(true)}
-                                                className="btn-premium btn-primary-gradient !px-12 !py-4 text-lg shadow-[0_0_30px_rgba(99,102,241,0.3)]"
-                                            >
-                                                Start Final Assessment
-                                                <FaClipboardCheck />
-                                            </button>
-                                        </div>
-                                    )}
-                                </>
-                            ) : (
-                                <div className="mt-10">
-                                    <div className="flex items-center gap-4 mb-10">
-                                        <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center text-indigo-400">
-                                            <FaClipboardCheck size={24} />
-                                        </div>
-                                        <div>
-                                            <h2 className="text-3xl font-black text-white">Final Assessment</h2>
-                                            <p className="text-slate-500 text-sm font-medium uppercase tracking-widest">Neural Pattern Verification in Progress</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="bg-[#020617]/50 rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl">
-                                        <AssessmentCenter isEmbedded={true} courseId={id} />
-                                    </div>
+                            <div className="flex items-center gap-6 text-sm font-bold text-gray-500 mb-8 uppercase tracking-wider">
+                                <div className="flex items-center gap-2">
+                                    <FaClock className="text-accent" />
+                                    <span>{course.totalDuration || 60} Mins Total</span>
                                 </div>
-                            )}
-                        </motion.div>
-                    </AnimatePresence>
-                </div>
+                                <div className="flex items-center gap-2">
+                                    <FaSignal className="text-accent" />
+                                    <span>{course.level || 'Intermediate'}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <FaBookOpen className="text-accent" />
+                                    <span>{course.totalLessons || 15} Lessons</span>
+                                </div>
+                            </div>
+                        </div>
 
-                {/* Bottom Bar */}
-                <div className="p-6 border-t border-slate-800 bg-slate-900/90 backdrop-blur">
-                    <div className="max-w-4xl mx-auto flex justify-between">
-                        <button
-                            onClick={() => {
-                                if (showAssessment) {
-                                    setShowAssessment(false);
-                                } else {
-                                    handlePrev();
-                                }
-                            }}
-                            disabled={!showAssessment && currentModuleIndex === 0 && currentLessonIndex === 0}
-                            className="btn btn-secondary disabled:opacity-50"
-                        >
-                            <FaChevronLeft className="mr-2" /> Previous
-                        </button>
-                        {!showAssessment && !isLastLesson && (
-                            <button
-                                onClick={handleNext}
-                                className="btn btn-primary"
-                            >
-                                Next <FaChevronRight className="ml-2" />
-                            </button>
-                        )}
-                        {!showAssessment && isLastLesson && course.quizId && (
-                            <button
-                                onClick={() => setShowAssessment(true)}
-                                className="btn btn-primary-gradient shadow-lg shadow-indigo-500/20"
-                            >
-                                Proceed to Assessment <FaClipboardCheck className="ml-2" />
-                            </button>
-                        )}
-                        {!showAssessment && isLastLesson && !course.quizId && (
-                            <button
-                                onClick={() => navigate('/dashboard')}
-                                className="btn btn-primary-gradient"
-                            >
-                                Finish Course <FaCheck className="ml-2" />
-                            </button>
-                        )}
-                        {showAssessment && (
-                            <button
-                                onClick={() => setShowAssessment(false)}
-                                className="btn btn-outline-glass"
-                            >
-                                Review Lessons
-                            </button>
-                        )}
+                        {/* Progress Section */}
+                        <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+                            <h3 className="text-xl font-bold mb-6">Your Progress</h3>
+
+                            <div className="mb-2 flex justify-between text-sm font-bold text-gray-500">
+                                <span>Overall Progress</span>
+                                <span>{Math.round((completedLessons.size / (course.modules.reduce((acc, m) => acc + m.lessons.length, 0) || 1)) * 100)}%</span>
+                            </div>
+                            <div className="h-3 bg-gray-100 rounded-full overflow-hidden mb-6">
+                                <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${Math.round((completedLessons.size / (course.modules.reduce((acc, m) => acc + m.lessons.length, 0) || 1)) * 100)}%` }}
+                                    className="h-full bg-accent rounded-full"
+                                />
+                            </div>
+
+                            <div className="flex justify-between text-center">
+                                <div>
+                                    <div className="text-3xl font-black text-brand mb-1">{completedLessons.size}</div>
+                                    <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">Completed Lessons</div>
+                                </div>
+                                <div>
+                                    <div className="text-3xl font-black text-brand mb-1">
+                                        {(course.modules.reduce((acc, m) => acc + m.lessons.length, 0) || 0) - completedLessons.size}
+                                    </div>
+                                    <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">Remaining Lessons</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Current Lesson View (If selected) */}
+                        <div id="lesson-content" className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden min-h-[500px]">
+                            {/* Content rendering logic from previous implementation... */}
+                            <AnimatePresence mode='wait'>
+                                <motion.div
+                                    key={showAssessment ? 'assessment' : currentLesson._id}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    className="p-8"
+                                >
+                                    {!showAssessment ? (
+                                        <>
+                                            <span className="text-accent font-bold uppercase tracking-widest text-xs mb-2 block">
+                                                Module {currentModuleIndex + 1}: {currentModule.title}
+                                            </span>
+                                            <h2 className="text-2xl font-black mb-6 text-brand">
+                                                {currentLesson.title}
+                                            </h2>
+                                            <div className="prose prose-lg max-w-none text-gray-600 leading-relaxed">
+                                                {currentLesson.content.split('\n').map((p, i) => (
+                                                    <p key={i} className="mb-4">{p}</p>
+                                                ))}
+                                            </div>
+                                            {/* Navigation Buttons */}
+                                            <div className="flex justify-between mt-12 pt-8 border-t border-gray-100">
+                                                <button
+                                                    onClick={handlePrev}
+                                                    disabled={currentModuleIndex === 0 && currentLessonIndex === 0}
+                                                    className="btn-premium bg-white border border-gray-200 text-brand hover:bg-gray-50 disabled:opacity-50 text-sm px-6 py-3"
+                                                >
+                                                    Previous
+                                                </button>
+                                                <button
+                                                    onClick={handleNext}
+                                                    className="btn-premium btn-primary text-sm px-6 py-3"
+                                                >
+                                                    {isLastLesson ? 'Finish' : 'Next Lesson'}
+                                                </button>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <AssessmentCenter isEmbedded={true} courseId={id} />
+                                    )}
+                                </motion.div>
+                            </AnimatePresence>
+                        </div>
+                    </div>
+
+                    {/* Right Column: Course Content List */}
+                    <div className="lg:col-span-1">
+                        <div className="bg-slate-900 rounded-2xl overflow-hidden shadow-xl sticky top-24">
+                            <div className="p-6 border-b border-gray-800">
+                                <h3 className="text-xl font-bold text-white">Course Content</h3>
+                            </div>
+                            <div className="p-4 space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto no-scrollbar">
+                                {course.modules.map((mod, mIdx) => (
+                                    <div key={mod._id} className="bg-slate-800/50 rounded-xl overflow-hidden border border-slate-700/50">
+                                        <div className="px-5 py-4 bg-slate-800 flex justify-between items-center">
+                                            <h4 className="font-bold text-white text-sm">
+                                                Module {mIdx + 1}: <span className="text-gray-400 font-medium ml-1">{mod.title}</span>
+                                            </h4>
+                                            <span className="text-xs font-bold text-slate-500">{mod.lessons.length} Lessons</span>
+                                        </div>
+                                        <div className="divide-y divide-slate-700/50">
+                                            {mod.lessons.map((less, lIdx) => {
+                                                const lessonId = less._id || less.id;
+                                                const isCompleted = completedLessons.has(String(lessonId));
+                                                const isCurrent = mIdx === currentModuleIndex && lIdx === currentLessonIndex;
+
+                                                return (
+                                                    <div key={lessonId} className="p-4 flex items-center justify-between group hover:bg-slate-800/80 transition-colors">
+                                                        <div className="flex items-center gap-3 overflow-hidden">
+                                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${isCompleted ? 'bg-emerald-500/20 text-emerald-500' : 'bg-slate-700 text-slate-400'}`}>
+                                                                {isCompleted ? <FaCheck size={10} /> : <div className="w-2 h-2 rounded-full bg-current" />}
+                                                            </div>
+                                                            <div className="flex-1 min-w-0">
+                                                                <p className="text-sm font-medium text-gray-300 truncate group-hover:text-white transition-colors">{less.title}</p>
+                                                                <p className="text-[10px] text-gray-500 font-bold uppercase">{less.duration || 5} mins</p>
+                                                            </div>
+                                                        </div>
+                                                        <button
+                                                            onClick={() => {
+                                                                setShowAssessment(false);
+                                                                setCurrentModuleIndex(mIdx);
+                                                                setCurrentLessonIndex(lIdx);
+                                                                // Scroll to content
+                                                                document.getElementById('lesson-content')?.scrollIntoView({ behavior: 'smooth' });
+                                                            }}
+                                                            className={`text-xs font-bold px-4 py-2 rounded-lg transition-all ${isCurrent
+                                                                ? 'bg-accent text-white shadow-lg shadow-orange-900/20'
+                                                                : 'bg-accent/10 text-accent hover:bg-accent hover:text-white'}`}
+                                                        >
+                                                            {isCurrent ? 'Play' : 'Start'}
+                                                        </button>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                ))}
+
+                                {course.quizId && (
+                                    <div className="mt-4 pt-4 border-t border-slate-700">
+                                        <button
+                                            onClick={() => setShowAssessment(true)}
+                                            className="w-full btn-premium bg-indigo-600 border-indigo-600 text-white hover:bg-indigo-700"
+                                        >
+                                            <FaClipboardCheck className="mr-2" /> Final Assessment
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

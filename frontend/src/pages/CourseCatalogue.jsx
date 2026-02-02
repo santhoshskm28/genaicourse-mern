@@ -47,7 +47,7 @@ const CourseCatalogue = () => {
     };
 
     return (
-        <div className="section pt-32 min-h-screen">
+        <div className="section pt-32 min-h-screen bg-[var(--bg-main)]">
             <div className="container overflow-visible">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -56,16 +56,16 @@ const CourseCatalogue = () => {
                 >
                     <button
                         onClick={() => navigate(-1)}
-                        className="absolute left-0 top-0 p-3 bg-white/5 border border-white/10 rounded-2xl text-slate-400 hover:text-white transition-all flex items-center gap-2 group"
+                        className="absolute left-0 top-0 p-3 bg-white border border-gray-200 rounded-2xl text-brand hover:text-accent transition-all flex items-center gap-2 group shadow-sm hover:shadow-md"
                     >
                         <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" />
                         <span className="text-xs font-black uppercase tracking-widest">Back</span>
                     </button>
 
-                    <h1 className="text-5xl md:text-7xl font-black mb-4 uppercase tracking-tighter text-center">
-                        GenAi <span className="text-gradient">Course</span>
+                    <h1 className="text-5xl md:text-7xl font-black mb-4 uppercase tracking-tighter text-center text-brand">
+                        GenAi <span className="bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">Course</span>
                     </h1>
-                    <p className="text-slate-400 font-bold tracking-widest uppercase text-xs text-center">Explore the Infinite Possibilities of AI</p>
+                    <p className="text-gray-500 font-bold tracking-widest uppercase text-xs text-center">Explore the Infinite Possibilities of AI</p>
                 </motion.div>
 
                 {/* Filters Hub */}
@@ -73,21 +73,21 @@ const CourseCatalogue = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="glass-card p-6 mb-16 relative overflow-visible z-10"
+                    className="glass-card p-6 mb-16 relative overflow-visible z-10 bg-white border border-gray-200 shadow-xl rounded-2xl"
                 >
                     <div className="flex flex-col lg:flex-row justify-between items-center gap-6">
                         <div className="flex items-center gap-4">
                         </div>
 
                         <div className="w-full lg:w-1/3 relative group px-2">
-                            <FaSearch className="absolute left-7 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
+                            <FaSearch className="absolute left-7 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-accent transition-colors" />
                             <input
                                 type="text"
                                 name="search"
                                 value={filters.search}
                                 onChange={handleFilterChange}
                                 placeholder="Search by neural keyword..."
-                                className="input-premium pl-14"
+                                className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 pl-14 focus:outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all text-brand placeholder:text-gray-400"
                             />
                         </div>
                     </div>
@@ -96,7 +96,7 @@ const CourseCatalogue = () => {
                 {/* Grid Results */}
                 {loading ? (
                     <div className="flex justify-center py-20">
-                        <div className="w-12 h-12 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
+                        <div className="w-12 h-12 border-4 border-indigo-200 border-t-accent rounded-full animate-spin"></div>
                     </div>
                 ) : courses.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -112,9 +112,9 @@ const CourseCatalogue = () => {
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center py-32 glass-card border-dashed">
-                        <h3 className="text-3xl font-black text-slate-700 mb-2 uppercase tracking-widest">Signal Lost</h3>
-                        <p className="text-slate-500 font-bold uppercase text-xs tracking-widest">Adjust your filters to reconnect with the academy</p>
+                    <div className="text-center py-32 glass-card border-dashed border-gray-300 bg-gray-50 rounded-2xl">
+                        <h3 className="text-3xl font-black text-brand mb-2 uppercase tracking-widest">Signal Lost</h3>
+                        <p className="text-gray-500 font-bold uppercase text-xs tracking-widest">Adjust your filters to reconnect with the academy</p>
                     </div>
                 )}
             </div>

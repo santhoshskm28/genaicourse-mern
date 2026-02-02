@@ -113,14 +113,14 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
 
   if (loading) {
     return (
-      <div className={`${isEmbedded ? '' : 'min-h-screen'} bg-[#020617] flex items-center justify-center p-12`}>
+      <div className={`${isEmbedded ? '' : 'min-h-screen'} bg-[var(--bg-main)] flex items-center justify-center p-12`}>
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           className="text-center"
         >
-          <div className="w-16 h-16 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin mx-auto mb-6 shadow-[0_0_20px_rgba(99,102,241,0.2)]"></div>
-          <p className="text-slate-400 font-bold tracking-widest uppercase text-xs">Initializing Neural Assessment...</p>
+          <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-6 shadow-xl"></div>
+          <p className="text-gray-500 font-bold tracking-widest uppercase text-xs">Initializing genaicourse Assessment...</p>
         </motion.div>
       </div>
     );
@@ -128,20 +128,20 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
 
   if (error && !assessment) {
     return (
-      <div className={`${isEmbedded ? '' : 'min-h-screen'} bg-[#020617] flex items-center justify-center p-6`}>
+      <div className={`${isEmbedded ? '' : 'min-h-screen'} bg-[var(--bg-main)] flex items-center justify-center p-6`}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass-card max-w-md w-full p-10 text-center"
+          className="glass-card max-w-md w-full p-10 text-center bg-white border border-gray-200 shadow-xl rounded-2xl"
         >
-          <div className="w-20 h-20 bg-red-500/10 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-red-500/20">
+          <div className="w-20 h-20 bg-red-100 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-red-200">
             <AlertCircle className="h-10 w-10 text-red-500" />
           </div>
-          <h2 className="text-3xl font-black text-white mb-4">Access Restricted</h2>
-          <p className="text-slate-400 mb-8 font-medium leading-relaxed">{error}</p>
+          <h2 className="text-3xl font-black text-brand mb-4">Access Restricted</h2>
+          <p className="text-gray-500 mb-8 font-medium leading-relaxed">{error}</p>
           <button
             onClick={() => navigate(`/courses/${courseId}`)}
-            className="btn-premium btn-primary-gradient w-full"
+            className="btn-premium btn-primary w-full"
           >
             Return to Course
           </button>
@@ -171,28 +171,28 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
   const question = assessment.questions[currentQuestion];
 
   return (
-    <div className={`${isEmbedded ? 'py-10' : 'min-h-screen bg-[#020617] py-24'} px-4 sm:px-6`}>
+    <div className={`${isEmbedded ? 'py-10' : 'min-h-screen bg-[var(--bg-main)] py-24'} px-4 sm:px-6`}>
       <div className="max-w-4xl mx-auto">
         {/* Header Card */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass-card p-8 mb-10 group"
+          className="glass-card p-8 mb-10 group bg-white border border-gray-200 shadow-sm rounded-2xl"
         >
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
-                <span className="px-3 py-1 bg-indigo-500/10 text-indigo-400 text-[10px] font-black uppercase tracking-widest rounded-lg border border-indigo-500/20">Active Session</span>
-                <h1 className="text-2xl font-black text-white">{assessment.title}</h1>
+                <span className="px-3 py-1 bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase tracking-widest rounded-lg border border-indigo-100">Active Session</span>
+                <h1 className="text-2xl font-black text-brand">{assessment.title}</h1>
               </div>
-              <div className="flex items-center gap-4 text-slate-500 font-bold text-xs uppercase tracking-widest">
+              <div className="flex items-center gap-4 text-gray-500 font-bold text-xs uppercase tracking-widest">
                 <span className="flex items-center gap-1.5"><HelpCircle size={14} />Question {currentQuestion + 1} of {assessment.questions.length}</span>
-                <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
+                <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
                 <span className="flex items-center gap-1.5"><BookOpen size={14} />80% to pass</span>
               </div>
             </div>
 
-            <div className={`flex flex-col items-center px-8 py-4 rounded-3xl border-2 transition-all duration-500 ${timeRemaining < 300 ? 'bg-red-500/10 border-red-500/30 text-red-500 animate-pulse' : 'bg-white/5 border-white/5 text-indigo-400'
+            <div className={`flex flex-col items-center px-8 py-4 rounded-3xl border-2 transition-all duration-500 ${timeRemaining < 300 ? 'bg-red-50 border-red-200 text-red-500 animate-pulse' : 'bg-gray-50 border-gray-100 text-indigo-600'
               }`}>
               <span className="text-[10px] font-black uppercase tracking-[0.2em] mb-1 opacity-60">Time Remaining</span>
               <div className="flex items-center gap-2">
@@ -203,9 +203,9 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
           </div>
 
           {/* Progress Bar */}
-          <div className="mt-8 h-2 bg-white/5 rounded-full overflow-hidden">
+          <div className="mt-8 h-2 bg-gray-100 rounded-full overflow-hidden">
             <motion.div
-              className="h-full bg-gradient-to-r from-indigo-500 to-fuchsia-500 shadow-[0_0_15px_rgba(99,102,241,0.5)]"
+              className="h-full bg-gradient-to-r from-indigo-500 to-fuchsia-500"
               initial={{ width: 0 }}
               animate={{ width: `${((currentQuestion + 1) / assessment.questions.length) * 100}%` }}
               transition={{ duration: 0.8 }}
@@ -220,14 +220,14 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
-            className="glass-card p-10 mb-8"
+            className="glass-card p-10 mb-8 bg-white border border-gray-200 shadow-xl rounded-2xl"
           >
             <div className="flex items-start gap-6">
-              <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center font-black text-indigo-400 text-xl flex-shrink-0">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center font-black text-indigo-600 text-xl flex-shrink-0">
                 {currentQuestion + 1}
               </div>
               <div className="flex-1">
-                <h2 className="text-2xl font-bold text-white mb-10 leading-snug">
+                <h2 className="text-2xl font-bold text-brand mb-10 leading-snug">
                   {question.question}
                 </h2>
 
@@ -239,7 +239,7 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
                         key={index}
                         whileHover={{ scale: 1.01 }}
                         whileTap={{ scale: 0.99 }}
-                        className={`flex items-center p-6 rounded-2xl cursor-pointer border-2 transition-all duration-300 relative overflow-hidden group/opt ${isSelected ? 'bg-indigo-500/10 border-indigo-500' : 'bg-white/5 border-white/5 hover:bg-white/10 hover:border-white/10'
+                        className={`flex items-center p-6 rounded-2xl cursor-pointer border-2 transition-all duration-300 relative overflow-hidden group/opt ${isSelected ? 'bg-indigo-50 border-indigo-500' : 'bg-gray-50 border-gray-100 hover:bg-white hover:border-indigo-200'
                           }`}
                       >
                         {isSelected && (
@@ -248,7 +248,7 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
                             className="absolute inset-0 bg-indigo-500/5 -z-10"
                           />
                         )}
-                        <div className={`w-6 h-6 rounded-lg border-2 mr-6 flex items-center justify-center transition-all ${isSelected ? 'bg-indigo-500 border-indigo-500' : 'bg-transparent border-white/20 group-hover/opt:border-indigo-500/50'
+                        <div className={`w-6 h-6 rounded-lg border-2 mr-6 flex items-center justify-center transition-all ${isSelected ? 'bg-indigo-500 border-indigo-500' : 'bg-transparent border-gray-300 group-hover/opt:border-indigo-300'
                           }`}>
                           {isSelected && <CheckCircle className="w-4 h-4 text-white" />}
                         </div>
@@ -259,7 +259,7 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
                           onChange={() => handleAnswerChange(currentQuestion, option)}
                           className="hidden"
                         />
-                        <span className={`text-lg transition-all ${isSelected ? 'text-white font-bold' : 'text-slate-400 group-hover/opt:text-slate-200'}`}>
+                        <span className={`text-lg transition-all ${isSelected ? 'text-brand font-bold' : 'text-gray-500 group-hover/opt:text-brand'}`}>
                           {option}
                         </span>
                       </motion.label>
@@ -276,7 +276,7 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
           <button
             onClick={handlePrevious}
             disabled={currentQuestion === 0}
-            className="btn-premium btn-outline-glass !py-3 !px-6 disabled:opacity-20"
+            className="btn-premium bg-white border border-gray-200 text-brand hover:bg-gray-50 !py-3 !px-6 disabled:opacity-50"
           >
             <ChevronLeft size={18} /> Back
           </button>
@@ -285,7 +285,7 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
             {assessment.questions.map((_, idx) => (
               <div
                 key={idx}
-                className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentQuestion ? 'w-8 bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]' : answers[idx] ? 'w-2 bg-emerald-500/50' : 'w-2 bg-white/10'
+                className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentQuestion ? 'w-8 bg-indigo-500' : answers[idx] ? 'w-2 bg-emerald-500' : 'w-2 bg-gray-300'
                   }`}
               />
             ))}
@@ -295,7 +295,7 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
             <button
               onClick={handleSubmit}
               disabled={submitting}
-              className="btn-premium btn-primary-gradient !py-3 !px-10"
+              className="btn-premium btn-primary !py-3 !px-10"
             >
               {submitting ? 'Submitting...' : 'Finish Quest'}
               <ArrowRight size={18} />
@@ -303,7 +303,7 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
           ) : (
             <button
               onClick={handleNext}
-              className="btn-premium bg-white/10 hover:bg-white/20 text-white !py-3 !px-8"
+              className="btn-premium btn-primary !py-3 !px-8"
             >
               Next Question <ChevronRight size={18} />
             </button>
@@ -336,10 +336,10 @@ const AssessmentResults = ({ results, courseId, onRetake, isEmbedded = false }) 
   };
 
   return (
-    <div className={`${isEmbedded ? 'py-10' : 'min-h-screen bg-[#020617] py-24'} px-4 overflow-hidden relative`}>
+    <div className={`${isEmbedded ? 'py-10' : 'min-h-screen bg-[var(--bg-main)] py-24'} px-4 overflow-hidden relative`}>
       {/* Victory/Defeat Background Glow */}
       {!isEmbedded && (
-        <div className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full -z-10 blur-[150px] opacity-20 pointer-events-none transition-colors duration-1000 ${isPassed ? 'bg-emerald-500' : 'bg-red-500'
+        <div className={`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full -z-10 blur-[150px] opacity-20 pointer-events-none transition-colors duration-1000 ${isPassed ? 'bg-emerald-200' : 'bg-red-200'
           }`}></div>
       )}
 
@@ -347,10 +347,10 @@ const AssessmentResults = ({ results, courseId, onRetake, isEmbedded = false }) 
         <motion.div
           initial={{ opacity: 0, scale: 0.9, y: 30 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          className="glass-card overflow-hidden"
+          className="glass-card overflow-hidden bg-white border border-gray-200 shadow-xl rounded-2xl"
         >
           {/* Hero State */}
-          <div className={`p-16 text-center relative overflow-hidden ${isPassed ? 'bg-emerald-500/10' : 'bg-red-500/10'}`}>
+          <div className={`p-16 text-center relative overflow-hidden ${isPassed ? 'bg-emerald-50' : 'bg-red-50'}`}>
             <motion.div
               initial={{ scale: 0, rotate: -45 }}
               animate={{ scale: 1, rotate: 0 }}
@@ -361,11 +361,11 @@ const AssessmentResults = ({ results, courseId, onRetake, isEmbedded = false }) 
               {isPassed ? <Award size={64} /> : <XCircle size={64} />}
             </motion.div>
 
-            <h2 className="text-5xl md:text-6xl font-black text-white mb-6 uppercase tracking-tighter">
+            <h2 className="text-5xl md:text-6xl font-black text-brand mb-6 uppercase tracking-tighter">
               {isPassed ? 'Mastery Achieved' : 'Oops... You failed!'}
             </h2>
 
-            <p className="text-xl text-slate-400 max-w-xl mx-auto font-medium leading-[1.6]">
+            <p className="text-xl text-gray-500 max-w-xl mx-auto font-medium leading-[1.6]">
               {isPassed
                 ? "You've successfully conquered the final challenge. Your professional certification is ready for validation."
                 : "You didn’t pass this time. Please review the lessons and try the quiz again."
@@ -374,21 +374,21 @@ const AssessmentResults = ({ results, courseId, onRetake, isEmbedded = false }) 
           </div>
 
           {/* Stats Dashboard */}
-          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/5 border-t border-white/5 bg-slate-900/40">
+          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-100 border-t border-gray-100 bg-gray-50">
             <ResultStat label="Sync Score" value={`${results.attempt?.score ?? results.score ?? 0}`} sub={`of ${results.attempt?.totalPoints ?? results.totalPoints ?? 0} pts`} />
-            <ResultStat label="Neural Accuracy" value={`${results.attempt?.percentageScore ?? results.percentageScore ?? 0}%`} sub="80% required" highlight={isPassed} />
-            <ResultStat label="Rank Assigned" value={results.attempt?.grade ?? results.grade ?? 'N/A'} sub="Standard Certified" />
+            <ResultStat label="Course Accuracy" value={`${results.attempt?.percentageScore ?? results.percentageScore ?? 0}%`} sub="80% required" highlight={isPassed} />
+            <ResultStat label="Course Rank" value={results.attempt?.grade ?? results.grade ?? 'N/A'} sub="Standard Certified" />
           </div>
 
           {/* Footer Actions */}
-          <div className="p-10 flex flex-col sm:flex-row justify-center gap-4 bg-slate-950/20">
+          <div className="p-10 flex flex-col sm:flex-row justify-center gap-4 bg-white">
             {isPassed ? (
               <button
                 onClick={handleDownloadCertificate}
                 disabled={downloadingCert}
-                className="btn-premium btn-primary-gradient !py-4 !px-12 text-lg shadow-[0_10px_30px_rgba(99,102,241,0.3)]"
+                className="btn-premium btn-primary !py-4 !px-12 text-lg"
               >
-                {downloadingCert ? 'Forging PDF...' : 'Secure Certificate'}
+                {downloadingCert ? 'Downloading Certificate...' : 'Generate Certificate'}
                 <Award size={20} />
               </button>
             ) : (
@@ -402,7 +402,7 @@ const AssessmentResults = ({ results, courseId, onRetake, isEmbedded = false }) 
 
             <button
               onClick={() => navigate(`/courses/${courseId}`)}
-              className="btn-premium btn-outline-glass !py-4 !px-10"
+              className="btn-premium bg-white border border-gray-200 text-brand hover:bg-gray-50 !py-4 !px-10"
             >
               Back to Module Hub
             </button>
@@ -411,9 +411,9 @@ const AssessmentResults = ({ results, courseId, onRetake, isEmbedded = false }) 
 
         {/* Review Modules */}
         <div className="mt-16">
-          <h3 className="text-slate-500 font-black uppercase tracking-[0.2em] text-xs mb-8 flex items-center gap-3">
-            <span className="w-8 h-px bg-slate-800"></span>
-            Neural Pattern Review
+          <h3 className="text-gray-400 font-black uppercase tracking-[0.2em] text-xs mb-8 flex items-center gap-3">
+            <span className="w-8 h-px bg-gray-300"></span>
+            Assessment Review
           </h3>
 
           <div className="space-y-6">
@@ -423,18 +423,18 @@ const AssessmentResults = ({ results, courseId, onRetake, isEmbedded = false }) 
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 * idx }}
                 key={idx}
-                className={`glass-card p-6 border-l-4 ${result.isCorrect ? 'border-l-emerald-500 bg-emerald-500/5' : 'border-l-red-500 bg-red-500/5'}`}
+                className={`glass-card p-6 border-l-4 rounded-xl shadow-sm bg-white ${result.isCorrect ? 'border-l-emerald-500' : 'border-l-red-500'}`}
               >
                 <div className="flex gap-6">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${result.isCorrect ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-500'}`}>
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${result.isCorrect ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
                     {result.isCorrect ? <CheckCircle size={20} /> : <XCircle size={20} />}
                   </div>
                   <div className="flex-1">
-                    <h4 className="text-white font-bold text-lg mb-4">{result.question}</h4>
+                    <h4 className="text-brand font-bold text-lg mb-4">{result.question}</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="p-4 rounded-xl bg-slate-950/40 border border-white/5">
-                        <span className="text-[10px] uppercase font-black tracking-widest text-slate-500 mb-1 block">Your Response</span>
-                        <span className={`font-bold ${result.isCorrect ? 'text-emerald-400' : 'text-red-400'}`}>{result.userAnswer}</span>
+                      <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
+                        <span className="text-[10px] uppercase font-black tracking-widest text-gray-400 mb-1 block">Your Response</span>
+                        <span className={`font-bold ${result.isCorrect ? 'text-emerald-600' : 'text-red-500'}`}>{result.userAnswer}</span>
                       </div>
 
                     </div>
@@ -451,11 +451,11 @@ const AssessmentResults = ({ results, courseId, onRetake, isEmbedded = false }) 
 
 const ResultStat = ({ label, value, sub, highlight }) => (
   <div className="p-10 text-center flex flex-col items-center group">
-    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-2">{label}</span>
-    <div className={`text-5xl font-black mb-1 transition-all duration-500 ${highlight ? 'text-emerald-400 scale-110 drop-shadow-[0_0_10px_rgba(52,211,153,0.3)]' : 'text-white group-hover:text-indigo-400'}`}>
+    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-2">{label}</span>
+    <div className={`text-5xl font-black mb-1 transition-all duration-500 ${highlight ? 'text-emerald-500 scale-110 drop-shadow-sm' : 'text-brand group-hover:text-accent'}`}>
       {value}
     </div>
-    <span className="text-xs font-bold text-slate-600 uppercase tracking-widest">{sub}</span>
+    <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">{sub}</span>
   </div>
 );
 

@@ -30,7 +30,7 @@ const CourseAssessmentUpload = ({ courseId, onAssessmentUploaded, existingQuiz }
     if (file) {
       setSelectedFile(file);
       setError('');
-      
+
       // Preview file content if JSON
       if (file.type === 'application/json') {
         try {
@@ -53,13 +53,13 @@ const CourseAssessmentUpload = ({ courseId, onAssessmentUploaded, existingQuiz }
     try {
       setUploading(true);
       setError('');
-      
+
       const result = await assessmentUploadService.importFromFile(selectedFile, courseId);
       setSuccess('Assessment uploaded and linked to course successfully!');
       setSelectedFile(null);
       setJsonInput('');
       onAssessmentUploaded && onAssessmentUploaded(result.quiz);
-      
+
       // Reset file input
       document.getElementById('courseFileInput').value = '';
     } catch (error) {
@@ -79,7 +79,7 @@ const CourseAssessmentUpload = ({ courseId, onAssessmentUploaded, existingQuiz }
       const assessmentData = JSON.parse(jsonInput);
       setUploading(true);
       setError('');
-      
+
       const result = await assessmentUploadService.uploadAssessment(assessmentData, courseId);
       setSuccess('Assessment uploaded and linked to course successfully!');
       setJsonInput('');
@@ -98,10 +98,10 @@ const CourseAssessmentUpload = ({ courseId, onAssessmentUploaded, existingQuiz }
   const downloadTemplate = () => {
     if (template) {
       const dataStr = JSON.stringify(template, null, 2);
-      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-      
+      const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
       const exportFileDefaultName = 'course-assessment-template.json';
-      
+
       const linkElement = document.createElement('a');
       linkElement.setAttribute('href', dataUri);
       linkElement.setAttribute('download', exportFileDefaultName);
@@ -116,7 +116,7 @@ const CourseAssessmentUpload = ({ courseId, onAssessmentUploaded, existingQuiz }
 
     const dataUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvTemplate);
     const exportFileDefaultName = 'course-assessment-template.csv';
-    
+
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
     linkElement.setAttribute('download', exportFileDefaultName);
@@ -225,21 +225,19 @@ const CourseAssessmentUpload = ({ courseId, onAssessmentUploaded, existingQuiz }
               <nav className="flex space-x-8">
                 <button
                   onClick={() => setActiveTab('file')}
-                  className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                    activeTab === 'file'
+                  className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === 'file'
                       ? 'border-indigo-600 text-indigo-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700'
-                  }`}
+                    }`}
                 >
                   Upload File
                 </button>
                 <button
                   onClick={() => setActiveTab('json')}
-                  className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                    activeTab === 'json'
+                  className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === 'json'
                       ? 'border-indigo-600 text-indigo-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700'
-                  }`}
+                    }`}
                 >
                   JSON Input
                 </button>
@@ -268,7 +266,7 @@ const CourseAssessmentUpload = ({ courseId, onAssessmentUploaded, existingQuiz }
                       onChange={handleFileUpload}
                     />
                   </div>
-                  
+
                   {selectedFile && (
                     <div className="mb-4 p-3 bg-gray-50 rounded-lg">
                       <div className="flex items-center justify-center">
@@ -322,7 +320,7 @@ const CourseAssessmentUpload = ({ courseId, onAssessmentUploaded, existingQuiz }
                     className="w-full h-48 p-3 border border-gray-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   />
                 </div>
-                
+
                 <div className="flex justify-between items-center">
                   <button
                     onClick={downloadTemplate}
@@ -331,7 +329,7 @@ const CourseAssessmentUpload = ({ courseId, onAssessmentUploaded, existingQuiz }
                     <Download className="h-4 w-4" />
                     <span>Get Template</span>
                   </button>
-                  
+
                   <button
                     onClick={handleJsonUpload}
                     disabled={!jsonInput.trim() || uploading}
