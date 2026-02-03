@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { HeroParallaxDemo } from '../components/HeroParallaxDemo';
+import { CertificationSteps } from '../components/CertificationSteps';
 import { motion, useScroll, useTransform, useSpring, useMotionValue, AnimatePresence } from 'framer-motion';
 import { FaRocket, FaCode, FaBrain, FaChevronRight, FaPlay, FaShieldAlt, FaGlobeAsia, FaCheckCircle, FaStar, FaBezierCurve, FaLayerGroup } from 'react-icons/fa';
 import { SiFigma, SiSketch, SiAdobexd, SiFramer, SiGoogle, SiAmazon, SiMicrosoft, SiUber, SiSpotify, SiIntel } from 'react-icons/si';
@@ -28,91 +30,8 @@ const Home = () => {
                 />
             </div>
 
-            {/* Hero Section */}
-            <section className="relative pt-48 pb-32 lg:pt-64 lg:pb-48">
-                <div className="container relative z-10">
-                    <div className="max-w-5xl mx-auto text-center">
-                        {/* Status Badge */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6 }}
-                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border border-gray-200 text-brand text-xs font-bold uppercase tracking-[0.2em] mb-12 shadow-sm"
-                        >
-                            <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
-                            </span>
-                            v2.0: The Evolution of Intelligent Learning
-                        </motion.div>
-
-                        {/* Main Heading */}
-                        <div className="overflow-hidden mb-8">
-                            <motion.h1
-                                initial={{ y: "100%" }}
-                                animate={{ y: 0 }}
-                                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                                className="text-6xl md:text-8xl lg:text-[9rem] font-black tracking-tighter leading-[0.9] text-brand"
-                            >
-                                AI <span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">MASTERY</span> <br />
-                                <span className="italic font-serif font-light text-gray-400"></span>
-                            </motion.h1>
-                        </div>
-
-                        {/* Description */}
-                        <motion.p
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, delay: 0.4 }}
-                            className="text-lg md:text-2xl text-gray-600 mb-14 max-w-3xl mx-auto font-medium leading-relaxed px-4"
-                        >
-                            Architect the future with the world's most immersive Generative AI platform.
-                            From AI course foundations to advanced prompt engineering.
-                        </motion.p>
-
-                        {/* CTA Buttons */}
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.8, delay: 0.6 }}
-                            className="flex flex-col sm:flex-row justify-center gap-6"
-                        >
-                            <MagneticButton>
-                                <Link to="/courses" className="btn-premium btn-primary !px-12 !py-5 text-lg group shadow-[0_0_15px_rgba(139,92,246,0.3)]">
-                                    Start Journey
-                                    <FaChevronRight className="group-hover:translate-x-1 transition-transform" />
-                                </Link>
-                            </MagneticButton>
-
-                            <MagneticButton>
-                                <Link to="/register" className="btn-premium btn-outline !px-12 !py-5 text-lg group bg-white">
-                                    <FaPlay className="text-[10px] text-accent relative z-10" />
-                                    <span className="relative z-10">AI Course Demo</span>
-                                </Link>
-                            </MagneticButton>
-                        </motion.div>
-
-                        {/* Social Proof */}
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 1, duration: 1 }}
-                            className="mt-20 flex items-center justify-center gap-8 text-gray-500"
-                        >
-                            <div className="h-8 w-px bg-gray-300" />
-                            <div className="text-left">
-                                <div className="flex text-amber-500 gap-1 mb-0.5">
-                                    {[1, 2, 3, 4, 5].map(i => <FaStar key={i} size={14} />)}
-                                </div>
-                                <div className="text-[10px] font-bold uppercase tracking-widest leading-none text-gray-400">Trust by world's best</div>
-                            </div>
-                        </motion.div>
-                    </div>
-                </div>
-
-                {/* Decorative Elements */}
-                {/* <FloatingElements /> removed as per previous request */}
-            </section>
+            {/* Hero Section with Parallax */}
+            <HeroParallaxDemo />
 
 
 
@@ -174,6 +93,9 @@ const Home = () => {
                 </div>
             </section>
 
+            {/* Certification Steps */}
+            <CertificationSteps />
+
             {/* Bottom CTA */}
             <section className="py-64 relative text-center overflow-hidden">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gray-100 blur-[150px] rounded-full -z-10" />
@@ -198,40 +120,6 @@ const Home = () => {
 
 /* --- SUB-COMPONENTS --- */
 
-const MagneticButton = ({ children }) => {
-    const ref = useRef(null);
-    const x = useMotionValue(0);
-    const y = useMotionValue(0);
-
-    const handleMouseMove = (e) => {
-        const { clientX, clientY } = e;
-        const { height, width, left, top } = ref.current.getBoundingClientRect();
-        const middleX = clientX - (left + width / 2);
-        const middleY = clientY - (top + height / 2);
-        x.set(middleX * 0.2);
-        y.set(middleY * 0.2);
-    };
-
-    const handleMouseLeave = () => {
-        x.set(0);
-        y.set(0);
-    };
-
-    const springConfig = { damping: 15, stiffness: 150 };
-    const dx = useSpring(x, springConfig);
-    const dy = useSpring(y, springConfig);
-
-    return (
-        <motion.div
-            ref={ref}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            style={{ x: dx, y: dy }}
-        >
-            {children}
-        </motion.div>
-    );
-};
 
 const BentoCard = ({ span, icon, title, desc, color }) => {
     return (
@@ -253,30 +141,6 @@ const BentoCard = ({ span, icon, title, desc, color }) => {
 
 
 
-const FloatingElements = () => {
-    return (
-        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-            {/* Connecting Lines Animation - kept as subtle background without logos */}
-            <svg className="absolute inset-0 w-full h-full opacity-20">
-                <motion.path
-                    d="M100,200 Q400,100 800,300 T1200,200"
-                    fill="none"
-                    stroke="url(#gradient-line)"
-                    strokeWidth="2"
-                    strokeDasharray="10,10"
-                    animate={{ strokeDashoffset: [0, 1000] }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                />
-                <defs>
-                    <linearGradient id="gradient-line" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#8B5CF6" />
-                        <stop offset="100%" stopColor="#06B6D4" />
-                    </linearGradient>
-                </defs>
-            </svg>
-        </div>
-    );
-};
 
 
 

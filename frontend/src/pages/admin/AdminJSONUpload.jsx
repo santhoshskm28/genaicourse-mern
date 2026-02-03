@@ -9,90 +9,111 @@ const AdminJSONUpload = () => {
     const [isSaving, setIsSaving] = useState(false);
 
     const handleSave = async () => {
-        if (!jsonInput.trim()) {
+        let cleanInput = jsonInput.trim();
+
+        // Remove markdown backticks if present
+        if (cleanInput.startsWith('```')) {
+            cleanInput = cleanInput.replace(/^```json\n?|^```\n?/, '').replace(/\n?```$/, '');
+        }
+
+        if (!cleanInput) {
             toast.error('Please enter JSON data');
             return;
         }
 
         try {
             setIsSaving(true);
-            const parsedData = JSON.parse(jsonInput); // Validate JSON
 
-            const token = localStorage.getItem('token');
-            const res = await api.post('http://localhost:5000/api/admin/courses/save-json', parsedData);
+            let parsedData;
+            try {
+                parsedData = JSON.parse(cleanInput);
+            } catch (err) {
+                console.error('JSON Parse Error:', err);
+                // Extract position from error message if possible
+                const posMatch = err.message.match(/at position (\d+)/);
+                if (posMatch) {
+                    const pos = parseInt(posMatch[1]);
+                    const preview = cleanInput.substring(Math.max(0, pos - 20), Math.min(cleanInput.length, pos + 20));
+                    toast.error(`Invalid JSON near: "...${preview}..."`);
+                } else {
+                    toast.error('Invalid JSON format: ' + err.message);
+                }
+                setIsSaving(false);
+                return;
+            }
+
+            const res = await api.post('/admin/courses/save-json', parsedData);
 
             if (res.data.success) {
-                toast.success('Course uploaded successfully!');
+                toast.success('Course published successfully!');
                 navigate('/admin/dashboard');
             }
         } catch (error) {
             console.error('Save error:', error);
-            if (error instanceof SyntaxError) {
-                toast.error('Invalid JSON format');
-            } else {
-                const errMsg = error.response?.data?.message || 'Failed to save course';
-                toast.error(errMsg);
-            }
+            const errMsg = error.response?.data?.message || error.response?.data?.errors?.[0] || 'Failed to save course';
+            toast.error(errMsg);
         } finally {
             setIsSaving(false);
         }
     };
 
     return (
-        <div className="container mx-auto px-4 py-8 max-w-4xl pt-28">
-            <div className="mb-8">
-                <h1 className="text-3xl font-bold text-white mb-2">JSON Course Publisher</h1>
-                <p className="text-slate-400">Paste your course JSON data below to upload a new course.</p>
-            </div>
-
-            <div className="bg-slate-800 rounded-2xl border border-slate-700 p-8">
-                <div className="mb-6">
-                    <label className="block text-white font-medium mb-2">Course JSON Data</label>
-                    <textarea
-                        value={jsonInput}
-                        onChange={(e) => setJsonInput(e.target.value)}
-                        placeholder={`Paste your course JSON here, e.g.:
-{
-  "title": "Introduction to React",
-  "description": "Learn React basics",
-  "category": "Web Development",
-  "level": "Beginner",
-  "modules": [
-    {
-      "moduleTitle": "Getting Started",
-      "lessons": [
-        {
-          "lessonTitle": "What is React?",
-          "content": "React is a JavaScript library...",
-          "keyPoints": ["Component-based", "Declarative"]
-        }
-      ]
-    }
-  ]
-}`}
-                        className="w-full h-96 bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white font-mono text-sm focus:border-primary outline-none"
-                        disabled={isSaving}
-                    />
+        <div className="min-h-screen bg-[var(--bg-main)] tech-grid pt-32 pb-20 px-4">
+            <div className="max-w-4xl mx-auto">
+                <div className="mb-10 text-center">
+                    <h1 className="text-4xl md:text-5xl font-black text-brand mb-4">
+                        JSON <span className="text-accent bg-gradient-to-r from-violet-500 to-cyan-500 bg-clip-text text-transparent">Publisher</span>
+                    </h1>
+                    <p className="text-gray-500 text-lg font-medium">Upload structured course content directly via JSON.</p>
                 </div>
 
-                <div className="flex gap-4">
-                    <button
-                        onClick={() => navigate('/admin/dashboard')}
-                        className="px-6 py-3 rounded-lg border border-slate-600 text-slate-300 hover:bg-slate-700 transition-colors"
-                        disabled={isSaving}
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        onClick={handleSave}
-                        disabled={!jsonInput.trim() || isSaving}
-                        className={`px-6 py-3 rounded-lg font-bold flex items-center gap-2 transition-all ${!jsonInput.trim() || isSaving
-                            ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
-                            : 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-900/20'
-                            }`}
-                    >
-                        {isSaving ? 'Publishing...' : 'Publish Course'}
-                    </button>
+                <div className="glass-card bg-white p-8 md:p-10 border border-gray-200">
+                    <div className="mb-8 relative">
+                        <div className="flex justify-between items-center mb-4">
+                            <label className="text-brand font-bold uppercase tracking-widest text-xs">Course Blueprint (JSON)</label>
+                            <span className="text-[10px] text-gray-400 font-mono">UTF-8 ENCODED</span>
+                        </div>
+                        <textarea
+                            value={jsonInput}
+                            onChange={(e) => setJsonInput(e.target.value)}
+                            placeholder={`Paste your course JSON here...`}
+                            className="w-full h-[500px] bg-gray-50 border border-gray-100 rounded-2xl px-6 py-6 text-brand font-mono text-sm focus:border-accent outline-none shadow-inner resize-none transition-all duration-300"
+                            disabled={isSaving}
+                        />
+
+                        {/* Status indicators */}
+                        <div className="absolute bottom-4 right-6 flex items-center gap-4">
+                            <div className={`w-2 h-2 rounded-full ${jsonInput ? 'bg-green-500' : 'bg-gray-300'}`} />
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
+                                {jsonInput.length.toLocaleString()} CHARACTERS
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-4">
+                        <button
+                            onClick={() => navigate('/admin/dashboard')}
+                            className="flex-1 px-8 py-4 rounded-xl border border-gray-200 text-gray-500 font-bold hover:bg-gray-50 transition-all active:scale-95"
+                            disabled={isSaving}
+                        >
+                            Back to Command Center
+                        </button>
+                        <button
+                            onClick={handleSave}
+                            disabled={!jsonInput.trim() || isSaving}
+                            className={`flex-[2] btn-premium btn-primary !rounded-xl text-lg ${!jsonInput.trim() || isSaving ? 'opacity-50 cursor-not-allowed grayscale' : ''
+                                }`}
+                        >
+                            {isSaving ? (
+                                <>
+                                    <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                                    Processing Neural Data...
+                                </>
+                            ) : (
+                                'Publish Global Access'
+                            )}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

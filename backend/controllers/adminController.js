@@ -344,16 +344,22 @@ export const uploadCourseFromJSON = async (req, res, next) => {
         }
 
         // Normalize field names to match schema
-        courseData.modules = courseData.modules.map(module => ({
-            title: module.moduleTitle || module.title,
-            description: module.description || '',
-            lessons: module.lessons.map(lesson => ({
-                title: lesson.lessonTitle || lesson.title,
-                content: lesson.content,
-                type: lesson.type || 'text',
-                keyPoints: lesson.keyPoints || []
-            }))
-        }));
+        if (courseData.modules && Array.isArray(courseData.modules)) {
+            courseData.modules = courseData.modules.map(module => ({
+                title: module.moduleTitle || module.title || 'Untitled Module',
+                description: module.description || '',
+                lessons: (module.lessons && Array.isArray(module.lessons))
+                    ? module.lessons.map(lesson => ({
+                        title: lesson.lessonTitle || lesson.title || 'Untitled Lesson',
+                        content: lesson.content || 'No content provided',
+                        type: lesson.type || 'text',
+                        keyPoints: lesson.keyPoints || []
+                    }))
+                    : []
+            }));
+        } else {
+            courseData.modules = [];
+        }
 
 
 

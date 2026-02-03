@@ -274,7 +274,7 @@ export const downloadCertificate = async (req, res, next) => {
         res.type('application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
         res.setHeader('Content-Length', pdfBuffer.length);
-        res.setHeader('Cache-Control', 'private, max-age=3600'); // Cache for 1 hour
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate'); // Disable cache to ensure fresh PDF
 
         // Use res.end for binary data to prevent Express from trying to be smart with encoding
         res.end(pdfBuffer, 'binary');

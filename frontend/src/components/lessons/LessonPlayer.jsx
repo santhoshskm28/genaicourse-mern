@@ -111,17 +111,17 @@ const LessonPlayer = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-                <div className="text-white">Loading lesson...</div>
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-brand font-medium">Loading lesson...</div>
             </div>
         );
     }
 
     if (!course || !currentLesson) {
         return (
-            <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
                 <div className="text-center">
-                    <h1 className="text-2xl font-bold text-white mb-4">Lesson not found</h1>
+                    <h1 className="text-2xl font-bold text-brand mb-4">Lesson not found</h1>
                     <Link to={`/courses/${courseId}`} className="btn btn-primary">
                         Back to Course
                     </Link>
@@ -136,18 +136,18 @@ const LessonPlayer = () => {
     const hasPrevious = currentIndex > 0;
 
     return (
-        <div className="min-h-screen bg-slate-900 flex">
+        <div className="min-h-screen bg-gray-50 flex">
             {/* Mobile Menu Toggle */}
             <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-slate-800 rounded-lg text-white"
+                className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white shadow-md rounded-lg text-brand border border-gray-200"
             >
                 {sidebarOpen ? <FaTimes /> : <FaBars />}
             </button>
 
             {/* Sidebar - Table of Contents */}
             <div className={`
-                fixed lg:static inset-y-0 left-0 z-40 w-80 bg-slate-800 border-r border-slate-700 
+                fixed lg:static inset-y-0 left-0 z-40 w-80 bg-white border-r border-gray-200 
                 transform transition-transform duration-300 ease-in-out
                 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
                 overflow-y-auto
@@ -156,24 +156,24 @@ const LessonPlayer = () => {
                     <div className="mb-6">
                         <Link
                             to={`/courses/${courseId}`}
-                            className="flex items-center text-gray-400 hover:text-white transition-colors"
+                            className="flex items-center text-gray-500 hover:text-brand transition-colors font-medium"
                         >
                             <FaArrowLeft className="mr-2" />
                             Back to Course
                         </Link>
                     </div>
 
-                    <h2 className="text-xl font-bold text-white mb-6">Course Content</h2>
-                    <h3 className="text-lg font-semibold text-primary mb-4">{course.title}</h3>
+                    <h2 className="text-xl font-black text-brand mb-6">Course Content</h2>
+                    <h3 className="text-sm font-bold text-accent mb-4 uppercase tracking-wider">{course.title}</h3>
 
                     <div className="space-y-6">
                         {course.modules.map((module, moduleIndex) => (
-                            <div key={module.id || moduleIndex} className="border-l-2 border-slate-600">
+                            <div key={module.id || moduleIndex} className="border-l-2 border-gray-100">
                                 <div className="pl-4">
-                                    <h4 className="text-sm font-semibold text-gray-300 mb-3 uppercase tracking-wide">
+                                    <h4 className="text-xs font-bold text-gray-400 mb-3 uppercase tracking-wide">
                                         {module.title}
                                     </h4>
-                                    <div className="space-y-2">
+                                    <div className="space-y-1">
                                         {module.lessons.map((lesson, lessonIndex) => {
                                             const isCurrent = lesson.id === currentLesson.id || lesson._id === currentLesson._id;
                                             const lessonGlobalIndex = allLessons.findIndex(l =>
@@ -187,13 +187,13 @@ const LessonPlayer = () => {
                                                     className={`
                                                         w-full text-left p-3 rounded-lg transition-all duration-200
                                                         ${isCurrent
-                                                            ? 'bg-primary text-white'
-                                                            : 'text-gray-400 hover:bg-slate-700 hover:text-white'
+                                                            ? 'bg-accent/10 text-accent font-bold border border-accent/20'
+                                                            : 'text-gray-500 hover:bg-gray-50 hover:text-brand'
                                                         }
                                                     `}
                                                 >
                                                     <div className="flex items-center justify-between">
-                                                        <span className="text-sm font-medium">
+                                                        <span className="text-sm">
                                                             {lesson.title}
                                                         </span>
                                                         <span className="text-xs opacity-75">
@@ -201,7 +201,7 @@ const LessonPlayer = () => {
                                                         </span>
                                                     </div>
                                                     {lesson.duration && (
-                                                        <div className="text-xs mt-1 opacity-75">
+                                                        <div className="text-xs mt-1 opacity-75 font-medium">
                                                             {lesson.duration}m
                                                         </div>
                                                     )}
@@ -222,23 +222,23 @@ const LessonPlayer = () => {
                     {showAssessment ? (
                         <div className="py-10">
                             <div className="flex items-center gap-4 mb-10">
-                                <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+                                <div className="w-12 h-12 rounded-2xl bg-indigo-100 flex items-center justify-center text-indigo-600">
                                     <FaClipboardCheck size={24} />
                                 </div>
                                 <div>
-                                    <h2 className="text-3xl font-black text-white">Final Assessment</h2>
-                                    <p className="text-slate-500 text-sm font-medium uppercase tracking-widest">Neural Pattern Verification in Progress</p>
+                                    <h2 className="text-3xl font-black text-brand">Final Assessment</h2>
+                                    <p className="text-gray-500 text-sm font-bold uppercase tracking-widest">Neural Pattern Verification in Progress</p>
                                 </div>
                             </div>
 
-                            <div className="bg-slate-800 rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl">
+                            <div className="bg-white rounded-[2rem] border border-gray-200 overflow-hidden shadow-xl">
                                 <AssessmentCenter isEmbedded={true} courseId={courseId} />
                             </div>
 
                             <div className="mt-12 flex justify-center">
                                 <button
                                     onClick={() => setShowAssessment(false)}
-                                    className="px-8 py-3 bg-slate-800 text-gray-400 hover:text-white rounded-xl border border-white/5 transition-all"
+                                    className="px-8 py-3 bg-white text-gray-500 hover:text-brand rounded-xl border border-gray-200 transition-all font-medium"
                                 >
                                     Back to Final Lesson
                                 </button>
@@ -248,15 +248,15 @@ const LessonPlayer = () => {
                         <>
                             {/* Lesson Header */}
                             <div className="mb-8">
-                                <div className="text-sm text-primary font-semibold mb-2">
+                                <div className="text-sm text-accent font-bold mb-2 uppercase tracking-wide">
                                     {course.modules[currentModuleIndex]?.title}
                                 </div>
-                                <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                                <h1 className="text-3xl md:text-4xl font-black text-brand mb-4">
                                     {currentLesson.title}
                                 </h1>
 
                                 {currentLesson.duration && (
-                                    <div className="flex items-center text-gray-400 text-sm">
+                                    <div className="flex items-center text-gray-500 text-sm font-medium">
                                         <span>Duration: {currentLesson.duration} minutes</span>
                                         {currentLesson.difficulty && (
                                             <>
@@ -269,16 +269,19 @@ const LessonPlayer = () => {
                             </div>
 
                             {/* Lesson Content */}
-                            <div className="bg-slate-800 rounded-lg p-8 mb-8">
-                                <div className="prose prose-invert max-w-none">
+                            <div className="bg-white rounded-2xl p-8 mb-8 border border-gray-200 shadow-sm">
+                                <div className="prose prose-lg max-w-none text-gray-600">
                                     {/* Key Points */}
                                     {currentLesson.keyPoints && currentLesson.keyPoints.length > 0 && (
-                                        <div className="mb-6">
-                                            <h3 className="text-xl font-semibold text-white mb-4">Key Points</h3>
-                                            <ul className="space-y-2">
+                                        <div className="mb-8 bg-gray-50 p-6 rounded-xl border border-gray-100">
+                                            <h3 className="text-lg font-bold text-brand mb-4 flex items-center">
+                                                <span className="w-1 h-5 bg-accent rounded mr-2"></span>
+                                                Key Points
+                                            </h3>
+                                            <ul className="space-y-3">
                                                 {currentLesson.keyPoints.map((point, index) => (
-                                                    <li key={index} className="text-gray-300 flex items-start">
-                                                        <span className="text-primary mr-2">•</span>
+                                                    <li key={index} className="text-gray-600 flex items-start">
+                                                        <FaCheck className="text-emerald-500 mt-1 mr-3 flex-shrink-0 text-xs" />
                                                         <span>{point}</span>
                                                     </li>
                                                 ))}
@@ -287,7 +290,7 @@ const LessonPlayer = () => {
                                     )}
 
                                     {/* Main Content */}
-                                    <div className="text-gray-300 leading-relaxed">
+                                    <div className="text-gray-600 leading-relaxed">
                                         {currentLesson.content ? (
                                             <div className="whitespace-pre-wrap">{currentLesson.content}</div>
                                         ) : (
@@ -297,12 +300,12 @@ const LessonPlayer = () => {
 
                                     {/* Learning Objectives */}
                                     {currentLesson.learningObjectives && currentLesson.learningObjectives.length > 0 && (
-                                        <div className="mt-8 pt-6 border-t border-slate-700">
-                                            <h3 className="text-xl font-semibold text-white mb-4">Learning Objectives</h3>
+                                        <div className="mt-8 pt-6 border-t border-gray-100">
+                                            <h3 className="text-xl font-bold text-brand mb-4">Learning Objectives</h3>
                                             <ul className="space-y-2">
                                                 {currentLesson.learningObjectives.map((objective, index) => (
-                                                    <li key={index} className="text-gray-300 flex items-start">
-                                                        <span className="text-primary mr-2">✓</span>
+                                                    <li key={index} className="text-gray-600 flex items-start">
+                                                        <span className="text-accent mr-2 font-bold">✓</span>
                                                         <span>{objective}</span>
                                                     </li>
                                                 ))}
@@ -312,8 +315,8 @@ const LessonPlayer = () => {
 
                                     {/* Resources */}
                                     {currentLesson.resources && currentLesson.resources.length > 0 && (
-                                        <div className="mt-8 pt-6 border-t border-slate-700">
-                                            <h3 className="text-xl font-semibold text-white mb-4">Resources</h3>
+                                        <div className="mt-8 pt-6 border-t border-gray-100">
+                                            <h3 className="text-xl font-bold text-brand mb-4">Resources</h3>
                                             <div className="space-y-2">
                                                 {currentLesson.resources.map((resource, index) => (
                                                     <a
@@ -321,7 +324,7 @@ const LessonPlayer = () => {
                                                         href={resource.url}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="flex items-center text-primary hover:text-primary-light transition-colors"
+                                                        className="flex items-center text-accent hover:text-orange-700 transition-colors font-medium"
                                                     >
                                                         <span>{resource.title || resource.url}</span>
                                                     </a>
@@ -333,7 +336,7 @@ const LessonPlayer = () => {
                             </div>
 
                             {/* Navigation */}
-                            <div className="flex justify-between items-center mt-12 pt-8 border-t border-slate-800">
+                            <div className="flex justify-between items-center mt-12 pt-8 border-t border-gray-200">
                                 <button
                                     onClick={() => {
                                         if (showAssessment) {
@@ -344,10 +347,10 @@ const LessonPlayer = () => {
                                     }}
                                     disabled={!showAssessment && !hasPrevious}
                                     className={`
-                                flex items-center px-6 py-3 rounded-lg font-medium transition-colors
+                                flex items-center px-6 py-3 rounded-xl font-bold transition-colors
                                 ${(!showAssessment && !hasPrevious)
-                                            ? 'bg-slate-800 text-gray-500 cursor-not-allowed'
-                                            : 'bg-slate-700 text-white hover:bg-slate-600'
+                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                            : 'bg-white border border-gray-200 text-brand hover:bg-gray-50 shadow-sm'
                                         }
                             `}
                                 >
@@ -356,7 +359,7 @@ const LessonPlayer = () => {
                                 </button>
 
                                 {!showAssessment && (
-                                    <div className="text-gray-400 text-sm">
+                                    <div className="text-gray-400 text-xs font-bold uppercase tracking-widest hidden sm:block">
                                         Lesson {currentIndex + 1} of {allLessons.length}
                                     </div>
                                 )}
@@ -365,7 +368,7 @@ const LessonPlayer = () => {
                                     hasNext ? (
                                         <button
                                             onClick={() => navigateToLesson('next')}
-                                            className="flex items-center px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-colors"
+                                            className="flex items-center px-6 py-3 bg-brand text-white rounded-xl font-bold hover:bg-gray-900 transition-colors shadow-lg shadow-brand/20"
                                         >
                                             Next Lesson
                                             <FaArrowRight className="ml-2" />
@@ -382,7 +385,7 @@ const LessonPlayer = () => {
                                 ) : (
                                     <Link
                                         to="/dashboard"
-                                        className="flex items-center px-6 py-3 bg-slate-700 text-white rounded-lg font-medium hover:bg-slate-600 transition-colors"
+                                        className="flex items-center px-6 py-3 bg-white border border-gray-200 text-brand rounded-xl font-bold hover:bg-gray-50 transition-colors"
                                     >
                                         Finish Later
                                         <FaCheck className="ml-2" />

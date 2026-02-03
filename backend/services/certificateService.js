@@ -324,7 +324,7 @@ export function generateCertificateHTML(data) {
         <div class="corner bl"></div><div class="corner br"></div>
         
         <div class="content">
-            <div class="logo">GENAI COURSE.IO</div>
+            <div class="logo">CERTIFYING AUTHORITY</div>
             
             <h1 class="main-title">CERTIFICATE</h1>
             <p class="sub-header">OF ACHIEVEMENT</p>
@@ -351,9 +351,9 @@ export function generateCertificateHTML(data) {
                 </div>
                 
                 <div class="sig">
-                    <div class="sig-font">GenAICourse.io</div>
+                    <div class="sig-font">Certifying Authority</div>
                     <div class="sig-line"></div>
-                    <div class="sig-label">GenAICourse.io</div>
+                    <div class="sig-label">Certifying Authority</div>
                 </div>
             </div>
         </div>

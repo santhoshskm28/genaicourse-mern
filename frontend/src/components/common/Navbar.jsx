@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaBars, FaTimes, FaUserShield, FaChevronRight } from 'react-icons/fa';
+import { MagneticButton } from '../ui/MagneticButton';
 
 const Navbar = () => {
     const { user, logout, isAuthenticated } = useAuth();
@@ -92,10 +93,12 @@ const Navbar = () => {
                             <Link to="/login" className="text-sm font-semibold text-gray-600 hover:text-brand transition-colors">
                                 Sign In
                             </Link>
-                            <Link to="/register" className="btn-premium btn-primary !py-3 !px-6 text-sm">
-                                Create Account
-                                <FaChevronRight className="text-[10px]" />
-                            </Link>
+                            <MagneticButton>
+                                <Link to="/register" className="btn-premium btn-primary !py-3 !px-6 text-sm">
+                                    Create Account
+                                    <FaChevronRight className="text-[10px]" />
+                                </Link>
+                            </MagneticButton>
                         </div>
                     )}
                 </div>

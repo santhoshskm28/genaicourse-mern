@@ -41,7 +41,7 @@ const CertificateViewer = ({ certificateId, onClose }) => {
     try {
       setSharing(true);
       const shareData = await certificateService.shareCertificate(certificateId);
-      
+
       // Copy shareable link to clipboard
       if (navigator.clipboard) {
         await navigator.clipboard.writeText(shareData.shareableLink);
@@ -85,7 +85,7 @@ const CertificateViewer = ({ certificateId, onClose }) => {
         <div className="flex justify-between items-start">
           <div>
             <h2 className="text-2xl font-bold mb-2">Certificate of Completion</h2>
-            <p className="text-indigo-100">GenAICourse.io</p>
+            <p className="text-indigo-100">GenAiCourse.io</p>
           </div>
           <div className="flex space-x-2">
             <button
@@ -121,15 +121,15 @@ const CertificateViewer = ({ certificateId, onClose }) => {
           <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full mb-6">
             <Award className="h-12 w-12 text-white" />
           </div>
-          
+
           <h3 className="text-3xl font-bold text-gray-900 mb-4">
             {certificate.userName}
           </h3>
-          
+
           <p className="text-lg text-gray-600 mb-6">
             has successfully completed the course
           </p>
-          
+
           <div className="bg-indigo-50 inline-block px-8 py-4 rounded-lg mb-6">
             <h4 className="text-2xl font-bold text-indigo-900">
               {certificate.courseTitle}
@@ -146,7 +146,7 @@ const CertificateViewer = ({ certificateId, onClose }) => {
             <p className="text-sm text-gray-600 mb-1">Grade</p>
             <p className="text-xl font-bold text-gray-900">{certificate.grade}</p>
           </div>
-          
+
           <div className="text-center">
             <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mx-auto mb-3">
               <BookOpen className="h-6 w-6 text-blue-600" />
@@ -154,7 +154,7 @@ const CertificateViewer = ({ certificateId, onClose }) => {
             <p className="text-sm text-gray-600 mb-1">Score</p>
             <p className="text-xl font-bold text-gray-900">{certificate.score}%</p>
           </div>
-          
+
           <div className="text-center">
             <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full mx-auto mb-3">
               <Calendar className="h-6 w-6 text-purple-600" />
@@ -203,7 +203,7 @@ const CertificateViewer = ({ certificateId, onClose }) => {
         >
           Close
         </button>
-        
+
         <div className="flex space-x-3">
           <button
             onClick={handleShare}
@@ -213,7 +213,7 @@ const CertificateViewer = ({ certificateId, onClose }) => {
             <Share2 className="h-4 w-4" />
             <span>{sharing ? 'Sharing...' : 'Share'}</span>
           </button>
-          
+
           <button
             onClick={handleDownload}
             disabled={downloading}
@@ -223,7 +223,7 @@ const CertificateViewer = ({ certificateId, onClose }) => {
             <span>{downloading ? 'Downloading...' : 'Download PDF'}</span>
           </button>
         </div>
-</div>
+      </div>
 
       {/* Preview Modal */}
       {previewMode && (
