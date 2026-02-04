@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import courseService from '../services/courseService.js';
 import Loader from '../components/common/Loader.jsx';
-import { FaChevronLeft, FaChevronRight, FaCheck, FaBars, FaTimes, FaClipboardCheck, FaPlayCircle } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight, FaCheck, FaBars, FaTimes, FaClipboardCheck, FaPlayCircle, FaClock, FaSignal, FaBookOpen } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import AssessmentCenter from '../components/assessment/AssessmentCenter.jsx';
 
@@ -19,22 +19,29 @@ const CourseViewer = () => {
     const [completedLessons, setCompletedLessons] = useState(new Set());
     const [showAssessment, setShowAssessment] = useState(false);
 
+    const queryParams = new URLSearchParams(window.location.search);
+    const isPreview = queryParams.get('preview') === 'true';
+
     useEffect(() => {
         const fetchCourseData = async () => {
             try {
-                const [courseData, progressData] = await Promise.all([
-                    courseService.getCourse(id),
-                    courseService.getCourseProgress(id).catch(() => null)
-                ]);
-                setCourse(courseData.data);
+                if (isPreview) {
+                    const courseData = await courseService.getCourse(id);
+                    setCourse(courseData.data);
+                } else {
+                    const [courseData, progressData] = await Promise.all([
+                        courseService.getCourse(id),
+                        courseService.getCourseProgress(id).catch(() => null)
+                    ]);
+                    setCourse(courseData.data);
 
-                if (progressData?.data) {
-                    setProgress(progressData.data);
-                    const completed = new Set();
-                    progressData.data.completedLessons?.forEach(lesson => {
-                        completed.add(String(lesson.lessonId));
-                    });
-                    setCompletedLessons(completed);
+                    if (progressData?.data) {
+                        const completed = new Set();
+                        progressData.data.completedLessons?.forEach(lesson => {
+                            completed.add(String(lesson.lessonId));
+                        });
+                        setCompletedLessons(completed);
+                    }
                 }
             } catch (error) {
                 toast.error("Failed to load course");
@@ -43,7 +50,7 @@ const CourseViewer = () => {
             }
         };
         fetchCourseData();
-    }, [id]);
+    }, [id, isPreview]);
 
     if (loading) return <Loader />;
     if (!course) return <div className="text-center mt-20 text-brand">Course not found</div>;
@@ -54,6 +61,7 @@ const CourseViewer = () => {
         currentLessonIndex === currentModule.lessons.length - 1;
 
     const markCurrentLessonComplete = async () => {
+        if (isPreview) return;
         try {
             const lessonId = currentLesson._id || currentLesson.id;
             const moduleId = currentModule._id || currentModule.id;
@@ -70,7 +78,7 @@ const CourseViewer = () => {
     const handleNext = async () => {
         // Mark current lesson as complete
         const lessonId = currentLesson._id || currentLesson.id;
-        if (!completedLessons.has(String(lessonId))) {
+        if (!isPreview && !completedLessons.has(String(lessonId))) {
             await markCurrentLessonComplete();
         }
 
@@ -80,6 +88,10 @@ const CourseViewer = () => {
             setCurrentModuleIndex(prev => prev + 1);
             setCurrentLessonIndex(0);
         } else {
+            if (isPreview) {
+                toast.success("End of course preview.");
+                return;
+            }
             // End of course - check if all lessons are completed
             const totalLessons = course.modules.reduce((acc, mod) => acc + mod.lessons.length, 0);
 
@@ -148,34 +160,36 @@ const CourseViewer = () => {
                         </div>
 
                         {/* Progress Section */}
-                        <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
-                            <h3 className="text-xl font-bold mb-6">Your Progress</h3>
+                        {!isPreview && (
+                            <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+                                <h3 className="text-xl font-bold mb-6">Your Progress</h3>
 
-                            <div className="mb-2 flex justify-between text-sm font-bold text-gray-500">
-                                <span>Overall Progress</span>
-                                <span>{Math.round((completedLessons.size / (course.modules.reduce((acc, m) => acc + m.lessons.length, 0) || 1)) * 100)}%</span>
-                            </div>
-                            <div className="h-3 bg-gray-100 rounded-full overflow-hidden mb-6">
-                                <motion.div
-                                    initial={{ width: 0 }}
-                                    animate={{ width: `${Math.round((completedLessons.size / (course.modules.reduce((acc, m) => acc + m.lessons.length, 0) || 1)) * 100)}%` }}
-                                    className="h-full bg-accent rounded-full"
-                                />
-                            </div>
-
-                            <div className="flex justify-between text-center">
-                                <div>
-                                    <div className="text-3xl font-black text-brand mb-1">{completedLessons.size}</div>
-                                    <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">Completed Lessons</div>
+                                <div className="mb-2 flex justify-between text-sm font-bold text-gray-500">
+                                    <span>Overall Progress</span>
+                                    <span>{Math.round((completedLessons.size / (course.modules.reduce((acc, m) => acc + m.lessons.length, 0) || 1)) * 100)}%</span>
                                 </div>
-                                <div>
-                                    <div className="text-3xl font-black text-brand mb-1">
-                                        {(course.modules.reduce((acc, m) => acc + m.lessons.length, 0) || 0) - completedLessons.size}
+                                <div className="h-3 bg-gray-100 rounded-full overflow-hidden mb-6">
+                                    <motion.div
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${Math.round((completedLessons.size / (course.modules.reduce((acc, m) => acc + m.lessons.length, 0) || 1)) * 100)}%` }}
+                                        className="h-full bg-accent rounded-full"
+                                    />
+                                </div>
+
+                                <div className="flex justify-between text-center">
+                                    <div>
+                                        <div className="text-3xl font-black text-brand mb-1">{completedLessons.size}</div>
+                                        <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">Completed Lessons</div>
                                     </div>
-                                    <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">Remaining Lessons</div>
+                                    <div>
+                                        <div className="text-3xl font-black text-brand mb-1">
+                                            {(course.modules.reduce((acc, m) => acc + m.lessons.length, 0) || 0) - completedLessons.size}
+                                        </div>
+                                        <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">Remaining Lessons</div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        )}
 
                         {/* Current Lesson View (If selected) */}
                         <div id="lesson-content" className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden min-h-[500px]">

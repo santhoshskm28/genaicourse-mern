@@ -5,6 +5,7 @@ import { CertificationSteps } from '../components/CertificationSteps';
 import { motion, useScroll, useTransform, useSpring, useMotionValue, AnimatePresence } from 'framer-motion';
 import { FaRocket, FaCode, FaBrain, FaChevronRight, FaPlay, FaShieldAlt, FaGlobeAsia, FaCheckCircle, FaStar, FaBezierCurve, FaLayerGroup } from 'react-icons/fa';
 import { SiFigma, SiSketch, SiAdobexd, SiFramer, SiGoogle, SiAmazon, SiMicrosoft, SiUber, SiSpotify, SiIntel } from 'react-icons/si';
+import Pricing from './Pricing';
 
 const Home = () => {
     return (
@@ -32,8 +33,6 @@ const Home = () => {
 
             {/* Hero Section with Parallax */}
             <HeroParallaxDemo />
-
-
 
             {/* Feature Bento Grid */}
             <section id="features" className="py-40 relative">
@@ -96,6 +95,9 @@ const Home = () => {
             {/* Certification Steps */}
             <CertificationSteps />
 
+            {/* Pricing Section */}
+            <Pricing />
+
             {/* Bottom CTA */}
             <section className="py-64 relative text-center overflow-hidden">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gray-100 blur-[150px] rounded-full -z-10" />
@@ -120,7 +122,6 @@ const Home = () => {
 
 /* --- SUB-COMPONENTS --- */
 
-
 const BentoCard = ({ span, icon, title, desc, color }) => {
     return (
         <motion.div
@@ -138,10 +139,5 @@ const BentoCard = ({ span, icon, title, desc, color }) => {
         </motion.div>
     );
 };
-
-
-
-
-
 
 export default Home;

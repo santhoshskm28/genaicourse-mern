@@ -23,7 +23,7 @@ const Navbar = () => {
     return (
         <nav
             className={`fixed w-full z-50 transition-all duration-500 top-0 ${scrolled
-                ? 'py-4 bg-white/10 backdrop-blur-md border-b border-gray-200'
+                ? 'py-4 bg-white/90 backdrop-blur-lg border-b border-gray-100 shadow-sm'
                 : 'py-6 bg-transparent'
                 }`}
         >
@@ -31,8 +31,8 @@ const Navbar = () => {
                 <Link to="/" className="flex items-center gap-3 group">
                     <img src="/logo.png" alt="GenAI" className="h-16 w-auto object-contain" />
                     <div className="flex items-baseline">
-                        <span className="text-2xl font-black tracking-tight text-brand leading-none">genaicourse</span>
-                        <span className="text-lg font-bold text-accent tracking-widest uppercase leading-none">.io</span>
+                        <span className="text-2xl font-black tracking-tight text-brand leading-none">GENAICOURSE</span>
+                        <span className="text-2xl font-bold text-accent tracking-widest uppercase leading-none">.IO</span>
                     </div>
                 </Link>
 
@@ -40,7 +40,7 @@ const Navbar = () => {
                 <div className="hidden lg:flex items-center gap-8">
                     <div className="flex items-center gap-6 bg-white/80 px-8 py-2.5 rounded-full border border-gray-200/50 backdrop-blur-md shadow-sm">
                         <NavLink to="/" active={isActive('/')}>Home</NavLink>
-                        <a href="/#features" className="text-sm font-bold text-gray-500 hover:text-brand transition-colors">Features</a>
+                        <Link to="/#features" className="text-sm font-bold text-gray-500 hover:text-brand transition-colors">Features</Link>
                         <NavLink to="/courses" active={isActive('/courses')}>Courses</NavLink>
                         <NavLink to="/pricing" active={isActive('/pricing')}>Pricing</NavLink>
                     </div>
@@ -153,20 +153,29 @@ const Navbar = () => {
     );
 };
 
-const NavLink = ({ to, children, active }) => (
-    <Link
-        to={to}
-        className={`text-sm font-bold transition-all relative px-2 py-1 ${active ? 'text-brand' : 'text-gray-500 hover:text-brand'}`}
-    >
-        {children}
-        {active && (
-            <motion.div
-                layoutId="nav-underline"
-                className="absolute -bottom-1 left-0 right-0 h-0.5 bg-accent rounded-full"
-            />
-        )}
-    </Link>
-);
+const NavLink = ({ to, children, active }) => {
+    const handleClick = () => {
+        if (active) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
+
+    return (
+        <Link
+            to={to}
+            onClick={handleClick}
+            className={`text-sm font-bold transition-all relative px-2 py-1 ${active ? 'text-brand' : 'text-gray-500 hover:text-brand'}`}
+        >
+            {children}
+            {active && (
+                <motion.div
+                    layoutId="nav-underline"
+                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-accent rounded-full"
+                />
+            )}
+        </Link>
+    );
+};
 
 const MobileNavLink = ({ to, children, onClick }) => (
     <Link to={to} onClick={onClick} className="text-2xl font-black text-brand hover:text-accent transition-colors uppercase tracking-tight">

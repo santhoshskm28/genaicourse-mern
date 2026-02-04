@@ -49,6 +49,8 @@ const App = () => {
     );
 };
 
+import ScrollToTop from './components/common/ScrollToTop';
+
 const AppContent = () => {
     const location = useLocation();
 
@@ -63,6 +65,7 @@ const AppContent = () => {
 
     return (
         <div className="min-h-screen bg-slate-900 text-white font-sans selection:bg-primary selection:text-white">
+            <ScrollToTop />
             {!shouldHideNavbar && <Navbar />}
             <main>
                 <Routes>

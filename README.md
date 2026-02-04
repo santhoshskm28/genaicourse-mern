@@ -581,7 +581,7 @@ The GenAI Course Platform is a complete MERN stack application featuring:
 
 **Ready for**: Development, Testing, and Production Deployment
 
----
+---updating
 
 **Last Updated**: 2026-01-27
 **Version**: 1.0.0
