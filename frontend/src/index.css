@@ -148,6 +148,17 @@ h6,
   pointer-events: none;
 }
 
+.text-half-shade-light {
+  background: linear-gradient(to bottom,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.192) 50%,
+      transparent 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  pointer-events: none;
+}
+
 @keyframes float {
 
   0%,

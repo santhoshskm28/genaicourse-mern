@@ -85,7 +85,7 @@ const CertificateViewer = ({ certificateId, onClose }) => {
         <div className="flex justify-between items-start">
           <div>
             <h2 className="text-2xl font-bold mb-2">Certificate of Completion</h2>
-            <p className="text-indigo-100">GenAiCourse.io</p>
+            <p className="text-indigo-100">GENAICOURSE.IO</p>
           </div>
           <div className="flex space-x-2">
             <button

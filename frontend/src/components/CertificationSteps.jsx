@@ -5,8 +5,8 @@ import { UserPlus, PlayCircle, FileCheck, Award } from 'lucide-react';
 const steps = [
     {
         icon: <UserPlus className="w-6 h-6 text-white" />,
-        title: "Enroll",
-        description: "Join our community and select your specialized AI learning path."
+        title: "Purchase Course",
+        description: "Invest in your future by purchasing a specialized AI learning path designed to fast-track your career."
     },
     {
         icon: <PlayCircle className="w-6 h-6 text-white" />,

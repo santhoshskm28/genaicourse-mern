@@ -74,14 +74,14 @@ export const Header = () => {
 
             <div className="flex flex-col sm:flex-row gap-6 mt-12 z-20 relative">
                 <MagneticButton>
-                    <Link to="/courses" className="btn-premium btn-primary !px-10 !py-4 !rounded-full text-lg shadow-[0_0_15px_rgba(139,92,246,0.5)]">
+                    <Link to="/register" className="btn-premium btn-primary !px-10 !py-4 !rounded-full text-lg shadow-[0_0_15px_rgba(139,92,246,0.5)]">
                         Start Journey
                         <FaChevronRight className="ml-2 group-hover:translate-x-1 transition-transform" />
                     </Link>
                 </MagneticButton>
 
                 <MagneticButton>
-                    <Link to="/register" className="btn-premium btn-outline !px-10 !py-4 !rounded-full bg-white text-brand border-brand/20 text-lg hover:bg-gray-50">
+                    <Link to="/courses" className="btn-premium btn-outline !px-10 !py-4 !rounded-full bg-white text-brand border-brand/20 text-lg hover:bg-gray-50">
                         <FaPlay className="mr-2 text-xs" />
                         AI Course Demo
                     </Link>

@@ -40,7 +40,6 @@ const Navbar = () => {
                 <div className="hidden lg:flex items-center gap-8">
                     <div className="flex items-center gap-6 bg-white/80 px-8 py-2.5 rounded-full border border-gray-200/50 backdrop-blur-md shadow-sm">
                         <NavLink to="/" active={isActive('/')}>Home</NavLink>
-                        <Link to="/#features" className="text-sm font-bold text-gray-500 hover:text-brand transition-colors">Features</Link>
                         <NavLink to="/courses" active={isActive('/courses')}>Courses</NavLink>
                         <NavLink to="/pricing" active={isActive('/pricing')}>Pricing</NavLink>
                     </div>

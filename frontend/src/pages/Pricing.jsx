@@ -19,7 +19,7 @@ const Pricing = () => {
                         animate={{ opacity: 1, y: 0 }}
                         className="inline-block px-4 py-1.5 mb-6 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-xs font-black uppercase tracking-[0.2em]"
                     >
-                        Investment Strategy
+                        Our Pricing
                     </motion.div>
                     <motion.h2
                         initial={{ opacity: 0, y: 10 }}
@@ -27,7 +27,7 @@ const Pricing = () => {
                         transition={{ delay: 0.1 }}
                         className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight"
                     >
-                        Simple, <span className="text-indigo-600">Transparent</span> Pricing
+                        Simple <span className="text-indigo-600">and Transparent </span>
                     </motion.h2>
                     <motion.p
                         initial={{ opacity: 0, y: 10 }}
@@ -49,7 +49,7 @@ const Pricing = () => {
                         className="bg-white rounded-[2.5rem] p-10 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col group hover:border-indigo-200 transition-all duration-500"
                     >
                         <div className="mb-8">
-                            <h3 className="text-2xl font-black text-slate-900 mb-2 uppercase tracking-tight">Individual Matrix</h3>
+                            <h3 className="text-2xl font-black text-slate-900 mb-2 uppercase tracking-tight">One-Course plan</h3>
                             <p className="text-slate-500 font-bold text-sm tracking-wide">Standard Learning Access</p>
                         </div>
 
@@ -60,9 +60,9 @@ const Pricing = () => {
 
                         <div className="space-y-5 mb-12 flex-1">
                             <FeatureItem text="Lifetime access to 1 course" />
-                            <FeatureItem text="Verifiable Certificate" />
-                            <FeatureItem text="3 Interactive Labs" />
-                            <FeatureItem text="Course Resources PDF" />
+                            <FeatureItem text="Course Completion Certificate" />
+                            <FeatureItem text="Regular Email Support" />
+                            <FeatureItem text="Unlimited Quiz Attempts" />
                         </div>
 
                         <Link to="/courses" className="w-full py-5 px-8 rounded-2xl bg-white border-2 border-slate-100 text-slate-900 font-black text-center hover:bg-slate-50 hover:border-slate-200 transition-all text-lg shadow-sm">
@@ -79,8 +79,8 @@ const Pricing = () => {
                         className="bg-[#0B0E14] rounded-[2.5rem] p-10 shadow-[0_30px_60px_rgba(0,0,0,0.3)] relative flex flex-col transform hover:scale-[1.02] transition-all duration-500"
                     >
                         <div className="absolute top-0 right-10 -translate-y-1/2">
-                            <span className="bg-indigo-600 text-white px-5 py-2 rounded-xl text-xs font-black uppercase tracking-[0.2em] shadow-2xl ring-4 ring-white/10">
-                                Most Popular
+                            <span className="bg-red-600 text-white px-5 py-2 rounded-xl text-xs font-black uppercase tracking-[0.2em] shadow-2xl ring-4 ring-white/10">
+                                Recommended
                             </span>
                         </div>
 
@@ -89,22 +89,22 @@ const Pricing = () => {
                                 <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-600/20">
                                     <FaBolt size={18} />
                                 </div>
-                                <h3 className="text-2xl font-black text-white uppercase tracking-tight">Neural Nexus</h3>
+                                <h3 className="text-2xl font-black text-white uppercase tracking-tight">All Courses pack</h3>
                             </div>
-                            <p className="text-slate-400 font-bold text-sm tracking-wide">Unlimited Professional Sync</p>
+                            <p className="text-slate-400 font-bold text-sm tracking-wide">Uninterrupted Access</p>
                         </div>
 
                         <div className="flex items-baseline gap-2 mb-10 text-white">
                             <span className="text-7xl font-black tracking-tighter">$159</span>
-                            <span className="text-slate-500 font-black text-sm uppercase tracking-widest">/one-time</span>
+                            <span className="text-slate-500 font-black text-sm uppercase tracking-widest">one-time</span>
                         </div>
 
                         <div className="space-y-5 mb-12 flex-1">
-                            <FeatureItem text="Access to ALL 50+ Courses" dark />
-                            <FeatureItem text="Future Course Updates (Free)" dark />
+                            <FeatureItem text="Access to ALL our Courses" dark />
+                            <FeatureItem text="Course Completion Certificate" dark />
                             <FeatureItem text="Priority Support" dark />
-                            <FeatureItem text="Resume Review Session" dark />
-                            <FeatureItem text="Exclusive Community Access" dark />
+                            <FeatureItem text="Unlimited Quiz Attempts" dark />
+                            <FeatureItem text="Future Course Updates (Free)" dark />
                         </div>
 
                         <Link to="/register?plan=pro" className="w-full py-5 px-8 rounded-2xl bg-indigo-600 text-white font-black text-center shadow-[0_20px_40px_rgba(79,70,229,0.3)] hover:bg-indigo-500 transition-all text-lg">

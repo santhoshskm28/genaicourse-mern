@@ -120,7 +120,7 @@ const AssessmentCenter = ({ isEmbedded = false, courseId: propCourseId }) => {
           className="text-center"
         >
           <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-6 shadow-xl"></div>
-          <p className="text-gray-500 font-bold tracking-widest uppercase text-xs">Initializing genaicourse Assessment...</p>
+          <p className="text-gray-500 font-bold tracking-widest uppercase text-xs">Initializing GENAICOURSE Assessment...</p>
         </motion.div>
       </div>
     );
