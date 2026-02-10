@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 
 const CourseCard = ({ course }) => {
     return (
-        <div className="glass-card group flex flex-col h-full !pb-0 active:scale-[0.98] transition-transform bg-white border border-gray-200">
+        <div className="course-card glass-card group flex flex-col h-full !pb-0 active:scale-[0.98] transition-transform bg-white border border-gray-200">
             {/* Thumbnail Box */}
             <div className="relative h-60 overflow-hidden">
                 <img

@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaBars, FaTimes, FaUserShield, FaChevronRight } from 'react-icons/fa';
 import { MagneticButton } from '../ui/MagneticButton';
+import { toast } from 'react-toastify';
 
 const Navbar = () => {
     const { user, logout, isAuthenticated } = useAuth();
@@ -49,6 +50,7 @@ const Navbar = () => {
                             <button
                                 onClick={() => setUserMenuOpen(!userMenuOpen)}
                                 className="w-10 h-10 rounded-full bg-brand text-white font-bold flex items-center justify-center hover:bg-gray-800 transition-colors border border-gray-200"
+                                data-testid="user-menu"
                             >
                                 {user?.name?.[0]}
                             </button>
@@ -78,10 +80,10 @@ const Navbar = () => {
                                             </Link>
                                         )}
                                         <button
-                                            onClick={() => { logout(); setUserMenuOpen(false); }}
+                                            onClick={() => { logout(); setUserMenuOpen(false); toast.success('Logout successful'); }}
                                             className="w-full text-left px-4 py-2 text-sm font-medium text-red-500 hover:bg-red-50"
                                         >
-                                            Sign Out
+                                            Logout
                                         </button>
                                     </motion.div>
                                 )}
@@ -89,11 +91,11 @@ const Navbar = () => {
                         </div>
                     ) : (
                         <div className="flex items-center gap-6">
-                            <Link to="/login" className="text-sm font-semibold text-gray-600 hover:text-brand transition-colors">
+                            <Link to="/login" className="text-sm font-semibold text-gray-600 hover:text-brand transition-colors" data-testid="login-link">
                                 Sign In
                             </Link>
                             <MagneticButton>
-                                <Link to="/register" className="btn-premium btn-primary !py-3 !px-6 text-sm">
+                                <Link to="/register" className="btn-premium btn-primary !py-3 !px-6 text-sm" data-testid="register-link">
                                     Create Account
                                     <FaChevronRight className="text-[10px]" />
                                 </Link>

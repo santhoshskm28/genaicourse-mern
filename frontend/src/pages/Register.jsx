@@ -73,6 +73,7 @@ const Register = () => {
                                 className="w-full bg-[#F3F4F6] border-none text-gray-800 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 block w-full p-4 pl-5 transition-all outline-none font-medium placeholder:text-gray-400"
                                 placeholder="Full Name"
                                 required
+                                data-testid="name-input"
                             />
                         </div>
                     </div>
@@ -87,6 +88,7 @@ const Register = () => {
                                 className="w-full bg-[#F3F4F6] border-none text-gray-800 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 block w-full p-4 pl-5 transition-all outline-none font-medium placeholder:text-gray-400"
                                 placeholder="Email Address"
                                 required
+                                data-testid="email-input"
                             />
                         </div>
                     </div>
@@ -101,6 +103,7 @@ const Register = () => {
                                 className="w-full bg-[#F3F4F6] border-none text-gray-800 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 block w-full p-4 pl-5 pr-12 transition-all outline-none font-medium placeholder:text-gray-400"
                                 placeholder="Password"
                                 required
+                                data-testid="password-input"
                             />
                             <button
                                 type="button"
@@ -122,6 +125,7 @@ const Register = () => {
                                 className="w-full bg-[#F3F4F6] border-none text-gray-800 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 block w-full p-4 pl-5 pr-12 transition-all outline-none font-medium placeholder:text-gray-400"
                                 placeholder="Confirm Password"
                                 required
+                                data-testid="confirm-password-input"
                             />
                             <button
                                 type="button"
@@ -139,6 +143,7 @@ const Register = () => {
                         type="submit"
                         disabled={loading}
                         className="w-full text-white bg-[#3B82F6] hover:bg-blue-600 font-bold rounded-xl text-lg px-5 py-4 text-center shadow-lg shadow-blue-500/30 transition-all duration-300 mt-6"
+                        data-testid="register-button"
                     >
                         {loading ? 'Creating Account...' : 'Register'}
                     </motion.button>

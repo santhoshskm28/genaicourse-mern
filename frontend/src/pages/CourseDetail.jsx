@@ -91,8 +91,8 @@ const CourseDetail = () => {
                             <span className="inline-block bg-accent/10 text-accent px-3 py-1 rounded-full text-sm font-bold mb-4 border border-accent/20">
                                 {course.category}
                             </span>
-                            <h1 className="text-4xl md:text-5xl font-black mb-6 leading-tight text-brand">{course.title}</h1>
-                            <p className="text-xl text-gray-500 mb-8 leading-relaxed max-w-3xl font-medium">
+                            <h1 className="text-4xl md:text-5xl font-black mb-6 leading-tight text-brand" data-testid="course-title">{course.title}</h1>
+                            <p className="text-xl text-gray-500 mb-8 leading-relaxed max-w-3xl font-medium" data-testid="course-description">
                                 {course.description}
                             </p>
 
@@ -114,6 +114,7 @@ const CourseDetail = () => {
                             <button
                                 onClick={startLearning}
                                 className="btn-premium btn-primary text-lg px-8 py-3 flex items-center"
+                                data-testid={isEnrolled ? "start-learning-button" : "enroll-button"}
                             >
                                 <FaPlay className="mr-2" />
                                 {isEnrolled ? 'Continue Learning' : 'Enroll Now - Free'}

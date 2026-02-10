@@ -150,8 +150,8 @@ h6,
 
 .text-half-shade-light {
   background: linear-gradient(to bottom,
-      rgba(255, 255, 255, 0.05) 0%,
-      rgba(255, 255, 255, 0.192) 50%,
+      rgba(255, 255, 255, 0.072) 0%,
+      rgba(255, 255, 255, 0.185) 50%,
       transparent 100%);
   -webkit-background-clip: text;
   background-clip: text;

@@ -192,7 +192,7 @@ const CourseViewer = () => {
                         )}
 
                         {/* Current Lesson View (If selected) */}
-                        <div id="lesson-content" className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden min-h-[500px]">
+                        <div id="lesson-content" className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden min-h-[500px]" data-testid="video-player">
                             {/* Content rendering logic from previous implementation... */}
                             <AnimatePresence mode='wait'>
                                 <motion.div
@@ -227,6 +227,7 @@ const CourseViewer = () => {
                                                 <button
                                                     onClick={handleNext}
                                                     className="btn-premium btn-primary text-sm px-6 py-3"
+                                                    data-testid="complete-lesson-button"
                                                 >
                                                     {isLastLesson ? 'Finish' : 'Next Lesson'}
                                                 </button>
@@ -262,7 +263,7 @@ const CourseViewer = () => {
                                                 const isCurrent = mIdx === currentModuleIndex && lIdx === currentLessonIndex;
 
                                                 return (
-                                                    <div key={lessonId} className="p-4 flex items-center justify-between group hover:bg-slate-800/80 transition-colors">
+                                                    <div key={lessonId} className="lesson-item p-4 flex items-center justify-between group hover:bg-slate-800/80 transition-colors">
                                                         <div className="flex items-center gap-3 overflow-hidden">
                                                             <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${isCompleted ? 'bg-emerald-500/20 text-emerald-500' : 'bg-slate-700 text-slate-400'}`}>
                                                                 {isCompleted ? <FaCheck size={10} /> : <div className="w-2 h-2 rounded-full bg-current" />}

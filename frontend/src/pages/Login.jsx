@@ -63,6 +63,7 @@ const Login = () => {
                                 className="w-full bg-[#F3F4F6] border-none text-gray-800 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 block w-full p-4 pl-5 hover:bg-white transition-all outline-none font-medium placeholder:text-gray-500"
                                 placeholder="Email Address"
                                 required
+                                data-testid="email-input"
                             />
                         </div>
                     </div>
@@ -77,6 +78,7 @@ const Login = () => {
                                 className="w-full bg-[#F3F4F6] border-none text-gray-800 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 block w-full p-4 pl-5 pr-12 hover:bg-white transition-all outline-none font-medium placeholder:text-gray-500"
                                 placeholder="Password"
                                 required
+                                data-testid="password-input"
                             />
                             <button
                                 type="button"
@@ -99,6 +101,7 @@ const Login = () => {
                         type="submit"
                         disabled={loading}
                         className="w-full text-white bg-[#3B82F6] hover:bg-blue-600 font-bold rounded-xl text-lg px-5 py-4 text-center shadow-lg shadow-blue-500/30 transition-all duration-300"
+                        data-testid="login-button"
                     >
                         {loading ? 'Signing in...' : 'Log In'}
                     </motion.button>

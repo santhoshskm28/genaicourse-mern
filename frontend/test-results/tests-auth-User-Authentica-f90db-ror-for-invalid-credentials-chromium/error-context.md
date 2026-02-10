@@ -1,0 +1,116 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - link "GenAI GENAICOURSE .IO" [ref=e6] [cursor=pointer]:
+        - /url: /
+        - img "GenAI" [ref=e7]
+        - generic [ref=e8]:
+          - generic [ref=e9]: GENAICOURSE
+          - generic [ref=e10]: .IO
+      - generic [ref=e11]:
+        - generic [ref=e12]:
+          - link "Home" [ref=e13] [cursor=pointer]:
+            - /url: /
+          - link "Courses" [ref=e14] [cursor=pointer]:
+            - /url: /courses
+          - link "Pricing" [ref=e15] [cursor=pointer]:
+            - /url: /pricing
+        - generic [ref=e16]:
+          - link "Sign In" [ref=e17] [cursor=pointer]:
+            - /url: /login
+          - link "Create Account" [ref=e19] [cursor=pointer]:
+            - /url: /register
+            - text: Create Account
+            - img [ref=e20]
+  - main [ref=e22]:
+    - generic [ref=e24]:
+      - generic [ref=e25]:
+        - heading "Welcome Back" [level=2] [ref=e26]
+        - paragraph [ref=e27]: We are really happy to see you again!
+      - generic [ref=e28]:
+        - textbox "Email Address" [ref=e31]
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - textbox "Password" [ref=e34]
+            - button [ref=e35] [cursor=pointer]:
+              - img [ref=e36]
+          - link "Forgot Password?" [ref=e39] [cursor=pointer]:
+            - /url: /forgot-password
+        - button "Log In" [ref=e40] [cursor=pointer]
+      - paragraph [ref=e42]: or sign in with
+      - generic [ref=e43]:
+        - button [ref=e44] [cursor=pointer]:
+          - img [ref=e46]
+        - button [ref=e48] [cursor=pointer]:
+          - img [ref=e50]
+        - button [ref=e52] [cursor=pointer]:
+          - img [ref=e54]
+      - paragraph [ref=e56]:
+        - text: Need an account?
+        - link "Sign Up" [ref=e57] [cursor=pointer]:
+          - /url: /register
+  - contentinfo [ref=e58]:
+    - generic [ref=e59]:
+      - generic [ref=e60]:
+        - generic [ref=e61]:
+          - link "GenAI genaicourse.io" [ref=e62] [cursor=pointer]:
+            - /url: /
+            - img "GenAI" [ref=e63]
+            - generic [ref=e64]: genaicourse.io
+          - paragraph [ref=e65]: Empowering professionals with practical, prompt-based AI skills for the modern workplace.
+          - generic [ref=e66]:
+            - link [ref=e67] [cursor=pointer]:
+              - /url: "#"
+              - img [ref=e68]
+            - link [ref=e70] [cursor=pointer]:
+              - /url: "#"
+              - img [ref=e71]
+            - link [ref=e73] [cursor=pointer]:
+              - /url: "#"
+              - img [ref=e74]
+        - generic [ref=e76]:
+          - heading "Explore" [level=4] [ref=e77]
+          - list [ref=e78]:
+            - listitem [ref=e79]:
+              - link "Home" [ref=e80] [cursor=pointer]:
+                - /url: /
+            - listitem [ref=e81]:
+              - link "All Courses" [ref=e82] [cursor=pointer]:
+                - /url: /courses
+            - listitem [ref=e83]:
+              - link "Pricing" [ref=e84] [cursor=pointer]:
+                - /url: /pricing
+            - listitem [ref=e85]:
+              - link "Contact Support" [ref=e86] [cursor=pointer]:
+                - /url: /contact
+        - generic [ref=e87]:
+          - heading "Legal" [level=4] [ref=e88]
+          - list [ref=e89]:
+            - listitem [ref=e90]:
+              - link "Privacy Policy" [ref=e91] [cursor=pointer]:
+                - /url: /privacy
+            - listitem [ref=e92]:
+              - link "Terms of Use" [ref=e93] [cursor=pointer]:
+                - /url: /terms
+            - listitem [ref=e94]:
+              - link "Refund Policy" [ref=e95] [cursor=pointer]:
+                - /url: /refund
+        - generic [ref=e96]:
+          - heading "Contact" [level=4] [ref=e97]
+          - list [ref=e98]:
+            - listitem [ref=e99]:
+              - img [ref=e100]
+              - generic [ref=e102]: 5080 Spectrum Drive, Suite 575E, Addison, TX 75001
+            - listitem [ref=e103]:
+              - img [ref=e104]
+              - link "info@genaicourse.io" [ref=e106] [cursor=pointer]:
+                - /url: mailto:info@genaicourse.io
+      - generic [ref=e107]:
+        - paragraph [ref=e108]: © 2026 GENAICOURSE.IO // ALL SYSTEMS OPERATIONAL
+        - generic [ref=e109]: System Operational
+    - generic:
+      - heading "genaicourse" [level=2]
+```

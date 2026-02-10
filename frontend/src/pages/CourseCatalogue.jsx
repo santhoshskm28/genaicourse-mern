@@ -88,6 +88,7 @@ const CourseCatalogue = () => {
                                 onChange={handleFilterChange}
                                 placeholder="Search by neural keyword..."
                                 className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-4 pl-14 focus:outline-none focus:border-accent focus:ring-4 focus:ring-accent/10 transition-all text-brand placeholder:text-gray-400"
+                                data-testid="course-search"
                             />
                         </div>
                     </div>
