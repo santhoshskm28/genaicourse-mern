@@ -5,26 +5,27 @@
 @tailwind utilities;
 
 :root {
-  /* Modern Workspace Palette (Aesthetic Light Mode) */
+  /* Modern Workspace Palette (Premium Light Theme) */
   --bg-main: #FFFFFF;
-  --text-main: #111827;
-  /* gray-900 */
-  --text-muted: #4b5563;
-  /* gray-600 */
-
-  --brand: #111827;
-  --accent: #C2410C;
-  --success: #059669;
+  --bg-secondary: #F8FAFC;
+  --text-main: #0F172A;
+  --text-muted: #64748B;
+  --brand: #0F172A;
+  --accent: #4F46E5;
+  /* Indigo 600 */
+  --accent-hover: #4338CA;
+  --success: #10B981;
+  --error: #EF4444;
 
   /* Aesthetic Details */
-  --shadow-glow: 0 0 15px rgba(139, 92, 246, 0.1);
-  /* Purple glow */
-  --card-border: 1px solid #e2e8f0;
-  /* border-slate-200 */
+  --shadow-glow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+  --shadow-premium: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.03);
+  --card-border: 1px solid #F1F5F9;
+  --card-bg: rgba(255, 255, 255, 0.8);
 }
 
 * {
-  @apply transition-colors duration-200;
+  @apply transition-colors duration-300;
 }
 
 body {
@@ -37,7 +38,7 @@ body {
   position: relative;
 }
 
-/* Subtle Grid Background for Academic Feel */
+/* Subtle Grid Background */
 body::before {
   content: "";
   position: fixed;
@@ -47,12 +48,9 @@ body::before {
   height: 100%;
   z-index: -1;
   background-image:
-    radial-gradient(#111827 0.5px, transparent 0.5px),
-    radial-gradient(#111827 0.5px, var(--bg-main) 0.5px);
-  background-size: 20px 20px;
-  background-position: 0 0, 10px 10px;
-  opacity: 0.03;
-  /* Very subtle */
+    radial-gradient(#E2E8F0 0.8px, transparent 0.8px);
+  background-size: 32px 32px;
+  opacity: 0.5;
 }
 
 h1,
@@ -77,24 +75,25 @@ h6,
 
   /* Typography */
   .text-gradient-heading {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-cyan-400;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-violet-600;
   }
 
   /* Glassmorphism & Cards */
   .glass-card {
-    @apply bg-white/10 backdrop-blur-md border border-slate-800 rounded-3xl overflow-hidden transition-all duration-300;
+    background: var(--card-bg);
+    @apply backdrop-blur-xl rounded-[2rem] overflow-hidden transition-all duration-500;
+    border: var(--card-border);
     box-shadow: var(--shadow-glow);
   }
 
   .glass-card:hover {
-    @apply shadow-xl border-slate-900;
-    box-shadow: 0 0 25px rgba(139, 92, 246, 0.4);
+    @apply -translate-y-1;
+    box-shadow: var(--shadow-premium);
   }
 
   /* Buttons */
   .btn-premium {
-    @apply px-8 py-4 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 active:scale-95 relative overflow-hidden;
-    box-shadow: var(--shadow-glow);
+    @apply px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all duration-500 flex items-center justify-center gap-3 active:scale-95 relative overflow-hidden;
   }
 
   /* Shine Effect */
@@ -117,11 +116,22 @@ h6,
   }
 
   .btn-primary {
-    @apply bg-[#C2410C] text-white border border-[#C2410C] hover:bg-[#9a3412] hover:border-[#9a3412];
+    background-color: var(--accent);
+    @apply text-white border-none;
+    box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3), 0 4px 6px -2px rgba(79, 70, 229, 0.1);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--accent-hover);
+    @apply shadow-2xl scale-[1.02];
   }
 
   .btn-outline {
-    @apply bg-transparent border border-slate-800 text-[#111827] hover:bg-slate-50;
+    @apply bg-white border border-slate-200 text-slate-800;
+  }
+
+  .btn-outline:hover {
+    @apply bg-slate-50 border-slate-300 shadow-lg -translate-y-0.5;
   }
 
   .animate-gradient-text {
@@ -139,8 +149,8 @@ h6,
 
 .text-half-shade {
   background: linear-gradient(to bottom,
-      rgba(17, 24, 39, 0.1) 0%,
-      rgba(29, 41, 66, 0.151) 50%,
+      rgba(15, 23, 42, 0.05) 0%,
+      rgba(15, 23, 42, 0.1) 60%,
       transparent 100%);
   -webkit-background-clip: text;
   background-clip: text;
@@ -150,8 +160,8 @@ h6,
 
 .text-half-shade-light {
   background: linear-gradient(to bottom,
-      rgba(255, 255, 255, 0.072) 0%,
-      rgba(255, 255, 255, 0.185) 50%,
+      rgba(255, 255, 255, 0.1) 30%,
+      rgba(255, 255, 255, 0.205) 60%,
       transparent 100%);
   -webkit-background-clip: text;
   background-clip: text;

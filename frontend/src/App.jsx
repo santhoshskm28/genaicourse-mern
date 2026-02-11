@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -64,49 +65,60 @@ const AppContent = () => {
     const shouldHideNavbar = hideNavbarPaths.some(path => location.pathname.includes(path));
 
     return (
-        <div className="min-h-screen bg-slate-900 text-white font-sans selection:bg-primary selection:text-white">
+        <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)] font-sans selection:bg-indigo-600 selection:text-white transition-colors duration-500">
             <ScrollToTop />
             {!shouldHideNavbar && <Navbar />}
-            <main>
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/courses" element={<CourseCatalogue />} />
-                    <Route path="/courses/:id" element={<CourseDetail />} />
-                    <Route path="/courses/:id/learn" element={<CourseViewer />} />
-                    <Route path="/courses/:id/enroll" element={<CourseEnrollment />} />
-                    <Route path="/courses/:id/access" element={<CourseAccess />} />
-                    <Route path="/courses/:id/assessment" element={<AssessmentCenter />} />
-                    {/* <Route path="/courses/:courseId/lessons/:lessonId" element={<CourseReadingProgress />} /> */}
-                    <Route path="/courses/:courseId/lessons/:lessonId" element={<LessonPlayer />} />
-                    <Route path="/pricing" element={<Pricing />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/how-it-works" element={<HowItWorks />} />
+            <main className="relative">
+                <AnimatePresence mode="wait">
+                    <Routes location={location} key={location.pathname}>
+                        <Route path="/" element={<PageContainer><Home /></PageContainer>} />
+                        <Route path="/courses" element={<PageContainer><CourseCatalogue /></PageContainer>} />
+                        <Route path="/courses/:id" element={<PageContainer><CourseDetail /></PageContainer>} />
+                        <Route path="/courses/:id/learn" element={<PageContainer><CourseViewer /></PageContainer>} />
+                        <Route path="/courses/:id/enroll" element={<PageContainer><CourseEnrollment /></PageContainer>} />
+                        <Route path="/courses/:id/access" element={<PageContainer><CourseAccess /></PageContainer>} />
+                        <Route path="/courses/:id/assessment" element={<PageContainer><AssessmentCenter /></PageContainer>} />
+                        <Route path="/courses/:courseId/lessons/:lessonId" element={<PageContainer><LessonPlayer /></PageContainer>} />
+                        <Route path="/pricing" element={<PageContainer><Pricing /></PageContainer>} />
+                        <Route path="/login" element={<PageContainer><Login /></PageContainer>} />
+                        <Route path="/register" element={<PageContainer><Register /></PageContainer>} />
+                        <Route path="/how-it-works" element={<PageContainer><HowItWorks /></PageContainer>} />
 
-                    <Route element={<PrivateRoute />}>
-                        <Route path="/dashboard" element={<Dashboard />} />
-                    </Route>
+                        <Route element={<PrivateRoute />}>
+                            <Route path="/dashboard" element={<PageContainer><Dashboard /></PageContainer>} />
+                        </Route>
 
-                    {/* Admin Routes */}
-                    <Route element={<AdminRoute />}>
-                        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                        <Route path="/admin/courses/new" element={<CourseForm />} />
-                        <Route path="/admin/courses/json" element={<AdminJSONUpload />} />
-                        <Route path="/admin/courses/:id/edit" element={<CourseForm isEditing={true} />} />
-                        <Route path="/admin/courses/:id/enrollments" element={<AdminCourseEnrollments />} />
-                    </Route>
-                </Routes>
+                        {/* Admin Routes */}
+                        <Route element={<AdminRoute />}>
+                            <Route path="/admin/dashboard" element={<PageContainer><AdminDashboard /></PageContainer>} />
+                            <Route path="/admin/courses/new" element={<PageContainer><CourseForm /></PageContainer>} />
+                            <Route path="/admin/courses/json" element={<PageContainer><AdminJSONUpload /></PageContainer>} />
+                            <Route path="/admin/courses/:id/edit" element={<PageContainer><CourseForm isEditing={true} /></PageContainer>} />
+                            <Route path="/admin/courses/:id/enrollments" element={<PageContainer><AdminCourseEnrollments /></PageContainer>} />
+                        </Route>
+                    </Routes>
+                </AnimatePresence>
             </main>
             <Footer />
 
             <ToastContainer
                 position="bottom-right"
-                theme="dark"
-                toastClassName="bg-slate-800 text-white font-sans"
+                theme="light"
+                toastClassName="bg-white text-slate-900 border border-slate-100 shadow-2xl rounded-2xl"
             />
-
         </div>
     );
 };
+
+const PageContainer = ({ children }) => (
+    <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+    >
+        {children}
+    </motion.div>
+);
 
 export default App;

@@ -24,11 +24,11 @@ const Navbar = () => {
     return (
         <nav
             className={`fixed w-full z-50 transition-all duration-500 top-0 ${scrolled
-                ? 'py-4 bg-white/90 backdrop-blur-lg border-b border-gray-100 shadow-sm'
+                ? 'py-4 bg-white/80 backdrop-blur-xl border-b border-slate-100 shadow-lg'
                 : 'py-6 bg-transparent'
                 }`}
         >
-            <div className="container mx-auto px-6 flex justify-between items-center text-brand">
+            <div className="container mx-auto px-6 flex justify-between items-center text-[var(--brand)]">
                 <Link to="/" className="flex items-center gap-3 group">
                     <img src="/logo.png" alt="GenAI" className="h-16 w-auto object-contain" />
                     <div className="flex items-baseline">
@@ -39,7 +39,7 @@ const Navbar = () => {
 
                 {/* Desktop Menu */}
                 <div className="hidden lg:flex items-center gap-8">
-                    <div className="flex items-center gap-6 bg-white/80 px-8 py-2.5 rounded-full border border-gray-200/50 backdrop-blur-md shadow-sm">
+                    <div className="flex items-center gap-6 bg-white/60 px-8 py-2.5 rounded-full border border-slate-200/50 backdrop-blur-md shadow-sm">
                         <NavLink to="/" active={isActive('/')}>Home</NavLink>
                         <NavLink to="/courses" active={isActive('/courses')}>Courses</NavLink>
                         <NavLink to="/pricing" active={isActive('/pricing')}>Pricing</NavLink>
@@ -49,7 +49,7 @@ const Navbar = () => {
                         <div className="relative ml-4">
                             <button
                                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                                className="w-10 h-10 rounded-full bg-brand text-white font-bold flex items-center justify-center hover:bg-gray-800 transition-colors border border-gray-200"
+                                className="w-10 h-10 rounded-full bg-[var(--brand)] text-white font-bold flex items-center justify-center hover:bg-slate-800 transition-all border border-slate-200 shadow-lg"
                                 data-testid="user-menu"
                             >
                                 {user?.name?.[0]}
@@ -61,12 +61,12 @@ const Navbar = () => {
                                         initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                        className="absolute right-0 top-12 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 overflow-hidden z-50 origin-top-right"
+                                        className="absolute right-0 top-14 w-52 bg-white rounded-2xl shadow-2xl border border-slate-100 py-3 overflow-hidden z-50 origin-top-right backdrop-blur-xl"
                                     >
                                         <Link
                                             to="/dashboard"
                                             onClick={() => setUserMenuOpen(false)}
-                                            className="block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-brand"
+                                            className="block px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-[var(--accent)] transition-colors"
                                         >
                                             My Dashboard
                                         </Link>
@@ -74,14 +74,15 @@ const Navbar = () => {
                                             <Link
                                                 to="/admin/dashboard"
                                                 onClick={() => setUserMenuOpen(false)}
-                                                className="block px-4 py-2 text-sm font-medium text-accent hover:bg-gray-50"
+                                                className="block px-4 py-2 text-sm font-semibold text-[var(--accent)] hover:bg-slate-50 transition-colors"
                                             >
-                                                Admin Panel
+                                                Admin Console
                                             </Link>
                                         )}
+                                        <div className="my-1 border-t border-slate-100"></div>
                                         <button
                                             onClick={() => { logout(); setUserMenuOpen(false); toast.success('Logout successful'); }}
-                                            className="w-full text-left px-4 py-2 text-sm font-medium text-red-500 hover:bg-red-50"
+                                            className="w-full text-left px-4 py-2 text-sm font-bold text-red-500 hover:bg-red-50 transition-colors"
                                         >
                                             Logout
                                         </button>
@@ -91,12 +92,12 @@ const Navbar = () => {
                         </div>
                     ) : (
                         <div className="flex items-center gap-6">
-                            <Link to="/login" className="text-sm font-semibold text-gray-600 hover:text-brand transition-colors" data-testid="login-link">
+                            <Link to="/login" className="text-sm font-bold text-slate-600 hover:text-[var(--brand)] transition-colors" data-testid="login-link">
                                 Sign In
                             </Link>
                             <MagneticButton>
-                                <Link to="/register" className="btn-premium btn-primary !py-3 !px-6 text-sm" data-testid="register-link">
-                                    Create Account
+                                <Link to="/register" className="btn-premium btn-primary !py-3.5 !px-8 text-xs font-black shadow-xl" data-testid="register-link">
+                                    Get Started
                                     <FaChevronRight className="text-[10px]" />
                                 </Link>
                             </MagneticButton>

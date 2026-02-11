@@ -126,7 +126,7 @@ const CourseViewer = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 text-brand font-sans pt-20">
+        <div className="min-h-screen bg-[var(--bg-secondary)] text-[var(--text-main)] font-sans pt-20">
             <div className="container mx-auto px-4 py-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Left Column: Course Info & Progress */}
@@ -243,20 +243,19 @@ const CourseViewer = () => {
 
                     {/* Right Column: Course Content List */}
                     <div className="lg:col-span-1">
-                        <div className="bg-slate-900 rounded-2xl overflow-hidden shadow-xl sticky top-24">
-                            <div className="p-6 border-b border-gray-800">
-                                <h3 className="text-xl font-bold text-white">Course Content</h3>
+                        <div className="bg-[#0F172A] rounded-[2rem] overflow-hidden shadow-2xl sticky top-24 border border-slate-800">
+                            <div className="p-8 border-b border-slate-800">
+                                <h3 className="text-xl font-black text-white uppercase tracking-tight">Course Content</h3>
                             </div>
-                            <div className="p-4 space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto no-scrollbar">
+                            <div className="p-4 space-y-4 max-h-[calc(100vh-250px)] overflow-y-auto no-scrollbar">
                                 {course.modules.map((mod, mIdx) => (
-                                    <div key={mod._id} className="bg-slate-800/50 rounded-xl overflow-hidden border border-slate-700/50">
-                                        <div className="px-5 py-4 bg-slate-800 flex justify-between items-center">
-                                            <h4 className="font-bold text-white text-sm">
-                                                Module {mIdx + 1}: <span className="text-gray-400 font-medium ml-1">{mod.title}</span>
+                                    <div key={mod._id} className="bg-slate-900/50 rounded-2xl overflow-hidden border border-slate-800/50">
+                                        <div className="px-5 py-4 bg-slate-800 flex justify-between items-center cursor-default">
+                                            <h4 className="font-bold text-white text-xs uppercase tracking-wider">
+                                                Mod {mIdx + 1}: <span className="text-slate-400 font-medium ml-1 normal-case">{mod.title}</span>
                                             </h4>
-                                            <span className="text-xs font-bold text-slate-500">{mod.lessons.length} Lessons</span>
                                         </div>
-                                        <div className="divide-y divide-slate-700/50">
+                                        <div className="divide-y divide-slate-800/30">
                                             {mod.lessons.map((less, lIdx) => {
                                                 const lessonId = less._id || less.id;
                                                 const isCompleted = completedLessons.has(String(lessonId));
