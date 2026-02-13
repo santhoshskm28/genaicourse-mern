@@ -25,6 +25,9 @@ import LessonPlayer from './components/lessons/LessonPlayer';
 import HowItWorks from './pages/HowItWorks';
 import Pricing from './pages/Pricing';
 import AssessmentCenter from './components/assessment/AssessmentCenter';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import OAuthCallback from './pages/OAuthCallback';
 
 // Admin Imports
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -82,7 +85,10 @@ const AppContent = () => {
                         <Route path="/pricing" element={<PageContainer><Pricing /></PageContainer>} />
                         <Route path="/login" element={<PageContainer><Login /></PageContainer>} />
                         <Route path="/register" element={<PageContainer><Register /></PageContainer>} />
+                        <Route path="/forgot-password" element={<PageContainer><ForgotPassword /></PageContainer>} />
+                        <Route path="/reset-password/:token" element={<PageContainer><ResetPassword /></PageContainer>} />
                         <Route path="/how-it-works" element={<PageContainer><HowItWorks /></PageContainer>} />
+                        <Route path="/oauth-callback" element={<PageContainer><OAuthCallback /></PageContainer>} />
 
                         <Route element={<PrivateRoute />}>
                             <Route path="/dashboard" element={<PageContainer><Dashboard /></PageContainer>} />

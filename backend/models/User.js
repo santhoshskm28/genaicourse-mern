@@ -25,9 +25,40 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: [true, 'Please provide a password'],
+        required: function () {
+            return !this.googleId && !this.githubId && !this.linkedinId;
+        },
         minlength: [6, 'Password must be at least 6 characters'],
         select: false // Don't return password by default
+    },
+    googleId: {
+        type: String,
+        unique: true,
+        sparse: true
+    },
+    githubId: {
+        type: String,
+        unique: true,
+        sparse: true
+    },
+    linkedinId: {
+        type: String,
+        unique: true,
+        sparse: true
+    },
+    provider: {
+        type: String,
+        enum: ['local', 'google', 'github', 'linkedin'],
+        default: 'local'
+    },
+    // Password Reset Fields (Secure Implementation)
+    resetPasswordToken: {
+        type: String,
+        select: false // Never return in queries
+    },
+    resetPasswordExpire: {
+        type: Date,
+        select: false // Never return in queries
     },
     role: {
         type: String,
@@ -181,8 +212,6 @@ const userSchema = new mongoose.Schema({
         default: false
     },
     verificationToken: String,
-    passwordResetToken: String,
-    passwordResetExpires: Date,
     createdAt: {
         type: Date,
         default: Date.now
@@ -190,6 +219,9 @@ const userSchema = new mongoose.Schema({
 }, {
     timestamps: true
 });
+
+// Import crypto for token generation
+import crypto from 'crypto';
 
 // Hash password before saving
 userSchema.pre('save', async function (next) {
@@ -201,6 +233,24 @@ userSchema.pre('save', async function (next) {
     this.password = await bcrypt.hash(this.password, salt);
     next();
 });
+
+// Method to get signed reset token
+userSchema.methods.getResetPasswordToken = function () {
+    // Generate token
+    const resetToken = crypto.randomBytes(20).toString('hex');
+
+    // Hash token and set to resetPasswordToken field
+    this.resetPasswordToken = crypto
+        .createHash('sha256')
+        .update(resetToken)
+        .digest('hex');
+
+    // Set expire (15 minutes from .env or fallback)
+    const expireMinutes = parseInt(process.env.RESET_TOKEN_EXPIRE) || 15;
+    this.resetPasswordExpire = Date.now() + expireMinutes * 60 * 1000;
+
+    return resetToken;
+};
 
 // Method to compare passwords
 userSchema.methods.comparePassword = async function (candidatePassword) {
@@ -222,14 +272,14 @@ userSchema.methods.getPublicProfile = function () {
 };
 
 // Method to check if user is enrolled in course
-userSchema.methods.isEnrolledInCourse = function(courseId) {
-    return this.enrolledCourses.some(enrollment => 
+userSchema.methods.isEnrolledInCourse = function (courseId) {
+    return this.enrolledCourses.some(enrollment =>
         enrollment.courseId.toString() === courseId.toString()
     );
 };
 
 // Method to enroll in course
-userSchema.methods.enrollInCourse = function(courseId) {
+userSchema.methods.enrollInCourse = function (courseId) {
     if (!this.isEnrolledInCourse(courseId)) {
         this.enrolledCourses.push({
             courseId: courseId,
@@ -244,22 +294,22 @@ userSchema.methods.enrollInCourse = function(courseId) {
 };
 
 // Method to update course progress
-userSchema.methods.updateCourseProgress = function(courseId, progress, timeSpent) {
-    const enrollment = this.enrolledCourses.find(e => 
+userSchema.methods.updateCourseProgress = function (courseId, progress, timeSpent) {
+    const enrollment = this.enrolledCourses.find(e =>
         e.courseId.toString() === courseId.toString()
     );
-    
+
     if (enrollment) {
         enrollment.progress = Math.max(0, Math.min(100, progress));
         enrollment.lastAccessedAt = new Date();
         if (timeSpent) enrollment.timeSpent += timeSpent;
-        
+
         if (progress === 100 && !enrollment.isCompleted) {
             enrollment.isCompleted = true;
             enrollment.completedAt = new Date();
             this.stats.coursesCompleted += 1;
         }
-        
+
         return true;
     }
     return false;

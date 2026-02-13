@@ -1,5 +1,13 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.join(__dirname, '.env') });
+
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -18,18 +26,15 @@ import learningPathRoutes from './routes/learningPathRoutes.js';
 import assessmentRoutes from './routes/assessment.js';
 import assessmentUploadRoutes from './routes/assessmentUpload.js';
 import courseAssessmentRoutes from './routes/courseAssessment.js';
+import passport from 'passport';
+import configurePassport from './config/passport.js';
 
-// Load environment variables
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-dotenv.config({ path: path.join(__dirname, '.env') });
-
-console.log('Current working directory:', process.cwd());
-console.log('MONGODB_URI:', process.env.MONGODB_URI); // Debug log
+// Console log to verify env variables are loaded (debug)
+console.log('✅ Auth Variables Check:', {
+    google: !!process.env.GOOGLE_CLIENT_ID,
+    github: !!process.env.GITHUB_CLIENT_ID,
+    linkedin: !!process.env.LINKEDIN_CLIENT_ID
+});
 
 // Initialize express app
 const app = express();
@@ -57,6 +62,10 @@ const startServer = async () => {
 
     // Security middleware
     app.use(helmet());
+
+    // Passport initialization
+    configurePassport();
+    app.use(passport.initialize());
 
     // Rate limiting
     const limiter = rateLimit({

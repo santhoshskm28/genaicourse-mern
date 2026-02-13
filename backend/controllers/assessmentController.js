@@ -367,6 +367,30 @@ async function generateCertificate(userId, courseId, score, grade) {
   certificate.certificateUrl = `/api/certificates/${certificate._id}/download`;
   await certificate.save();
 
+  // 🔥 SEND CERTIFICATE EMAIL (With PDF Attachment)
+  try {
+    const sendEmail = (await import('../utils/email/sendEmail.js')).default;
+    const { certificateTemplate } = await import('../utils/email/templates/certificateTemplate.js');
+
+    // Dynmically generate a professional filename
+    const filename = `Certificate_${course.title.replace(/\s+/g, '_')}_${user.name.replace(/\s+/g, '_')}.pdf`;
+
+    await sendEmail({
+      to: user.email,
+      subject: `Course Certified: ${course.title} 🏆`,
+      html: certificateTemplate(user.name, course.title),
+      attachments: [
+        {
+          filename: filename,
+          content: pdfBuffer,
+          contentType: 'application/pdf'
+        }
+      ]
+    });
+  } catch (emailError) {
+    console.error('❌ Failed to send certificate email:', emailError.message);
+  }
+
   return certificate;
 }
 

@@ -9,25 +9,50 @@ import {
     resetPassword,
     verifyEmail,
     logout,
-    getAllUsers
+    getAllUsers,
+    oauthSuccess
 } from '../controllers/authController.js';
 import { protect, authorize } from '../middleware/auth.js';
-import { 
-    registerValidation, 
+import {
+    registerValidation,
     loginValidation,
     forgotPasswordValidation,
     resetPasswordValidation,
     emailVerificationValidation,
     changePasswordValidation,
     profileUpdateValidation,
-    validate 
+    validate
 } from '../middleware/validation.js';
+import { checkOauthConfig } from '../middleware/oauthCheck.js';
+
+import passport from 'passport';
 
 const router = express.Router();
 
 /**
  * Authentication Routes
  */
+
+// Google OAuth Routes
+router.get('/google', checkOauthConfig('google'), passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/google/callback',
+    passport.authenticate('google', { session: false, failureRedirect: '/login' }),
+    oauthSuccess
+);
+
+// GitHub OAuth Routes
+router.get('/github', checkOauthConfig('github'), passport.authenticate('github', { scope: ['user:email'] }));
+router.get('/github/callback',
+    passport.authenticate('github', { session: false, failureRedirect: '/login' }),
+    oauthSuccess
+);
+
+// LinkedIn OAuth Routes
+router.get('/linkedin', checkOauthConfig('linkedin'), passport.authenticate('linkedin', { state: 'SOME_STATE' }));
+router.get('/linkedin/callback',
+    passport.authenticate('linkedin', { session: false, failureRedirect: '/login' }),
+    oauthSuccess
+);
 
 // Public routes
 router.post('/register', registerValidation, validate, register);

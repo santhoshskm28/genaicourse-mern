@@ -49,6 +49,20 @@ export const register = async (req, res, next) => {
             isVerified: userRole === 'admin' // Auto-verify admins
         });
 
+        // 🔥 SEND WELCOME EMAIL (Onboarding)
+        try {
+            const sendEmail = (await import('../utils/email/sendEmail.js')).default;
+            const { welcomeTemplate } = await import('../utils/email/templates/welcomeTemplate.js');
+
+            await sendEmail({
+                to: user.email,
+                subject: 'Welcome to GENAICOURSE.IO 🚀',
+                html: welcomeTemplate(user.name)
+            });
+        } catch (emailError) {
+            console.error('❌ Failed to send welcome email:', emailError.message);
+        }
+
         // Generate token
         const token = generateToken(user._id);
 
@@ -105,6 +119,23 @@ export const login = async (req, res, next) => {
         // Update last login
         user.lastLoginAt = new Date();
         await user.save();
+
+        // 🔥 SEND LOGIN SECURITY ALERT (Security Notification)
+        try {
+            const sendEmail = (await import('../utils/email/sendEmail.js')).default;
+            const { loginAlertTemplate } = await import('../utils/email/templates/loginAlertTemplate.js');
+
+            const time = new Date().toLocaleString();
+            const ip = req.ip || req.headers['x-forwarded-for'] || 'Unknown';
+
+            await sendEmail({
+                to: user.email,
+                subject: 'Security Alert: New Sign-in Detected - GENAICOURSE.IO',
+                html: loginAlertTemplate(user.name, time, ip)
+            });
+        } catch (emailError) {
+            console.error('❌ Failed to send login alert email:', emailError.message);
+        }
 
         // Generate token
         const token = generateToken(user._id);
@@ -202,76 +233,6 @@ export const changePassword = async (req, res, next) => {
 };
 
 /**
- * @desc    Forgot password
- * @route   POST /api/auth/forgot-password
- * @access  Public
- */
-export const forgotPassword = async (req, res, next) => {
-    try {
-        const { email } = req.body;
-
-        const user = await User.findOne({ email });
-
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: 'No user found with this email'
-            });
-        }
-
-        // Generate reset token (simplified - in production, use crypto and email service)
-        const resetToken = Math.random().toString(36).substring(2, 15);
-        user.passwordResetToken = resetToken;
-        user.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
-        await user.save();
-
-        res.status(200).json({
-            success: true,
-            message: 'Password reset token generated',
-            data: { resetToken } // In production, send via email
-        });
-    } catch (error) {
-        next(error);
-    }
-};
-
-/**
- * @desc    Reset password
- * @route   POST /api/auth/reset-password
- * @access  Public
- */
-export const resetPassword = async (req, res, next) => {
-    try {
-        const { token, newPassword } = req.body;
-
-        const user = await User.findOne({
-            passwordResetToken: token,
-            passwordResetExpires: { $gt: Date.now() }
-        });
-
-        if (!user) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid or expired reset token'
-            });
-        }
-
-        // Update password
-        user.password = newPassword;
-        user.passwordResetToken = undefined;
-        user.passwordResetExpires = undefined;
-        await user.save();
-
-        res.status(200).json({
-            success: true,
-            message: 'Password reset successful'
-        });
-    } catch (error) {
-        next(error);
-    }
-};
-
-/**
  * @desc    Verify email
  * @route   POST /api/auth/verify-email
  * @access  Public
@@ -311,7 +272,7 @@ export const logout = async (req, res, next) => {
     try {
         // In a production environment, you might want to blacklist the token
         // For now, just return success - client should remove the token
-        
+
         res.status(200).json({
             success: true,
             message: 'Logout successful'
@@ -329,7 +290,7 @@ export const logout = async (req, res, next) => {
 export const getAllUsers = async (req, res, next) => {
     try {
         const { page = 1, limit = 10, role, search } = req.query;
-        
+
         const query = {};
         if (role) query.role = role;
         if (search) {
@@ -364,15 +325,190 @@ export const getAllUsers = async (req, res, next) => {
     }
 };
 
-export default { 
-    register, 
-    login, 
-    getMe, 
-    updateProfile, 
+/**
+ * @desc    Handle OAuth success and redirect to frontend with token
+ * @route   GET /api/auth/oauth/success
+ * @access  Private (Internal)
+ */
+export const oauthSuccess = async (req, res, next) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({
+                success: false,
+                message: 'Authentication failed'
+            });
+        }
+
+
+        const token = generateToken(req.user._id);
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+
+        // Redirect to frontend with token
+        res.redirect(`${frontendUrl}/oauth-callback?token=${token}`);
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * @desc    Forgot Password - Generate reset token and send email
+ * @route   POST /api/auth/forgot-password
+ * @access  Public
+ * 
+ * SECURITY IMPLEMENTATION:
+ * 1. Generate cryptographically secure random token (via user model)
+ * 2. Hash token using SHA256 before storing in database (via user model)
+ * 3. Set expiration time (15 minutes) (via user model)
+ * 4. Send reset link via email
+ * 5. Never expose whether email exists (prevent user enumeration)
+ */
+export const forgotPassword = async (req, res, next) => {
+    try {
+        const { email } = req.body;
+
+        // Validate email
+        if (!email) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please provide an email address'
+            });
+        }
+
+        // Find user by email
+        const user = await User.findOne({ email: email.toLowerCase() });
+
+        // SECURITY: Always return same message to prevent user enumeration
+        const successMessage = 'If an account exists with this email, you will receive password reset instructions.';
+
+        if (!user) {
+            // Don't reveal that user doesn't exist
+            return res.status(200).json({
+                success: true,
+                message: successMessage
+            });
+        }
+
+        // Generate reset token using cryptographically secure model method
+        const resetToken = user.getResetPasswordToken();
+
+        // Save user (skips validation for other fields like password)
+        await user.save({ validateBeforeSave: false });
+
+        // Create reset URL with unhashed token
+        const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+
+        // Send Email
+        try {
+            const sendEmail = (await import('../utils/email/sendEmail.js')).sendEmailWithRetry;
+            const { resetPasswordTemplate } = await import('../utils/email/templates/resetPasswordTemplate.js');
+
+            await sendEmail({
+                to: user.email,
+                subject: 'Password Reset Request - GENAICOURSE.IO',
+                html: resetPasswordTemplate(user.name, resetUrl)
+            }, 3); // Critical email: retry up to 3 times
+
+            res.status(200).json({
+                success: true,
+                message: successMessage
+            });
+
+        } catch (emailError) {
+            // If email fails, clear reset fields
+            user.resetPasswordToken = undefined;
+            user.resetPasswordExpire = undefined;
+            await user.save({ validateBeforeSave: false });
+
+            console.error('❌ Failed to send password reset email:', emailError);
+
+            return res.status(500).json({
+                success: false,
+                message: 'Email could not be sent. Please try again later.'
+            });
+        }
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * @desc    Reset Password - Validate token and update password
+ * @route   PUT /api/auth/reset-password/:resetToken
+ * @access  Public
+ */
+export const resetPassword = async (req, res, next) => {
+    try {
+        const { resetToken } = req.params;
+        const { password } = req.body;
+
+        // Validate password
+        if (!password) {
+            return res.status(400).json({ success: false, message: 'Please provide a new password' });
+        }
+
+        if (password.length < 6) {
+            return res.status(400).json({ success: false, message: 'Password must be at least 6 characters' });
+        }
+
+        // Hash incoming token to match database
+        const crypto = await import('crypto');
+        const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+        // Find user with valid token and not expired
+        const user = await User.findOne({
+            resetPasswordToken: hashedToken,
+            resetPasswordExpire: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            return res.status(400).json({ success: false, message: 'Invalid or expired reset token' });
+        }
+
+        // Set new password (auto-hashed by pre-save hook)
+        user.password = password;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined;
+
+        await user.save();
+
+        // Send confirmation email
+        try {
+            const sendEmail = (await import('../utils/email/sendEmail.js')).default;
+            const { resetConfirmationTemplate } = await import('../utils/email/templates/resetConfirmationTemplate.js');
+
+            await sendEmail({
+                to: user.email,
+                subject: 'Password Reset Successful - GENAICOURSE.IO',
+                html: resetConfirmationTemplate(user.name)
+            });
+        } catch (emailError) {
+            console.error('❌ Failed to send confirmation email:', emailError);
+        }
+
+        const token = generateToken(user._id);
+
+        res.status(200).json({
+            success: true,
+            message: 'Password reset successful',
+            data: { user: user.getPublicProfile(), token }
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+export default {
+    register,
+    login,
+    getMe,
+    updateProfile,
     changePassword,
     forgotPassword,
     resetPassword,
     verifyEmail,
     logout,
-    getAllUsers
+    getAllUsers,
+    oauthSuccess
 };

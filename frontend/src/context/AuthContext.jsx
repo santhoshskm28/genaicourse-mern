@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import authService from '../services/authService.js';
 
 const AuthContext = createContext();
@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
-    const login = async (credentials) => {
+    const login = useCallback(async (credentials) => {
         try {
             const data = await authService.login(credentials);
             setUser(data.data.user);
@@ -37,9 +37,9 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
             throw error;
         }
-    };
+    }, []);
 
-    const register = async (userData) => {
+    const register = useCallback(async (userData) => {
         try {
             const data = await authService.register(userData);
             setUser(data.data.user);
@@ -48,18 +48,33 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
             throw error;
         }
-    };
+    }, []);
 
-    const logout = () => {
+    const logout = useCallback(() => {
         authService.logout();
         setUser(null);
         setIsAuthenticated(false);
-    };
+    }, []);
 
-    const updateUser = (userData) => {
+    const handleOAuthSuccess = useCallback(async (token) => {
+        try {
+            localStorage.setItem('token', token);
+            const data = await authService.getCurrentUser();
+            setUser(data.data);
+            setIsAuthenticated(true);
+            localStorage.setItem('user', JSON.stringify(data.data));
+            return data.data;
+        } catch (error) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            throw error;
+        }
+    }, []);
+
+    const updateUser = useCallback((userData) => {
         setUser(userData);
         localStorage.setItem('user', JSON.stringify(userData));
-    };
+    }, []);
 
     const value = {
         user,
@@ -68,6 +83,7 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         logout,
+        handleOAuthSuccess,
         updateUser,
         isAdmin: user?.role === 'admin'
     };

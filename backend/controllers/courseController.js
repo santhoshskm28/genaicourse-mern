@@ -249,6 +249,20 @@ export const enrollCourse = async (req, res, next) => {
             success: true,
             message: 'Successfully enrolled in course'
         });
+
+        // 🔥 SEND ENROLLMENT EMAIL
+        try {
+            const sendEmail = (await import('../utils/email/sendEmail.js')).default;
+            const { enrollmentTemplate } = await import('../utils/email/templates/enrollmentTemplate.js');
+
+            await sendEmail({
+                to: user.email,
+                subject: `Enrollment Confirmed: ${course.title} 🎓`,
+                html: enrollmentTemplate(user.name, course.title)
+            });
+        } catch (emailError) {
+            console.error('❌ Failed to send enrollment email:', emailError.message);
+        }
     } catch (error) {
         next(error);
     }
